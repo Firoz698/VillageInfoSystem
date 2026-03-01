@@ -23,24 +23,52 @@ namespace VillageInfoSystem.Controllers
         }
 
         // ─── LOGIN ───────────────────────────────────────────────────────────
+        // ── GET ──────────────────────────────────────────────────────
         [HttpGet]
-        public IActionResult Login() => View();
-
-        [HttpPost]
-        public async Task<IActionResult> Login(string username, string password)
+        public IActionResult Login()
         {
-            var adminUser = "admin";
-            var adminPass = "admin@123";
+            // যদি ইতিমধ্যে লগইন করা থাকে, সরাসরি Dashboard-এ পাঠাও
+            if (User.Identity?.IsAuthenticated == true)
+                return RedirectToAction("Dashboard");
+
+            return View();
+        }
+
+        // ── POST ─────────────────────────────────────────────────────
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(string username, string password, bool rememberMe = false)
+        {
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            {
+                ViewBag.Error = "ইউজারনেম ও পাসওয়ার্ড দেওয়া আবশ্যক!";
+                return View();
+            }
+
+            const string adminUser = "admin";
+            const string adminPass = "admin@123";
 
             if (username == adminUser && password == adminPass)
             {
                 var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, username),
-                new Claim(ClaimTypes.Role, "Admin")
-            };
+                {
+                    new Claim(ClaimTypes.Name, username),
+                    new Claim(ClaimTypes.Role, "Admin")
+                };
+
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
+                var principal = new ClaimsPrincipal(identity);
+
+                var authProps = new AuthenticationProperties
+                {
+                    // rememberMe চেক করা থাকলে cookie ৭ দিন টিকবে,
+                    // না থাকলে browser বন্ধ হলেই মুছে যাবে
+                    IsPersistent = rememberMe,
+                    ExpiresUtc = rememberMe? DateTimeOffset.UtcNow.AddDays(7): (DateTimeOffset?)null
+                };
+
+                await HttpContext.SignInAsync( CookieAuthenticationDefaults.AuthenticationScheme,principal,authProps);
+
                 return RedirectToAction("Dashboard");
             }
 

@@ -126,7 +126,7 @@
         border: 1px solid var(--border);
         border-radius: var(--radius-lg);
         box-shadow: var(--shadow-sm);
-        overflow: hidden;
+        overflow: visible; /* FIXED: was 'hidden', caused dropdown clipping */
         margin-bottom: 1.2rem;
         transition: box-shadow .2s;
     }
@@ -146,6 +146,7 @@
         padding: 1rem 1.4rem;
         border-bottom: 1px solid var(--border);
         background: var(--surface);
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0; /* FIXED: re-add top radius since overflow:visible */
     }
 
     .sc-section-icon {
@@ -288,8 +289,8 @@
         }
 
     /* ═══════════════════════════════
-           CUSTOM DROPDOWN SELECTOR
-        ═══════════════════════════════ */
+               CUSTOM DROPDOWN SELECTOR
+            ═══════════════════════════════ */
     .ds-wrap {
         position: relative;
     }
@@ -365,7 +366,7 @@
         top: calc(100% + 6px);
         left: 0;
         right: 0;
-        z-index: 300;
+        z-index: 9999; /* FIXED: increased from 300 to 9999 */
         background: var(--canvas);
         border: 1.5px solid var(--border-strong);
         border-radius: var(--radius-md);
@@ -567,6 +568,8 @@
         border: 1.5px solid var(--border);
         border-radius: var(--radius-md);
         padding: 1.1rem;
+        overflow: visible; /* FIXED: ensure dropdowns not clipped */
+        position: relative;
     }
 
         .btn-slot:focus-within {

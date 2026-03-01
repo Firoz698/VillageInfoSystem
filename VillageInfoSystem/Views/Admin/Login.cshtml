@@ -80,21 +80,17 @@
             }
 
         @@keyframes pulse {
-            0%, 100%
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
 
-        {
-            transform: scale(1);
-            opacity: 0.8;
+            50% {
+                transform: scale(1.08);
+                opacity: 1;
+            }
         }
 
-        50% {
-            transform: scale(1.08);
-            opacity: 1;
-        }
-
-        }
-
-        /* Decorative hexagons */
         .hex-grid {
             position: absolute;
             inset: 0;
@@ -112,26 +108,23 @@
         }
 
         @@keyframes hexFloat {
-            0%
+            0% {
+                transform: translateY(110vh) rotate(0deg);
+                opacity: 0;
+            }
 
-        {
-            transform: translateY(110vh) rotate(0deg);
-            opacity: 0;
-        }
+            10% {
+                opacity: 1;
+            }
 
-        10% {
-            opacity: 1;
-        }
+            90% {
+                opacity: 1;
+            }
 
-        90% {
-            opacity: 1;
-        }
-
-        100% {
-            transform: translateY(-110px) rotate(180deg);
-            opacity: 0;
-        }
-
+            100% {
+                transform: translateY(-110px) rotate(180deg);
+                opacity: 0;
+            }
         }
 
         .left-content {
@@ -156,16 +149,13 @@
         }
 
         @@keyframes iconGlow {
-            0%, 100%
+            0%, 100% {
+                box-shadow: 0 0 0 15px rgba(200,153,58,0.1), 0 0 0 30px rgba(200,153,58,0.05);
+            }
 
-        {
-            box-shadow: 0 0 0 15px rgba(200,153,58,0.1), 0 0 0 30px rgba(200,153,58,0.05);
-        }
-
-        50% {
-            box-shadow: 0 0 0 20px rgba(200,153,58,0.15), 0 0 0 40px rgba(200,153,58,0.07);
-        }
-
+            50% {
+                box-shadow: 0 0 0 20px rgba(200,153,58,0.15), 0 0 0 40px rgba(200,153,58,0.07);
+            }
         }
 
         .left-content h1 {
@@ -304,20 +294,17 @@
         }
 
         @@keyframes shakeIn {
-            0%,100%
+            0%, 100% {
+                transform: translateX(0);
+            }
 
-        {
-            transform: translateX(0);
-        }
+            20%, 60% {
+                transform: translateX(-6px);
+            }
 
-        20%, 60% {
-            transform: translateX(-6px);
-        }
-
-        40%, 80% {
-            transform: translateX(6px);
-        }
-
+            40%, 80% {
+                transform: translateX(6px);
+            }
         }
 
         /* FORM */
@@ -377,10 +364,6 @@
                 border-color: var(--green);
                 box-shadow: 0 0 0 4px rgba(26,107,60,0.08);
             }
-
-                .form-input:focus + .input-icon {
-                    color: var(--green);
-                }
 
         /* password toggle */
         .toggle-pass {
@@ -523,7 +506,6 @@
                 transform: translateY(0);
             }
 
-            /* Loading state */
             .btn-login.loading .btn-text {
                 display: none;
             }
@@ -543,12 +525,9 @@
             }
 
         @@keyframes spin {
-            to
-
-        {
-            transform: rotate(360deg);
-        }
-
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* DIVIDER */
@@ -603,93 +582,73 @@
                 color: var(--green);
             }
 
-        /* HINT */
-        .hint {
-            text-align: center;
-            margin-top: 1rem;
-            font-size: 0.75rem;
-            color: #b5c9ba;
-            padding: 0.5rem;
-            border-radius: 8px;
-            background: rgba(0,0,0,0.02);
-        }
-
         /* RESPONSIVE */
         @@media (max-width: 820px) {
-            body
+            body {
+                flex-direction: column;
+                overflow: auto;
+            }
 
-        {
-            flex-direction: column;
-            overflow: auto;
-        }
+            .left-panel {
+                min-height: 260px;
+                padding: 2rem;
+            }
 
-        .left-panel {
-            min-height: 260px;
-            padding: 2rem;
-        }
+                .left-panel::before, .left-panel::after {
+                    display: none;
+                }
 
-            .left-panel::before, .left-panel::after {
+            .stats-row {
                 display: none;
             }
 
-        .stats-row {
-            display: none;
-        }
+            .village-icon {
+                width: 72px;
+                height: 72px;
+                font-size: 2rem;
+                margin-bottom: 1rem;
+            }
 
-        .village-icon {
-            width: 72px;
-            height: 72px;
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
+            .left-content h1 {
+                font-size: 1.4rem;
+            }
 
-        .left-content h1 {
-            font-size: 1.4rem;
-        }
+            .left-content p {
+                display: none;
+            }
 
-        .left-content p {
-            display: none;
-        }
-
-        .right-panel {
-            width: 100%;
-            min-height: auto;
-            padding: 2rem 1.5rem 3rem;
-        }
-
+            .right-panel {
+                width: 100%;
+                min-height: auto;
+                padding: 2rem 1.5rem 3rem;
+            }
         }
 
         @@media (max-width: 480px) {
-            .right-panel
+            .right-panel {
+                padding: 1.5rem 1.2rem 2.5rem;
+            }
 
-        {
-            padding: 1.5rem 1.2rem 2.5rem;
+            .login-header h2 {
+                font-size: 1.6rem;
+            }
         }
 
-        .login-header h2 {
-            font-size: 1.6rem;
-        }
-
-        }
-
-        /* FADE IN ANIMATION */
+        /* FADE IN */
         .fade-up {
             animation: fadeUp 0.5s ease both;
         }
 
         @@keyframes fadeUp {
-            from
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
 
-        {
-            opacity: 0;
-            transform: translateY(16px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .fade-up:nth-child(1) {
@@ -725,7 +684,6 @@
 
     <!-- ── LEFT DECORATIVE PANEL ── -->
     <div class="left-panel">
-        <!-- Floating hexagons -->
         <div class="hex-grid" aria-hidden="true">
             <div class="hex" style="left:10%;animation-duration:14s;animation-delay:0s;opacity:0.8;"></div>
             <div class="hex" style="left:30%;animation-duration:18s;animation-delay:3s;width:50px;height:58px;"></div>
@@ -789,7 +747,7 @@
                            name="username"
                            id="username"
                            class="form-input"
-                           placeholder="admin"
+                           placeholder="ইউজারনেম লিখুন"
                            required
                            autofocus
                            autocomplete="username" />
@@ -817,9 +775,9 @@
                 </div>
             </div>
 
-            <!-- REMEMBER ME + FORGOT -->
+            <!-- REMEMBER ME -->
             <div class="form-options fade-up">
-                <label class="remember-wrap">
+                <label class="remember-wrap" id="rememberLabel">
                     <input type="checkbox" name="rememberMe" id="rememberMe" />
                     <span class="custom-checkbox">
                         <span class="check-mark">✓</span>
@@ -843,10 +801,6 @@
             <span>SSL এনক্রিপ্টেড ও সুরক্ষিত সংযোগ</span>
         </div>
 
-        <div class="hint fade-up">
-            Default: admin / admin@123
-        </div>
-
         <a href="/" class="back-link fade-up">
             ← মূল সাইটে ফিরুন
         </a>
@@ -854,10 +808,10 @@
     </div>
 
     <script>
-        /* Password toggle */
+        /* ── Password toggle ── */
         function togglePassword() {
             const input = document.getElementById('password');
-            const icon = document.getElementById('eyeIcon');
+            const icon  = document.getElementById('eyeIcon');
             if (input.type === 'password') {
                 input.type = 'text';
                 icon.textContent = '🙈';
@@ -867,39 +821,41 @@
             }
         }
 
-        /* Loading state on submit */
-        document.getElementById('loginForm').addEventListener('submit', function (e) {
-            const btn = document.getElementById('loginBtn');
-            btn.classList.add('loading');
-            btn.disabled = true;
-        });
-
-        /* Remember me - restore username from localStorage */
-        window.addEventListener('DOMContentLoaded', function () {
+        /* ── Remember Me: restore on page load ── */
+        (function () {
             const saved = localStorage.getItem('rm_user');
             if (saved) {
-                document.getElementById('username').value = saved;
+                document.getElementById('username').value    = saved;
                 document.getElementById('rememberMe').checked = true;
+            }
+        })();
+
+        /* ── Custom checkbox toggle (click on label area) ── */
+        document.getElementById('rememberLabel').addEventListener('click', function (e) {
+            // Let the native <input type="checkbox"> inside handle its own click
+            // Only intercept clicks NOT on the input itself
+            if (e.target.tagName !== 'INPUT') {
+                e.preventDefault();
+                const cb = document.getElementById('rememberMe');
+                cb.checked = !cb.checked;
             }
         });
 
+        /* ── Form submit: save/clear username & show loading ── */
         document.getElementById('loginForm').addEventListener('submit', function () {
             const cb = document.getElementById('rememberMe');
-            const un = document.getElementById('username').value;
-            if (cb.checked) {
+            const un = document.getElementById('username').value.trim();
+
+            if (cb.checked && un) {
                 localStorage.setItem('rm_user', un);
             } else {
                 localStorage.removeItem('rm_user');
             }
-        });
 
-        /* Custom checkbox click area */
-        document.querySelectorAll('.remember-wrap').forEach(el => {
-            el.addEventListener('click', function (e) {
-                if (e.target.tagName === 'INPUT') return;
-                const cb = el.querySelector('input[type="checkbox"]');
-                cb.checked = !cb.checked;
-            });
+            // Loading state
+            const btn = document.getElementById('loginBtn');
+            btn.classList.add('loading');
+            btn.disabled = true;
         });
     </script>
 </body>
