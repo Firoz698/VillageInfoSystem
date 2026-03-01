@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "উজালপুর গ্রাম";
+    ViewData["Title"] = "খোকসা মল্লিক পাড়া";
     var info = ViewBag.Info as VillageInfoSystem.Models.VillageInfo;
     var featuredNews = ViewBag.FeaturedNews as VillageInfoSystem.Models.News;
     var newsList = ViewBag.NewsList as List<VillageInfoSystem.Models.News>;
@@ -73,7 +73,7 @@
         <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
         <div class="slide-content">
             <div class="slide-badge">🌿 খুলনা বিভাগ, বাংলাদেশ</div>
-            <h1 class="slide-title">স্বাগতম<br><span>@(info?.VillageName ?? "উজালপুর গ্রামে")</span></h1>
+            <h1 class="slide-title">স্বাগতম<br><span>@(info?.VillageName ?? "খোকসা মল্লিক পাড়া")</span></h1>
             <p class="slide-sub">সবুজে ঘেরা এই শান্তির গ্রামে আপনাকে স্বাগতম। ইতিহাস, ঐতিহ্য ও মানুষের সাথে পরিচিত হন।</p>
             <div class="slide-btns"><a href="#about" class="btn btn-primary">গ্রাম সম্পর্কে জানুন</a><a href="#contact" class="btn btn-outline">যোগাযোগ করুন</a></div>
         </div>
@@ -83,7 +83,7 @@
         <div class="slide-content">
             <div class="slide-badge">🌾 কৃষি ও প্রকৃতি</div>
             <h1 class="slide-title">সোনালি ফসলের<br><span>মাঠ ও মাটি</span></h1>
-            <p class="slide-sub">উজালপুরের কৃষকরা প্রতি মৌসুমে সোনালি ধান ফলান। পরিশ্রমী মানুষের ঘামে সিক্ত এই মাটির গল্প।</p>
+            <p class="slide-sub">খোকসা মল্লিক পাড়া কৃষকরা প্রতি মৌসুমে সোনালি ধান ফলান। পরিশ্রমী মানুষের ঘামে সিক্ত এই মাটির গল্প।</p>
             <div class="slide-btns"><a href="#facilities" class="btn btn-primary">সুবিধা দেখুন</a><a href="#gallery" class="btn btn-outline">গ্যালারি দেখুন</a></div>
         </div>
     </div>
@@ -182,15 +182,15 @@
             <div class="about-img reveal">
                 <div class="about-img-inner">
                     <div class="about-img-icon">🏡</div>
-                    <div class="about-img-text">@(info?.VillageName ?? "উজালপুর গ্রাম")</div>
+                    <div class="about-img-text">@(info?.VillageName ?? "খোকসা মল্লিক পাড়া")</div>
                     <p style="color:rgba(255,255,255,0.7);font-size:0.88rem;">সবুজে ঘেরা শান্তির আবাস</p>
                 </div>
                 <div class="about-img-badge">🏆 আদর্শ গ্রাম</div>
             </div>
             <div class="about-content reveal">
                 <div class="section-tag">📖 আমাদের ইতিহাস</div>
-                <h2>@(info?.VillageName ?? "উজালপুর গ্রামের") গৌরবময় ইতিহাস</h2>
-                <p>@(info?.History ?? "উজালপুর গ্রাম খুলনা বিভাগের একটি সমৃদ্ধ ও ঐতিহ্যবাহী গ্রাম।")</p>
+                <h2>@(info?.VillageName ?? "খোকসা মল্লিক পাড়া") গৌরবময় ইতিহাস</h2>
+                <p>@(info?.History ?? "খোকসা মল্লিক পাড়া গ্রাম খুলনা বিভাগের একটি সমৃদ্ধ ও ঐতিহ্যবাহী গ্রাম।")</p>
                 <p>গ্রামের মানুষ কৃষিকাজ, মৎস্যচাষ এবং ক্ষুদ্র ব্যবসার মাধ্যমে জীবিকা নির্বাহ করেন।</p>
                 <div class="about-tags">
                     <span class="tag">🌾 কৃষিপ্রধান</span>

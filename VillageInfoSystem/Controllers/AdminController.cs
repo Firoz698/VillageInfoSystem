@@ -29,8 +29,8 @@ namespace VillageInfoSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string username, string password)
         {
-            var adminUser = _config["AdminSettings:Username"];
-            var adminPass = _config["AdminSettings:Password"];
+            var adminUser = "admin";
+            var adminPass = "admin@123";
 
             if (username == adminUser && password == adminPass)
             {
