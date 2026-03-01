@@ -10,8 +10,7 @@ builder.Services.AddControllersWithViews();
 
 // SQLite Database
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")
-        ?? "Data Source=ujalpur.db"));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("VillageInfoSystemConnection")));
 
 
 // Cookie Authentication for Admin
