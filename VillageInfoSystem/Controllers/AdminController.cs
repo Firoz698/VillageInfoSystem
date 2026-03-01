@@ -345,6 +345,8 @@ namespace VillageInfoSystem.Controllers
         [Authorize, HttpPost]
         public async Task<IActionResult> SliderCreate(SliderItem item, IFormFile? imageFile)
         {
+            ModelState.Remove("ImagePath");
+
             if (!ModelState.IsValid) return View(item);
 
             if (imageFile != null && imageFile.Length > 0)

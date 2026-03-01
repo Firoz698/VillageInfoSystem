@@ -5,105 +5,201 @@
 }
 
 <style>
-    /* ── SHARED FORM STYLES ── */
-    .form-page-header {
+    :root {
+        --g900: #0d2918;
+        --g800: #1a4a2e;
+        --g700: #1e6b3c;
+        --g600: #2a8a52;
+        --g300: #7bc49a;
+        --g100: #e8f5ec;
+        --g50: #f2faf5;
+        --gold: #c8903a;
+        --gold-light: #f0c97a;
+        --ink: #111c16;
+        --ink-muted: #4a6658;
+        --ink-faint: #8aab97;
+        --canvas: #ffffff;
+        --surface: #f7fbf8;
+        --border: #d6e8dd;
+        --border-strong: #b8d4c4;
+        --shadow-xs: 0 1px 3px rgba(13,41,24,.06);
+        --shadow-sm: 0 3px 10px rgba(13,41,24,.08);
+        --shadow-md: 0 8px 28px rgba(13,41,24,.11);
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+    }
+
+    .sc-page {
+        animation: scPageIn .5s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    @@keyframes scPageIn {
+        from {
+            opacity: 0;
+            transform: translateY(18px)
+        }
+
+        to {
+            opacity: 1;
+            transform: none
+        }
+    }
+
+    /* Header */
+    .sc-header {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: space-between;
         flex-wrap: wrap;
         gap: 1rem;
-        margin-bottom: 1.6rem;
+        margin-bottom: 2rem;
     }
 
-    .fph-left h2 {
-        font-family: 'Playfair Display', serif;
-        font-size: 1.4rem;
-        color: var(--green-dark);
-        font-weight: 900;
+    .sc-header-title {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: .9rem;
     }
 
-    .fph-left p {
-        font-size: 0.84rem;
-        color: var(--text-muted);
-        margin-top: 2px;
-    }
-
-    .form-layout {
-        display: grid;
-        grid-template-columns: 1fr 340px;
-        gap: 1.4rem;
-        align-items: start;
-    }
-
-    /* ── FORM SECTIONS ── */
-    .form-section {
-        background: white;
-        border-radius: var(--radius);
-        border: 1px solid var(--border);
-        box-shadow: var(--shadow-sm);
-        overflow: hidden;
-        margin-bottom: 1.2rem;
-    }
-
-        .form-section:last-child {
-            margin-bottom: 0;
-        }
-
-    .fs-header {
-        display: flex;
-        align-items: center;
-        gap: 0.6rem;
-        padding: 1rem 1.4rem;
-        border-bottom: 1px solid var(--border);
-        background: #fafcfa;
-    }
-
-    .fs-icon {
-        width: 30px;
-        height: 30px;
-        border-radius: 7px;
-        background: var(--green-muted);
+    .sc-header-emblem {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg,var(--g700),var(--g900));
+        border-radius: var(--radius-md);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.85rem;
+        font-size: 1.25rem;
+        box-shadow: 0 4px 14px rgba(13,41,24,.25);
         flex-shrink: 0;
     }
 
-    .fs-header h3 {
-        font-size: 0.9rem;
+    .sc-header-text h1 {
+        font-size: 1.45rem;
+        font-weight: 800;
+        color: var(--g900);
+        margin: 0 0 .2rem;
+        letter-spacing: -.02em;
+        line-height: 1.15;
+    }
+
+    .sc-header-text p {
+        font-size: .82rem;
+        color: var(--ink-muted);
+        margin: 0;
+    }
+
+    .sc-back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        padding: .55rem 1.1rem;
+        border: 1.5px solid var(--border-strong);
+        border-radius: var(--radius-sm);
+        font-size: .82rem;
+        font-weight: 600;
+        color: var(--ink-muted);
+        background: var(--canvas);
+        text-decoration: none;
+        transition: all .18s;
+        white-space: nowrap;
+    }
+
+        .sc-back-btn:hover {
+            border-color: var(--g600);
+            color: var(--g700);
+            background: var(--g50);
+        }
+
+    /* Layout */
+    .sc-layout {
+        display: grid;
+        grid-template-columns: 1fr 360px;
+        gap: 1.5rem;
+        align-items: start;
+    }
+
+    /* Sections */
+    .sc-section {
+        background: var(--canvas);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        margin-bottom: 1.2rem;
+        transition: box-shadow .2s;
+    }
+
+        .sc-section:focus-within {
+            box-shadow: var(--shadow-md);
+        }
+
+        .sc-section:last-child {
+            margin-bottom: 0;
+        }
+
+    .sc-section-head {
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+        padding: 1rem 1.4rem;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface);
+    }
+
+    .sc-section-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .9rem;
+        flex-shrink: 0;
+    }
+
+    .icon-tag {
+        background: linear-gradient(135deg,#daeee4,#bcdece);
+    }
+
+    .icon-link {
+        background: linear-gradient(135deg,#dde8f8,#c5d7f4);
+    }
+
+    .icon-image {
+        background: linear-gradient(135deg,#fde8d8,#fac9ad);
+    }
+
+    .sc-section-head-text h3 {
+        font-size: .9rem;
         font-weight: 700;
-        color: var(--green-dark);
+        color: var(--g900);
+        margin: 0 0 .1rem;
     }
 
-    .fs-header p {
-        font-size: 0.75rem;
-        color: var(--text-muted);
-        margin-top: 1px;
+    .sc-section-head-text p {
+        font-size: .74rem;
+        color: var(--ink-muted);
+        margin: 0;
     }
 
-    .fs-body {
+    .sc-section-body {
         padding: 1.3rem 1.4rem;
     }
 
-    /* ── FORM FIELDS ── */
-    .field-grid-2 {
+    /* Form */
+    .fg-2 {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 1rem;
     }
 
-    .field-grid-4 {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr;
-        gap: 1rem;
-    }
-
     .form-group {
-        margin-bottom: 1.1rem;
+        display: flex;
+        flex-direction: column;
+        gap: .38rem;
+        margin-bottom: 1rem;
     }
 
         .form-group:last-child {
@@ -111,147 +207,425 @@
         }
 
     .form-label {
+        font-size: .79rem;
+        font-weight: 700;
+        color: var(--g900);
         display: flex;
         align-items: center;
-        gap: 0.35rem;
-        font-weight: 600;
-        color: var(--green-dark);
-        margin-bottom: 0.42rem;
-        font-size: 0.84rem;
+        gap: .3rem;
+        letter-spacing: .01em;
     }
 
     .req {
-        color: #e74c3c;
-        font-size: 0.75rem;
+        color: #d04040;
+        font-size: .72rem;
     }
 
     .form-control {
         width: 100%;
-        padding: 0.68rem 0.95rem;
+        padding: .62rem .9rem;
         border: 1.5px solid var(--border);
-        border-radius: 9px;
-        font-family: 'Hind Siliguri', sans-serif;
-        font-size: 0.9rem;
-        color: var(--text);
-        background: white;
-        transition: all 0.2s;
+        border-radius: var(--radius-sm);
+        font-size: .875rem;
+        color: var(--ink);
+        background: var(--canvas);
+        outline: none;
+        box-sizing: border-box;
+        font-family: inherit;
+        transition: border-color .18s, box-shadow .18s, background .18s;
     }
 
         .form-control:focus {
-            outline: none;
-            border-color: var(--green);
-            box-shadow: 0 0 0 3px rgba(26,107,60,0.09);
+            border-color: var(--g600);
+            box-shadow: 0 0 0 3px rgba(42,138,82,.12);
+            background: #fafffc;
         }
 
         .form-control::placeholder {
-            color: #b5c8ba;
+            color: var(--ink-faint);
         }
 
     textarea.form-control {
         resize: vertical;
-        min-height: 90px;
+        min-height: 88px;
+        line-height: 1.6;
     }
 
-    .field-hint {
-        font-size: 0.74rem;
-        color: var(--text-muted);
-        margin-top: 0.28rem;
+    .form-hint {
+        font-size: .72rem;
+        color: var(--ink-faint);
         display: flex;
         align-items: center;
-        gap: 0.3rem;
+        gap: .28rem;
+        margin-top: .05rem;
     }
 
-    .validation-msg {
-        font-size: 0.75rem;
+    .val-msg {
+        font-size: .74rem;
         color: #c0392b;
-        margin-top: 0.25rem;
+        margin-top: .18rem;
     }
 
-    /* ── TOGGLE SWITCH ── */
-    .toggle-wrap {
+    .field-footer {
         display: flex;
         align-items: center;
-        gap: 0.85rem;
-        padding: 0.85rem 1rem;
-        background: #f8fbf8;
-        border: 1.5px solid var(--border);
-        border-radius: 10px;
-        cursor: pointer;
-        transition: all 0.2s;
+        justify-content: space-between;
+        margin-top: .22rem;
     }
 
-        .toggle-wrap:hover {
-            border-color: var(--green);
-            background: #f0f8f3;
+    .char-count {
+        font-size: .7rem;
+        color: var(--ink-faint);
+    }
+
+        .char-count.near {
+            color: #c87a30;
         }
 
-    .toggle-switch {
+        .char-count.over {
+            color: #c03020;
+            font-weight: 600;
+        }
+
+    /* ═══════════════════════════════
+           CUSTOM DROPDOWN SELECTOR
+        ═══════════════════════════════ */
+    .ds-wrap {
         position: relative;
-        width: 44px;
-        height: 24px;
+    }
+
+    .ds-trigger {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: .5rem;
+        padding: .6rem .9rem;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-sm);
+        background: var(--canvas);
+        cursor: pointer;
+        font-family: inherit;
+        text-align: left;
+        outline: none;
+        box-sizing: border-box;
+        transition: all .18s;
+    }
+
+        .ds-trigger:hover {
+            border-color: var(--border-strong);
+            background: var(--surface);
+        }
+
+        .ds-trigger.is-open {
+            border-color: var(--g600);
+            box-shadow: 0 0 0 3px rgba(42,138,82,.12);
+            background: #fafffc;
+        }
+
+    .ds-trigger-left {
+        display: flex;
+        align-items: center;
+        gap: .6rem;
+        min-width: 0;
+        flex: 1;
+    }
+
+    .ds-trigger-icon {
+        font-size: 1rem;
+        flex-shrink: 0;
+        line-height: 1;
+    }
+
+    .ds-trigger-label {
+        font-size: .875rem;
+        color: var(--ink);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+        .ds-trigger-label.muted {
+            color: var(--ink-faint);
+        }
+
+    .ds-chevron {
+        flex-shrink: 0;
+        color: var(--ink-faint);
+        transition: transform .2s;
+    }
+
+    .ds-trigger.is-open .ds-chevron {
+        transform: rotate(180deg);
+    }
+
+    /* Panel */
+    .ds-panel {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        right: 0;
+        z-index: 300;
+        background: var(--canvas);
+        border: 1.5px solid var(--border-strong);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+        pointer-events: none;
+        opacity: 0;
+        transform: translateY(-8px);
+        transition: opacity .15s, transform .15s;
+    }
+
+        .ds-panel.is-open {
+            pointer-events: all;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    /* Search */
+    .ds-search-row {
+        padding: .6rem .7rem .4rem;
+        border-bottom: 1px solid var(--border);
+        position: relative;
+    }
+
+        .ds-search-row svg {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--ink-faint);
+            pointer-events: none;
+        }
+
+    .ds-search {
+        width: 100%;
+        padding: .42rem .7rem .42rem 2rem;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-sm);
+        font-size: .82rem;
+        font-family: inherit;
+        color: var(--ink);
+        outline: none;
+        background: var(--surface);
+        box-sizing: border-box;
+        transition: border-color .15s;
+    }
+
+        .ds-search:focus {
+            border-color: var(--g600);
+        }
+
+    /* Options */
+    .ds-list {
+        max-height: 200px;
+        overflow-y: auto;
+        padding: .3rem 0;
+    }
+
+        .ds-list::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        .ds-list::-webkit-scrollbar-thumb {
+            background: var(--border-strong);
+            border-radius: 99px;
+        }
+
+    .ds-opt {
+        display: flex;
+        align-items: center;
+        gap: .6rem;
+        padding: .58rem 1rem;
+        cursor: pointer;
+        transition: background .13s;
+    }
+
+        .ds-opt:hover {
+            background: var(--g50);
+        }
+
+        .ds-opt.chosen {
+            background: var(--g100);
+        }
+
+    .ds-opt-ico {
+        font-size: .9rem;
+        flex-shrink: 0;
+        width: 18px;
+        text-align: center;
+        line-height: 1;
+    }
+
+    .ds-opt-body {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .ds-opt-name {
+        font-size: .85rem;
+        color: var(--ink);
+        display: block;
+        line-height: 1.3;
+    }
+
+    .ds-opt-hint {
+        font-size: .7rem;
+        color: var(--ink-faint);
+        display: block;
+        margin-top: .06rem;
+    }
+
+    .ds-opt-tick {
+        color: var(--g600);
+        opacity: 0;
+        flex-shrink: 0;
+        transition: opacity .15s;
+    }
+
+    .ds-opt.chosen .ds-opt-tick {
+        opacity: 1;
+    }
+
+    /* Custom row */
+    .ds-custom-row {
+        border-top: 1px solid var(--border);
+        background: var(--surface);
+        padding: .6rem .7rem;
+        display: flex;
+        flex-direction: column;
+        gap: .35rem;
+    }
+
+    .ds-custom-label {
+        font-size: .68rem;
+        font-weight: 700;
+        color: var(--ink-faint);
+        text-transform: uppercase;
+        letter-spacing: .07em;
+    }
+
+    .ds-custom-inputs {
+        display: flex;
+        gap: .4rem;
+    }
+
+    .ds-custom-input {
+        flex: 1;
+        padding: .4rem .65rem;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-sm);
+        font-size: .82rem;
+        font-family: inherit;
+        color: var(--ink);
+        outline: none;
+        background: var(--canvas);
+        transition: border-color .15s;
+    }
+
+        .ds-custom-input:focus {
+            border-color: var(--g600);
+        }
+
+        .ds-custom-input::placeholder {
+            color: var(--ink-faint);
+        }
+
+    .ds-apply {
+        padding: .4rem .85rem;
+        background: var(--g700);
+        color: #fff;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: .78rem;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: inherit;
+        white-space: nowrap;
+        transition: background .15s;
+    }
+
+        .ds-apply:hover {
+            background: var(--g600);
+        }
+
+    /* Hidden synced input */
+    .ds-hidden-input {
+        display: none;
+    }
+
+    /* Button slots */
+    .btn-slots {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .btn-slot {
+        background: var(--surface);
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 1.1rem;
+    }
+
+        .btn-slot:focus-within {
+            border-color: var(--g600);
+            box-shadow: 0 0 0 3px rgba(42,138,82,.07);
+        }
+
+    .btn-slot-head {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        margin-bottom: .9rem;
+    }
+
+    .btn-slot-num {
+        width: 22px;
+        height: 22px;
+        border-radius: 6px;
+        background: linear-gradient(135deg,var(--g700),var(--g900));
+        color: #fff;
+        font-size: .7rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         flex-shrink: 0;
     }
 
-        .toggle-switch input {
-            display: none;
+    .btn-slot-title {
+        font-size: .82rem;
+        font-weight: 700;
+        color: var(--g900);
+    }
+
+    .btn-slot .form-group {
+        margin-bottom: .75rem;
+    }
+
+        .btn-slot .form-group:last-child {
+            margin-bottom: 0;
         }
 
-    .toggle-track {
-        position: absolute;
-        inset: 0;
-        background: #dde8dd;
-        border-radius: 50px;
-        transition: background 0.25s;
-        cursor: pointer;
-    }
-
-    .toggle-thumb {
-        position: absolute;
-        top: 3px;
-        left: 3px;
-        width: 18px;
-        height: 18px;
-        background: white;
-        border-radius: 50%;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-        transition: transform 0.25s;
-    }
-
-    .toggle-switch input:checked ~ .toggle-track {
-        background: var(--green);
-    }
-
-    .toggle-switch input:checked ~ .toggle-thumb {
-        transform: translateX(20px);
-    }
-
-    .toggle-info strong {
-        display: block;
-        font-size: 0.86rem;
-        color: var(--green-dark);
-        font-weight: 700;
-    }
-
-    .toggle-info span {
-        font-size: 0.75rem;
-        color: var(--text-muted);
-    }
-
-    /* ── IMAGE UPLOAD ── */
+    /* Upload */
     .upload-zone {
-        border: 2px dashed var(--border);
-        border-radius: 12px;
-        padding: 1.5rem;
+        border: 2px dashed var(--border-strong);
+        border-radius: var(--radius-md);
+        padding: 2rem 1.5rem;
         text-align: center;
         cursor: pointer;
-        transition: all 0.25s;
         position: relative;
-        background: #fafcfa;
+        background: var(--surface);
+        transition: all .22s;
     }
 
-        .upload-zone:hover, .upload-zone.dragover {
-            border-color: var(--green);
-            background: rgba(26,107,60,0.04);
+        .upload-zone:hover, .upload-zone.drag-over {
+            border-color: var(--g600);
+            background: var(--g50);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
         }
 
         .upload-zone input[type="file"] {
@@ -263,471 +637,962 @@
             height: 100%;
         }
 
-    .uz-icon {
-        font-size: 2rem;
-        display: block;
-        margin-bottom: 0.5rem;
+    .uz-icon-wrap {
+        width: 52px;
+        height: 52px;
+        background: linear-gradient(135deg,var(--g100),#d0ead8);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        margin: 0 auto .8rem;
+        transition: transform .2s;
     }
 
-    .uz-text {
-        font-size: 0.85rem;
-        color: var(--text-muted);
+    .upload-zone:hover .uz-icon-wrap {
+        transform: scale(1.08) rotate(-3deg);
     }
 
-        .uz-text strong {
-            color: var(--green);
+    .uz-main {
+        font-size: .875rem;
+        color: var(--ink-muted);
+        font-weight: 500;
+    }
+
+        .uz-main strong {
+            color: var(--g700);
         }
 
-    .uz-hint {
-        font-size: 0.73rem;
-        color: #b5c8ba;
-        margin-top: 0.25rem;
+    .uz-sub {
+        font-size: .72rem;
+        color: var(--ink-faint);
+        margin-top: .3rem;
     }
 
-    /* ── IMAGE PREVIEW ── */
     .img-preview-wrap {
         display: none;
-        margin-top: 1rem;
         position: relative;
-        border-radius: 12px;
+        border-radius: var(--radius-md);
         overflow: hidden;
         border: 2px solid var(--border);
+        box-shadow: var(--shadow-xs);
     }
-
-        .img-preview-wrap img {
-            width: 100%;
-            max-height: 200px;
-            object-fit: cover;
-            display: block;
-        }
 
         .img-preview-wrap.show {
             display: block;
         }
 
-    .img-remove-btn {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        width: 28px;
-        height: 28px;
-        background: rgba(231,76,60,0.85);
-        border: none;
-        border-radius: 50%;
-        color: white;
-        font-size: 0.85rem;
-        cursor: pointer;
+        .img-preview-wrap img {
+            width: 100%;
+            max-height: 220px;
+            object-fit: cover;
+            display: block;
+        }
+
+    .img-meta-bar {
+        background: var(--surface);
+        padding: .55rem .85rem;
         display: flex;
         align-items: center;
-        justify-content: center;
-        transition: background 0.2s;
+        justify-content: space-between;
+        font-size: .75rem;
+        color: var(--ink-muted);
+        border-top: 1px solid var(--border);
+    }
+
+    .img-remove-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: .3rem;
+        background: none;
+        border: 1px solid var(--border-strong);
+        border-radius: 6px;
+        padding: .22rem .6rem;
+        font-size: .72rem;
+        color: #c0392b;
+        cursor: pointer;
+        transition: all .15s;
     }
 
         .img-remove-btn:hover {
-            background: #c0392b;
+            background: #fff0f0;
+            border-color: #f0a0a0;
         }
 
-    /* ── SIDEBAR CARD ── */
-    .sidebar-card {
-        background: white;
-        border-radius: var(--radius);
+    /* Sidebar */
+    .sc-sidebar {
+        position: sticky;
+        top: 1.5rem;
+    }
+
+    .sc-card {
+        background: var(--canvas);
         border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
         box-shadow: var(--shadow-sm);
         overflow: hidden;
         margin-bottom: 1.2rem;
     }
 
-        .sidebar-card:last-child {
+        .sc-card:last-child {
             margin-bottom: 0;
         }
 
-    .sc-hd {
-        padding: 0.9rem 1.2rem;
-        border-bottom: 1px solid var(--border);
-        background: #fafcfa;
-        font-size: 0.86rem;
-        font-weight: 700;
-        color: var(--green-dark);
+    .sc-card-head {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: .5rem;
+        padding: .85rem 1.2rem;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface);
+        font-size: .83rem;
+        font-weight: 700;
+        color: var(--g900);
     }
 
-    .sc-bd {
+    .sc-card-body {
         padding: 1.1rem 1.2rem;
     }
 
-    /* LIVE PREVIEW CARD */
-    .live-preview {
-        border-radius: 12px;
+    .slide-canvas {
+        border-radius: var(--radius-md);
         overflow: hidden;
-        height: 160px;
-        background: linear-gradient(135deg, var(--green-dark), #2d9b5a);
+        height: 180px;
+        background: var(--g900);
         position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
         text-align: center;
-        padding: 1.2rem;
     }
 
-    .lp-bg {
+    .slide-bg {
         position: absolute;
         inset: 0;
         background-size: cover;
         background-position: center;
         opacity: 0;
-        transition: opacity 0.3s;
+        transition: opacity .4s;
     }
 
-        .lp-bg.show {
+        .slide-bg.show {
             opacity: 1;
         }
 
-    .lp-overlay {
+    .slide-overlay {
         position: absolute;
         inset: 0;
-        background: rgba(8,40,24,0.6);
+        background: linear-gradient(to top,rgba(8,30,18,.88) 0%,rgba(8,30,18,.45) 60%,rgba(8,30,18,.2) 100%);
     }
 
-    .lp-content {
+    .slide-no-img {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: .5rem;
+        opacity: .35;
+        transition: opacity .3s;
+    }
+
+        .slide-no-img.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .slide-no-img svg {
+            color: var(--g300);
+        }
+
+        .slide-no-img span {
+            font-size: .7rem;
+            color: var(--g300);
+        }
+
+    .slide-content {
         position: relative;
         z-index: 2;
+        padding: 1.2rem;
+        width: 100%;
     }
 
-    .lp-badge {
+    .slide-badge {
         display: inline-block;
-        background: rgba(200,153,58,0.25);
-        border: 1px solid rgba(200,153,58,0.5);
-        color: #e8b84b;
-        padding: 0.15rem 0.65rem;
-        border-radius: 50px;
-        font-size: 0.65rem;
+        background: rgba(200,144,58,.22);
+        border: 1px solid rgba(200,144,58,.45);
+        color: #f0c060;
+        padding: .12rem .65rem;
+        border-radius: 999px;
+        font-size: .62rem;
         font-weight: 700;
-        margin-bottom: 0.45rem;
+        letter-spacing: .04em;
+        margin-bottom: .5rem;
     }
 
-    .lp-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 1rem;
-        color: white;
+    .slide-title {
+        font-size: 1.05rem;
         font-weight: 900;
+        color: #fff;
         line-height: 1.2;
+        text-shadow: 0 1px 8px rgba(0,0,0,.4);
     }
 
-        .lp-title span {
-            color: #e8b84b;
+        .slide-title .hl {
+            color: var(--gold-light);
         }
 
-    .lp-sub {
-        font-size: 0.68rem;
-        color: rgba(255,255,255,0.65);
-        margin-top: 0.3rem;
+    .slide-sub {
+        font-size: .65rem;
+        color: rgba(255,255,255,.6);
+        margin-top: .4rem;
+        line-height: 1.4;
     }
 
-    /* FORM ACTIONS */
-    .form-actions {
+    .slide-btns {
         display: flex;
-        gap: 0.7rem;
-        padding: 1.1rem 1.2rem;
-        border-top: 1px solid var(--border);
-        background: #fafcfa;
+        gap: .4rem;
+        justify-content: center;
+        margin-top: .65rem;
     }
 
-        .form-actions .btn {
-            flex: 1;
-            justify-content: center;
-        }
+    .slide-btn-p {
+        padding: .2rem .65rem;
+        border-radius: 999px;
+        font-size: .55rem;
+        font-weight: 700;
+        background: var(--g600);
+        color: #fff;
+    }
 
-    /* ── CURRENT IMAGE ── */
-    .current-img-wrap {
+    .slide-btn-o {
+        padding: .2rem .65rem;
+        border-radius: 999px;
+        font-size: .55rem;
+        font-weight: 700;
+        background: transparent;
+        border: 1px solid rgba(255,255,255,.4);
+        color: rgba(255,255,255,.85);
+    }
+
+    .toggle-row {
+        display: flex;
+        align-items: center;
+        gap: .85rem;
+        background: var(--surface);
+        border: 1.5px solid var(--border);
         border-radius: 10px;
-        overflow: hidden;
-        border: 2px solid var(--border);
-        margin-bottom: 0.8rem;
+        padding: .85rem 1rem;
+        cursor: pointer;
+        transition: all .18s;
+    }
+
+        .toggle-row:hover {
+            border-color: var(--g600);
+            background: var(--g50);
+        }
+
+    .ts-switch {
         position: relative;
+        width: 42px;
+        height: 23px;
+        flex-shrink: 0;
     }
 
-        .current-img-wrap img {
-            width: 100%;
-            max-height: 180px;
-            object-fit: cover;
-            display: block;
+        .ts-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
         }
 
-    .ci-label {
+    .ts-track {
         position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: rgba(0,0,0,0.55);
-        color: rgba(255,255,255,0.8);
-        font-size: 0.7rem;
-        padding: 0.35rem 0.7rem;
+        inset: 0;
+        background: #ccdad4;
+        border-radius: 999px;
+        transition: background .22s;
+        cursor: pointer;
+    }
+
+        .ts-track::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 17px;
+            height: 17px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 1px 5px rgba(0,0,0,.18);
+            transition: transform .22s;
+        }
+
+    .ts-switch input:checked ~ .ts-track {
+        background: var(--g600);
+    }
+
+        .ts-switch input:checked ~ .ts-track::after {
+            transform: translateX(19px);
+        }
+
+    .ts-info strong {
+        display: block;
+        font-size: .84rem;
+        font-weight: 700;
+        color: var(--g900);
+    }
+
+    .ts-info span {
+        font-size: .73rem;
+        color: var(--ink-muted);
+    }
+
+    .tip-item {
+        display: flex;
+        align-items: flex-start;
+        gap: .6rem;
+        padding: .55rem 0;
+        border-bottom: 1px solid var(--border);
+        font-size: .77rem;
+        color: var(--ink-muted);
+        line-height: 1.45;
+    }
+
+        .tip-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .tip-item:first-child {
+            padding-top: 0;
+        }
+
+    .tip-dot {
+        width: 5px;
+        height: 5px;
+        background: var(--g300);
+        border-radius: 50%;
+        margin-top: .45rem;
+        flex-shrink: 0;
+    }
+
+    .sc-actions {
+        display: flex;
+        flex-direction: column;
+        gap: .65rem;
+        padding: 1.1rem 1.2rem;
+    }
+
+    .btn-save {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: .5rem;
+        background: linear-gradient(135deg,var(--g700),var(--g900));
+        color: #fff;
+        border: none;
+        padding: .75rem 1.5rem;
+        border-radius: 10px;
+        font-size: .9rem;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 3px 12px rgba(13,41,24,.25);
+        transition: all .18s;
+        width: 100%;
+    }
+
+        .btn-save:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(13,41,24,.3);
+            background: linear-gradient(135deg,var(--g600),var(--g800));
+        }
+
+    .btn-cancel {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: .45rem;
+        background: transparent;
+        border: 1.5px solid var(--border-strong);
+        color: var(--ink-muted);
+        padding: .65rem 1.5rem;
+        border-radius: 10px;
+        font-size: .86rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all .18s;
+        width: 100%;
+    }
+
+        .btn-cancel:hover {
+            border-color: var(--ink-faint);
+            color: var(--ink);
+            background: var(--surface);
+        }
+
+    .save-note {
         text-align: center;
+        font-size: .71rem;
+        color: var(--ink-faint);
+        padding: 0 1.2rem .9rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: .3rem;
     }
 
-    @@media (max-width: 900px) {
-        .form-layout {
+    @@media (max-width:920px) {
+        .sc-layout {
             grid-template-columns: 1fr;
         }
 
-        .field-grid-4 {
-            grid-template-columns: 1fr 1fr;
+        .sc-sidebar {
+            position: static;
         }
     }
 
-    @@media (max-width: 560px) {
-        .field-grid-2 {
+    @@media (max-width:640px) {
+        .fg-2, .btn-slots {
             grid-template-columns: 1fr;
         }
 
-        .field-grid-4 {
-            grid-template-columns: 1fr;
+        .sc-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+
+    @@media (max-width:420px) {
+        .sc-section-body {
+            padding: 1.1rem;
+        }
+
+        .sc-section-head {
+            padding: .9rem 1.1rem;
         }
     }
 </style>
 
-<!-- ── HEADER ── -->
-<div class="form-page-header">
-    <div class="fph-left">
-        <h2>➕ নতুন স্লাইড যোগ করুন</h2>
-        <p>হোমপেজ হিরো স্লাইডারে নতুন স্লাইড যোগ করুন</p>
+<div class="sc-page">
+    <div class="sc-header">
+        <div class="sc-header-title">
+            <div class="sc-header-emblem">🖼️</div>
+            <div class="sc-header-text">
+                <h1>নতুন স্লাইড যোগ করুন</h1>
+                <p>হোমপেজ হিরো স্লাইডারে একটি নতুন স্লাইড কনফিগার করুন</p>
+            </div>
+        </div>
+        <a href="/Admin/SliderList" class="sc-back-btn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
+            তালিকায় ফিরুন
+        </a>
     </div>
-    <a href="/Admin/SliderList" class="btn btn-outline btn-sm">← ফিরে যান</a>
+
+    <form method="post" enctype="multipart/form-data" id="sliderForm">
+        @Html.AntiForgeryToken()
+
+        <div class="sc-layout">
+            <div>
+                <!-- Section 1 -->
+                <div class="sc-section">
+                    <div class="sc-section-head">
+                        <div class="sc-section-icon icon-tag">🏷️</div>
+                        <div class="sc-section-head-text">
+                            <h3>স্লাইডের মূল তথ্য</h3>
+                            <p>Badge, শিরোনাম ও সাবটেক্সট সেট করুন</p>
+                        </div>
+                    </div>
+                    <div class="sc-section-body">
+                        <div class="fg-2" style="margin-bottom:1rem">
+                            <div class="form-group">
+                                <label class="form-label">Badge টেক্সট <span class="req">✦</span></label>
+                                <input asp-for="Badge" class="form-control" id="badgeInput" placeholder="🌿 খুলনা বিভাগ, বাংলাদেশ" maxlength="60" oninput="syncPreview();countChars(this,'badgeCount',60)" />
+                                <div class="field-footer">
+                                    <span asp-validation-for="Badge" class="val-msg"></span>
+                                    <span class="char-count" id="badgeCount">০/৬০</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">ক্রম নম্বর</label>
+                                <input asp-for="SortOrder" type="number" class="form-control" value="0" min="0" placeholder="0" />
+                                <div class="form-hint">ছোট সংখ্যা আগে দেখাবে</div>
+                            </div>
+                        </div>
+                        <div class="fg-2" style="margin-bottom:1rem">
+                            <div class="form-group">
+                                <label class="form-label">Title <span class="req">✦</span></label>
+                                <input asp-for="Title" class="form-control" id="titleInput" placeholder="স্বাগতম" oninput="syncPreview()" />
+                                <span asp-validation-for="Title" class="val-msg"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Title Highlight <span class="req">✦</span> <span style="font-weight:400;color:var(--ink-faint);font-size:.7rem">(সোনালি রঙে)</span></label>
+                                <input asp-for="TitleHighlight" class="form-control" id="highlightInput" placeholder="খোকসা মল্লিক পাড়া" oninput="syncPreview()" />
+                                <span asp-validation-for="TitleHighlight" class="val-msg"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">সাব টেক্সট</label>
+                            <textarea asp-for="SubText" class="form-control" id="subInput" rows="2" maxlength="160" placeholder="স্লাইডের সংক্ষিপ্ত বিবরণ লিখুন…" oninput="syncPreview();countChars(this,'subCount',160)"></textarea>
+                            <div class="field-footer">
+                                <span class="form-hint">প্রিভিউতে সর্বোচ্চ ৮০ অক্ষর দেখাবে</span>
+                                <span class="char-count" id="subCount">০/১৬০</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Button config with dropdowns -->
+                <div class="sc-section">
+                    <div class="sc-section-head">
+                        <div class="sc-section-icon icon-link">🔗</div>
+                        <div class="sc-section-head-text">
+                            <h3>বাটন কনফিগারেশন</h3>
+                            <p>তালিকা থেকে বেছে নিন অথবা নিজে লিখুন</p>
+                        </div>
+                    </div>
+                    <div class="sc-section-body">
+                        <div class="btn-slots">
+
+                            <!-- Btn 1 -->
+                            <div class="btn-slot">
+                                <div class="btn-slot-head">
+                                    <div class="btn-slot-num">১</div>
+                                    <span class="btn-slot-title">প্রাথমিক বাটন</span>
+                                </div>
+                                <!-- Btn1 Text dropdown -->
+                                <div class="form-group">
+                                    <label class="form-label">বাটনের লেখা</label>
+                                    <div class="ds-wrap">
+                                        <button type="button" class="ds-trigger" id="t-b1txt" onclick="DS.toggle('b1txt')">
+                                            <div class="ds-trigger-left">
+                                                <span class="ds-trigger-icon" id="t-b1txt-ico">📝</span>
+                                                <span class="ds-trigger-label muted" id="t-b1txt-lbl">বেছে নিন বা লিখুন…</span>
+                                            </div>
+                                            <svg class="ds-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+                                        </button>
+                                        <div class="ds-panel" id="p-b1txt">
+                                            <div class="ds-search-row">
+                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+                                                <input class="ds-search" placeholder="খুঁজুন…" oninput="DS.filter('b1txt',this.value)">
+                                            </div>
+                                            <div class="ds-list" id="l-b1txt">
+                                                <div class="ds-opt" onclick="DS.pick('b1txt','গ্রাম সম্পর্কে জানুন','📖','prev-btn1')"><span class="ds-opt-ico">📖</span><div class="ds-opt-body"><span class="ds-opt-name">গ্রাম সম্পর্কে জানুন</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                                <div class="ds-opt" onclick="DS.pick('b1txt','পরিচিতি দেখুন','🏡','prev-btn1')"><span class="ds-opt-ico">🏡</span><div class="ds-opt-body"><span class="ds-opt-name">পরিচিতি দেখুন</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                                <div class="ds-opt" onclick="DS.pick('b1txt','সর্বশেষ সংবাদ','📰','prev-btn1')"><span class="ds-opt-ico">📰</span><div class="ds-opt-body"><span class="ds-opt-name">সর্বশেষ সংবাদ</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                                <div class="ds-opt" onclick="DS.pick('b1txt','কমিটি দেখুন','👥','prev-btn1')"><span class="ds-opt-ico">👥</span><div class="ds-opt-body"><span class="ds-opt-name">কমিটি দেখুন</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                                <div class="ds-opt" onclick="DS.pick('b1txt','গ্যালারি দেখুন','🖼️','prev-btn1')"><span class="ds-opt-ico">🖼️</span><div class="ds-opt-body"><span class="ds-opt-name">গ্যালারি দেখুন</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                                <div class="ds-opt" onclick="DS.pick('b1txt','আরও পড়ুন','➡️','prev-btn1')"><span class="ds-opt-ico">➡️</span><div class="ds-opt-body"><span class="ds-opt-name">আরও পড়ুন</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                            </div>
+                                            <div class="ds-custom-row">
+                                                <span class="ds-custom-label">✏️ নিজে লিখুন</span>
+                                                <div class="ds-custom-inputs">
+                                                    <input class="ds-custom-input" id="ci-b1txt" placeholder="কাস্টম লেখা টাইপ করুন…" onkeydown="if(event.key==='Enter'){event.preventDefault();DS.custom('b1txt','prev-btn1')}">
+                                                    <button type="button" class="ds-apply" onclick="DS.custom('b1txt','prev-btn1')">যোগ করুন</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" asp-for="Btn1Text" id="h-b1txt">
+                                    </div>
+                                </div>
+                                <!-- Btn1 Link dropdown -->
+                                <div class="form-group">
+                                    <label class="form-label">বাটনের লিংক</label>
+                                    <div class="ds-wrap">
+                                        <button type="button" class="ds-trigger" id="t-b1lnk" onclick="DS.toggle('b1lnk')">
+                                            <div class="ds-trigger-left">
+                                                <span class="ds-trigger-icon" id="t-b1lnk-ico">🔗</span>
+                                                <span class="ds-trigger-label muted" id="t-b1lnk-lbl">সেকশন বেছে নিন…</span>
+                                            </div>
+                                            <svg class="ds-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+                                        </button>
+                                        <div class="ds-panel" id="p-b1lnk">
+                                            <div class="ds-search-row">
+                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+                                                <input class="ds-search" placeholder="খুঁজুন…" oninput="DS.filter('b1lnk',this.value)">
+                                            </div>
+                                            <div class="ds-list" id="l-b1lnk">
+                                                <div class="ds-opt" onclick="DS.pick('b1lnk','#about','🏠',null)"><span class="ds-opt-ico">🏠</span><div class="ds-opt-body"><span class="ds-opt-name">#about</span><span class="ds-opt-hint">পরিচিতি সেকশন</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                                <div class="ds-opt" onclick="DS.pick('b1lnk','#news','📰',null)"><span class="ds-opt-ico">📰</span><div class="ds-opt-body"><span class="ds-opt-name">#news</span><span class="ds-opt-hint">সংবাদ সেকশন</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                                <div class="ds-opt" onclick="DS.pick('b1lnk','#population','📊',null)"><span class="ds-opt-ico">📊</span><div class="ds-opt-body"><span class="ds-opt-name">#population</span><span class="ds-opt-hint">পরিসংখ্যান সেকশন</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                                <div class="ds-opt" onclick="DS.pick('b1lnk','#facilities','🏛️',null)"><span class="ds-opt-ico">🏛️</span><div class="ds-opt-body"><span class="ds-opt-name">#facilities</span><span class="ds-opt-hint">সুবিধা সেকশন</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                                <div class="ds-opt" onclick="DS.pick('b1lnk','#committee','👥',null)"><span class="ds-opt-ico">👥</span><div class="ds-opt-body"><span class="ds-opt-name">#committee</span><span class="ds-opt-hint">কমিটি সেকশন</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                                <div class="ds-opt" onclick="DS.pick('b1lnk','#gallery','🖼️',null)"><span class="ds-opt-ico">🖼️</span><div class="ds-opt-body"><span class="ds-opt-name">#gallery</span><span class="ds-opt-hint">গ্যালারি সেকশন</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                                <div class="ds-opt" onclick="DS.pick('b1lnk','#contact','📍',null)"><span class="ds-opt-ico">📍</span><div class="ds-opt-body"><span class="ds-opt-name">#contact</span><span class="ds-opt-hint">যোগাযোগ সেকশন</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                                <div class="ds-opt" onclick="DS.pick('b1lnk','#home','🔝',null)"><span class="ds-opt-ico">🔝</span><div class="ds-opt-body"><span class="ds-opt-name">#home</span><span class="ds-opt-hint">হোম / উপরে</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                            </div>
+                                            <div class="ds-custom-row">
+                                                <span class="ds-custom-label">🔗 কাস্টম URL</span>
+                                                <div class="ds-custom-inputs">
+                                                    <input class="ds-custom-input" id="ci-b1lnk" placeholder="https:// বা /পেজ-পথ" onkeydown="if(event.key==='Enter'){event.preventDefault();DS.custom('b1lnk',null)}">
+                                                    <button type="button" class="ds-apply" onclick="DS.custom('b1lnk',null)">যোগ করুন</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" asp-for="Btn1Link" id="h-b1lnk">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Btn 2 -->
+                            <div class="btn-slot">
+                                <div class="btn-slot-head">
+                                    <div class="btn-slot-num">২</div>
+                                    <span class="btn-slot-title">সেকেন্ডারি বাটন</span>
+                                </div>
+                                <!-- Btn2 Text -->
+                                <div class="form-group">
+                                    <label class="form-label">বাটনের লেখা</label>
+                                    <div class="ds-wrap">
+                                        <button type="button" class="ds-trigger" id="t-b2txt" onclick="DS.toggle('b2txt')">
+                                            <div class="ds-trigger-left">
+                                                <span class="ds-trigger-icon" id="t-b2txt-ico">📝</span>
+                                                <span class="ds-trigger-label muted" id="t-b2txt-lbl">বেছে নিন বা লিখুন…</span>
+                                            </div>
+                                            <svg class="ds-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+                                        </button>
+                                        <div class="ds-panel" id="p-b2txt">
+                                            <div class="ds-search-row">
+                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+                                                <input class="ds-search" placeholder="খুঁজুন…" oninput="DS.filter('b2txt',this.value)">
+                                            </div>
+                                            <div class="ds-list" id="l-b2txt">
+                                                <div class="ds-opt" onclick="DS.pick('b2txt','যোগাযোগ করুন','📞','prev-btn2')"><span class="ds-opt-ico">📞</span><div class="ds-opt-body"><span class="ds-opt-name">যোগাযোগ করুন</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                                <div class="ds-opt" onclick="DS.pick('b2txt','গ্যালারি দেখুন','🖼️','prev-btn2')"><span class="ds-opt-ico">🖼️</span><div class="ds-opt-body"><span class="ds-opt-name">গ্যালারি দেখুন</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                                <div class="ds-opt" onclick="DS.pick('b2txt','আরও জানুন','ℹ️','prev-btn2')"><span class="ds-opt-ico">ℹ️</span><div class="ds-opt-body"><span class="ds-opt-name">আরও জানুন</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                                <div class="ds-opt" onclick="DS.pick('b2txt','সংবাদ পড়ুন','📰','prev-btn2')"><span class="ds-opt-ico">📰</span><div class="ds-opt-body"><span class="ds-opt-name">সংবাদ পড়ুন</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                                <div class="ds-opt" onclick="DS.pick('b2txt','কমিটি দেখুন','👥','prev-btn2')"><span class="ds-opt-ico">👥</span><div class="ds-opt-body"><span class="ds-opt-name">কমিটি দেখুন</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                                <div class="ds-opt" onclick="DS.pick('b2txt','ম্যাপ দেখুন','🗺️','prev-btn2')"><span class="ds-opt-ico">🗺️</span><div class="ds-opt-body"><span class="ds-opt-name">ম্যাপ দেখুন</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                            </div>
+                                            <div class="ds-custom-row">
+                                                <span class="ds-custom-label">✏️ নিজে লিখুন</span>
+                                                <div class="ds-custom-inputs">
+                                                    <input class="ds-custom-input" id="ci-b2txt" placeholder="কাস্টম লেখা টাইপ করুন…" onkeydown="if(event.key==='Enter'){event.preventDefault();DS.custom('b2txt','prev-btn2')}">
+                                                    <button type="button" class="ds-apply" onclick="DS.custom('b2txt','prev-btn2')">যোগ করুন</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" asp-for="Btn2Text" id="h-b2txt">
+                                    </div>
+                                </div>
+                                <!-- Btn2 Link -->
+                                <div class="form-group">
+                                    <label class="form-label">বাটনের লিংক</label>
+                                    <div class="ds-wrap">
+                                        <button type="button" class="ds-trigger" id="t-b2lnk" onclick="DS.toggle('b2lnk')">
+                                            <div class="ds-trigger-left">
+                                                <span class="ds-trigger-icon" id="t-b2lnk-ico">🔗</span>
+                                                <span class="ds-trigger-label muted" id="t-b2lnk-lbl">সেকশন বেছে নিন…</span>
+                                            </div>
+                                            <svg class="ds-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+                                        </button>
+                                        <div class="ds-panel" id="p-b2lnk">
+                                            <div class="ds-search-row">
+                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+                                                <input class="ds-search" placeholder="খুঁজুন…" oninput="DS.filter('b2lnk',this.value)">
+                                            </div>
+                                            <div class="ds-list" id="l-b2lnk">
+                                                <div class="ds-opt" onclick="DS.pick('b2lnk','#contact','📍',null)"><span class="ds-opt-ico">📍</span><div class="ds-opt-body"><span class="ds-opt-name">#contact</span><span class="ds-opt-hint">যোগাযোগ সেকশন</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                                <div class="ds-opt" onclick="DS.pick('b2lnk','#gallery','🖼️',null)"><span class="ds-opt-ico">🖼️</span><div class="ds-opt-body"><span class="ds-opt-name">#gallery</span><span class="ds-opt-hint">গ্যালারি সেকশন</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                                <div class="ds-opt" onclick="DS.pick('b2lnk','#news','📰',null)"><span class="ds-opt-ico">📰</span><div class="ds-opt-body"><span class="ds-opt-name">#news</span><span class="ds-opt-hint">সংবাদ সেকশন</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                                <div class="ds-opt" onclick="DS.pick('b2lnk','#about','🏠',null)"><span class="ds-opt-ico">🏠</span><div class="ds-opt-body"><span class="ds-opt-name">#about</span><span class="ds-opt-hint">পরিচিতি সেকশন</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                                <div class="ds-opt" onclick="DS.pick('b2lnk','#committee','👥',null)"><span class="ds-opt-ico">👥</span><div class="ds-opt-body"><span class="ds-opt-name">#committee</span><span class="ds-opt-hint">কমিটি সেকশন</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                                <div class="ds-opt" onclick="DS.pick('b2lnk','#population','📊',null)"><span class="ds-opt-ico">📊</span><div class="ds-opt-body"><span class="ds-opt-name">#population</span><span class="ds-opt-hint">পরিসংখ্যান সেকশন</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                                <div class="ds-opt" onclick="DS.pick('b2lnk','#facilities','🏛️',null)"><span class="ds-opt-ico">🏛️</span><div class="ds-opt-body"><span class="ds-opt-name">#facilities</span><span class="ds-opt-hint">সুবিধা সেকশন</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                                <div class="ds-opt" onclick="DS.pick('b2lnk','#home','🔝',null)"><span class="ds-opt-ico">🔝</span><div class="ds-opt-body"><span class="ds-opt-name">#home</span><span class="ds-opt-hint">হোম / উপরে</span></div><svg class="ds-opt-tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12" /></svg></div>
+                                            </div>
+                                            <div class="ds-custom-row">
+                                                <span class="ds-custom-label">🔗 কাস্টম URL</span>
+                                                <div class="ds-custom-inputs">
+                                                    <input class="ds-custom-input" id="ci-b2lnk" placeholder="https:// বা /পেজ-পথ" onkeydown="if(event.key==='Enter'){event.preventDefault();DS.custom('b2lnk',null)}">
+                                                    <button type="button" class="ds-apply" onclick="DS.custom('b2lnk',null)">যোগ করুন</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" asp-for="Btn2Link" id="h-b2lnk">
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!-- /btn-slots -->
+                    </div>
+                </div>
+
+                <!-- Section 3: Image -->
+                <div class="sc-section">
+                    <div class="sc-section-head">
+                        <div class="sc-section-icon icon-image">🖼️</div>
+                        <div class="sc-section-head-text">
+                            <h3>ব্যাকগ্রাউন্ড ইমেজ</h3>
+                            <p>স্লাইডের পেছনে দেখানো ছবি আপলোড করুন</p>
+                        </div>
+                    </div>
+                    <div class="sc-section-body">
+                        <div class="upload-zone" id="uploadZone">
+                            <input type="file" name="imageFile" id="imageInput" accept="image/*" onchange="handleImage(this)" />
+                            <div class="uz-icon-wrap">📤</div>
+                            <div class="uz-main"><strong>ক্লিক করুন</strong> বা ছবি এখানে টেনে আনুন</div>
+                            <div class="uz-sub">JPG, PNG, WEBP · সর্বোচ্চ ৫MB · প্রস্তাবিত 1280×720px</div>
+                        </div>
+                        <div class="img-preview-wrap" id="previewWrap">
+                            <img id="imgPreview" src="" alt="Preview" />
+                            <div class="img-meta-bar">
+                                <span id="imgFileName" style="font-size:.75rem;color:var(--ink-muted)">—</span>
+                                <button type="button" class="img-remove-btn" onclick="removeImage()">
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                                    সরিয়ে দিন
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SIDEBAR -->
+            <div class="sc-sidebar">
+                <div class="sc-card">
+                    <div class="sc-card-head">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
+                        লাইভ প্রিভিউ
+                    </div>
+                    <div class="sc-card-body" style="padding:1rem">
+                        <div class="slide-canvas">
+                            <div class="slide-bg" id="slideBg"></div>
+                            <div class="slide-overlay"></div>
+                            <div class="slide-no-img" id="noImgPh">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>
+                                <span>ছবি আপলোড করুন</span>
+                            </div>
+                            <div class="slide-content">
+                                <div class="slide-badge" id="prev-badge">🌿 Badge</div>
+                                <div class="slide-title"><span id="prev-title">Title</span><span class="hl"> <span id="prev-highlight">Highlight</span></span></div>
+                                <div class="slide-sub" id="prev-sub">সাব টেক্সট এখানে দেখাবে</div>
+                                <div class="slide-btns" id="prev-btns">
+                                    <span class="slide-btn-p" id="prev-btn1">বাটন ১</span>
+                                    <span class="slide-btn-o" id="prev-btn2">বাটন ২</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p style="font-size:.71rem;color:var(--ink-faint);text-align:center;margin:.65rem 0 0;display:flex;align-items:center;justify-content:center;gap:.3rem">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
+                            তথ্য লিখলে প্রিভিউ আপডেট হবে
+                        </p>
+                    </div>
+                </div>
+
+                <div class="sc-card">
+                    <div class="sc-card-head">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" /></svg>
+                        প্রকাশনা অবস্থা
+                    </div>
+                    <div class="sc-card-body">
+                        <label class="toggle-row" for="IsActive">
+                            <div class="ts-switch"><input asp-for="IsActive" type="checkbox" id="IsActive" checked /><div class="ts-track"></div></div>
+                            <div class="ts-info"><strong>স্লাইড সক্রিয় রাখুন</strong><span>বন্ধ থাকলে ওয়েবসাইটে দেখাবে না</span></div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="sc-card">
+                    <div class="sc-card-head">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
+                        ডিজাইন টিপস
+                    </div>
+                    <div class="sc-card-body">
+                        <div class="tip-item"><span class="tip-dot"></span>ইমেজ কমপক্ষে <strong>1280×720px</strong> হলে সেরা দেখাবে</div>
+                        <div class="tip-item"><span class="tip-dot"></span><strong>Title Highlight</strong> সোনালি রঙে দেখাবে</div>
+                        <div class="tip-item"><span class="tip-dot"></span>Dropdown থেকে সেকশন বেছে নিন বা কাস্টম URL লিখুন</div>
+                        <div class="tip-item"><span class="tip-dot"></span>ক্রম নম্বর ছোট হলে স্লাইড তালিকায় আগে আসবে</div>
+                    </div>
+                </div>
+
+                <div class="sc-card">
+                    <div class="sc-actions">
+                        <button type="submit" class="btn-save">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" /><polyline points="17 21 17 13 7 13 7 21" /><polyline points="7 3 7 8 15 8" /></svg>
+                            স্লাইড সংরক্ষণ করুন
+                        </button>
+                        <a href="/Admin/SliderList" class="btn-cancel">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                            বাতিল করুন
+                        </a>
+                    </div>
+                    <div class="save-note">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
+                        সংরক্ষণের পর ওয়েবসাইটে প্রকাশ পাবে
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 
-<form method="post" enctype="multipart/form-data" id="sliderForm">
-    @Html.AntiForgeryToken()
-
-    <div class="form-layout">
-
-        <!-- ── LEFT: MAIN FIELDS ── -->
-        <div>
-            <!-- Basic Info -->
-            <div class="form-section">
-                <div class="fs-header">
-                    <div class="fs-icon">🏷️</div>
-                    <div>
-                        <h3>মূল তথ্য</h3>
-                        <p>স্লাইডের শিরোনাম ও badge সেট করুন</p>
-                    </div>
-                </div>
-                <div class="fs-body">
-                    <div class="field-grid-2">
-                        <div class="form-group">
-                            <label class="form-label">Badge টেক্সট <span class="req">*</span></label>
-                            <input asp-for="Badge" class="form-control" id="badgeInput"
-                                   placeholder="🌿 খুলনা বিভাগ, বাংলাদেশ"
-                                   oninput="updatePreview()" />
-                            <span asp-validation-for="Badge" class="validation-msg"></span>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">ক্রম নম্বর</label>
-                            <input asp-for="SortOrder" type="number" class="form-control"
-                                   value="0" min="0" placeholder="0" />
-                            <div class="field-hint">ℹ️ ছোট সংখ্যা আগে দেখাবে</div>
-                        </div>
-                    </div>
-                    <div class="field-grid-2">
-                        <div class="form-group">
-                            <label class="form-label">Title <span class="req">*</span></label>
-                            <input asp-for="Title" class="form-control" id="titleInput"
-                                   placeholder="স্বাগতম" oninput="updatePreview()" />
-                            <span asp-validation-for="Title" class="validation-msg"></span>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Title Highlight <span class="req">*</span></label>
-                            <input asp-for="TitleHighlight" class="form-control" id="highlightInput"
-                                   placeholder="খোকসা মল্লিক পাড়া" oninput="updatePreview()" />
-                            <span asp-validation-for="TitleHighlight" class="validation-msg"></span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">সাব টেক্সট</label>
-                        <textarea asp-for="SubText" class="form-control" rows="2"
-                                  id="subInput" placeholder="স্লাইডের সংক্ষিপ্ত বিবরণ লিখুন..."
-                                  oninput="updatePreview()"></textarea>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Buttons -->
-            <div class="form-section">
-                <div class="fs-header">
-                    <div class="fs-icon">🔗</div>
-                    <div>
-                        <h3>বাটন কনফিগারেশন</h3>
-                        <p>স্লাইডে দুটি পর্যন্ত বাটন যোগ করুন</p>
-                    </div>
-                </div>
-                <div class="fs-body">
-                    <div class="field-grid-4">
-                        <div class="form-group">
-                            <label class="form-label">বাটন ১ লেখা</label>
-                            <input asp-for="Btn1Text" class="form-control" placeholder="গ্রাম সম্পর্কে জানুন" />
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">বাটন ১ লিংক</label>
-                            <input asp-for="Btn1Link" class="form-control" placeholder="#about" />
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">বাটন ২ লেখা</label>
-                            <input asp-for="Btn2Text" class="form-control" placeholder="যোগাযোগ করুন" />
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">বাটন ২ লিংক</label>
-                            <input asp-for="Btn2Link" class="form-control" placeholder="#contact" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Image Upload -->
-            <div class="form-section">
-                <div class="fs-header">
-                    <div class="fs-icon">🖼️</div>
-                    <div>
-                        <h3>ব্যাকগ্রাউন্ড ইমেজ</h3>
-                        <p>স্লাইডের পেছনে দেখানো ছবি আপলোড করুন</p>
-                    </div>
-                </div>
-                <div class="fs-body">
-                    <div class="upload-zone" id="uploadZone">
-                        <input type="file" name="imageFile" id="imageInput"
-                               accept="image/*" onchange="handleImageChange(this)" />
-                        <span class="uz-icon">📤</span>
-                        <div class="uz-text"><strong>ক্লিক করুন</strong> বা ছবি এখানে টেনে আনুন</div>
-                        <div class="uz-hint">JPG, PNG, WEBP · সর্বোচ্চ 5MB</div>
-                    </div>
-                    <div class="img-preview-wrap" id="previewWrap">
-                        <img id="imgPreview" src="" alt="Preview" />
-                        <button type="button" class="img-remove-btn" onclick="removeImage()" title="সরান">✕</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ── RIGHT: SIDEBAR ── -->
-        <div>
-            <!-- Live Preview -->
-            <div class="sidebar-card">
-                <div class="sc-hd">👁️ লাইভ প্রিভিউ</div>
-                <div class="sc-bd">
-                    <div class="live-preview">
-                        <div class="lp-bg" id="lpBg"></div>
-                        <div class="lp-overlay"></div>
-                        <div class="lp-content">
-                            <div class="lp-badge" id="lpBadge">🌿 Badge</div>
-                            <div class="lp-title" id="lpTitle">
-                                Title <span id="lpHighlight">Highlight</span>
-                            </div>
-                            <div class="lp-sub" id="lpSub">সাব টেক্সট এখানে দেখাবে</div>
-                        </div>
-                    </div>
-                    <div class="field-hint" style="margin-top:0.6rem;">ℹ️ তথ্য টাইপ করলে প্রিভিউ আপডেট হবে</div>
-                </div>
-            </div>
-
-            <!-- Active Toggle -->
-            <div class="sidebar-card">
-                <div class="sc-hd">⚙️ স্ট্যাটাস</div>
-                <div class="sc-bd">
-                    <label class="toggle-wrap" for="IsActive">
-                        <div class="toggle-switch">
-                            <input asp-for="IsActive" type="checkbox" id="IsActive" checked />
-                            <div class="toggle-track" onclick=""></div>
-                            <div class="toggle-thumb"></div>
-                        </div>
-                        <div class="toggle-info">
-                            <strong>স্লাইড সক্রিয় রাখুন</strong>
-                            <span>বন্ধ করলে ওয়েবসাইটে দেখাবে না</span>
-                        </div>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Tips -->
-            <div class="sidebar-card">
-                <div class="sc-hd">💡 টিপস</div>
-                <div class="sc-bd" style="display:flex;flex-direction:column;gap:0.7rem;">
-                    <div class="field-hint">🖼️ ইমেজ কমপক্ষে 1280×720px হলে ভালো দেখাবে</div>
-                    <div class="field-hint">🔢 ক্রম নম্বর ছোট হলে স্লাইড আগে দেখাবে</div>
-                    <div class="field-hint">✦ Title Highlight সোনালি রঙে দেখাবে</div>
-                    <div class="field-hint">🔗 লিংকে <code style="background:#f0f5f0;padding:0 4px;border-radius:3px;">#about</code> ধরনের anchor ব্যবহার করুন</div>
-                </div>
-            </div>
-
-            <!-- Submit -->
-            <div class="sidebar-card">
-                <div class="form-actions">
-                    <a href="/Admin/SliderList" class="btn btn-outline">বাতিল</a>
-                    <button type="submit" class="btn btn-primary">💾 সংরক্ষণ করুন</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</form>
-
 <script>
-    function updatePreview() {
-        const badge = document.getElementById('badgeInput')?.value || 'Badge';
-        const title = document.getElementById('titleInput')?.value || 'Title';
-        const highlight = document.getElementById('highlightInput')?.value || 'Highlight';
-        const sub = document.getElementById('subInput')?.value || 'সাব টেক্সট এখানে দেখাবে';
-        document.getElementById('lpBadge').textContent = badge;
-        document.getElementById('lpTitle').childNodes[0].nodeValue = title + ' ';
-        document.getElementById('lpHighlight').textContent = highlight;
-        document.getElementById('lpSub').textContent = sub.substring(0, 80);
+    /* ═══════════════════════════════════════
+       DS — Dropdown Selector module
+    ═══════════════════════════════════════ */
+    const DS = (() => {
+        function close(id) {
+            document.getElementById(`p-${id}`)?.classList.remove('is-open');
+            document.getElementById(`t-${id}`)?.classList.remove('is-open');
+        }
+
+        function toggle(id) {
+            const panel   = document.getElementById(`p-${id}`);
+            const trigger = document.getElementById(`t-${id}`);
+            // Close all others
+            document.querySelectorAll('.ds-panel.is-open').forEach(p => {
+                if (p !== panel) {
+                    p.classList.remove('is-open');
+                    const tid = p.id.replace('p-','t-');
+                    document.getElementById(tid)?.classList.remove('is-open');
+                }
+            });
+            const opening = !panel.classList.contains('is-open');
+            panel.classList.toggle('is-open', opening);
+            trigger.classList.toggle('is-open', opening);
+            if (opening) {
+                const s = panel.querySelector('.ds-search');
+                if (s) setTimeout(() => s.focus(), 60);
+            }
+        }
+
+        function setValue(id, value, icon) {
+            document.getElementById(`h-${id}`).value = value;
+            const lbl = document.getElementById(`t-${id}-lbl`);
+            lbl.textContent = value;
+            lbl.classList.remove('muted');
+            document.getElementById(`t-${id}-ico`).textContent = icon || '✅';
+        }
+
+        function markActive(id, value) {
+            document.querySelectorAll(`#l-${id} .ds-opt`).forEach(o => {
+                const nameEl = o.querySelector('.ds-opt-name');
+                o.classList.toggle('chosen', nameEl?.textContent.trim() === value);
+            });
+        }
+
+        function pick(id, value, icon, previewId) {
+            setValue(id, value, icon);
+            markActive(id, value);
+            close(id);
+            if (previewId) {
+                const el = document.getElementById(previewId);
+                if (el) el.textContent = value;
+                updateBtnRow();
+            }
+        }
+
+        function custom(id, previewId) {
+            const input = document.getElementById(`ci-${id}`);
+            const val   = input.value.trim();
+            if (!val) { input.focus(); return; }
+            setValue(id, val, '✏️');
+            markActive(id, ''); // deselect all
+            close(id);
+            input.value = '';
+            if (previewId) {
+                const el = document.getElementById(previewId);
+                if (el) el.textContent = val;
+                updateBtnRow();
+            }
+        }
+
+        function filter(id, q) {
+            const lq = q.toLowerCase();
+            document.querySelectorAll(`#l-${id} .ds-opt`).forEach(o => {
+                o.style.display = o.textContent.toLowerCase().includes(lq) ? '' : 'none';
+            });
+        }
+
+        return { toggle, pick, custom, filter };
+    })();
+
+    /* Close when clicking outside */
+    document.addEventListener('click', e => {
+        if (!e.target.closest('.ds-wrap')) {
+            document.querySelectorAll('.ds-panel.is-open').forEach(p => {
+                p.classList.remove('is-open');
+                const tid = p.id.replace('p-','t-');
+                document.getElementById(tid)?.classList.remove('is-open');
+            });
+        }
+    });
+
+    /* Preview btn row visibility */
+    function updateBtnRow() {
+        const b1  = document.getElementById('h-b1txt')?.value.trim();
+        const b2  = document.getElementById('h-b2txt')?.value.trim();
+        document.getElementById('prev-btns').style.display = (b1||b2) ? 'flex' : 'none';
     }
 
-    function handleImageChange(input) {
-        if (input.files && input.files[0]) {
-            const file = input.files[0];
-            if (file.size > 5 * 1024 * 1024) {
-                alert('ফাইলের সাইজ ৫MB-এর বেশি হওয়া যাবে না।');
-                input.value = '';
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = e => {
-                document.getElementById('imgPreview').src = e.target.result;
-                document.getElementById('previewWrap').classList.add('show');
-                document.getElementById('lpBg').style.backgroundImage = `url('${e.target.result}')`;
-                document.getElementById('lpBg').classList.add('show');
-                document.getElementById('uploadZone').style.display = 'none';
-            };
-            reader.readAsDataURL(file);
-        }
+    /* Main preview sync */
+    function syncPreview() {
+        const G = id => document.getElementById(id)?.value.trim();
+        document.getElementById('prev-badge').textContent     = G('badgeInput') || 'Badge';
+        document.getElementById('prev-title').textContent     = G('titleInput') || 'Title';
+        document.getElementById('prev-highlight').textContent = G('highlightInput') || 'Highlight';
+        document.getElementById('prev-sub').textContent       = (G('subInput') || 'সাব টেক্সট').substring(0,80);
+        updateBtnRow();
+    }
+
+    /* Char counter */
+    const toB = n => n.toString().replace(/\d/g, d => '০১২৩৪৫৬৭৮৯'[d]);
+    function countChars(el, cid, max) {
+        const len = el.value.length;
+        const c = document.getElementById(cid);
+        if (!c) return;
+        c.textContent = `${toB(len)}/${toB(max)}`;
+        c.className = 'char-count' + (len > max*.8 ? ' near' : '') + (len >= max ? ' over' : '');
+    }
+
+    /* Image upload */
+    function handleImage(input) {
+        if (!input.files?.[0]) return;
+        const file = input.files[0];
+        if (file.size > 5*1024*1024) { alert('ফাইলের সাইজ ৫MB-এর বেশি হওয়া যাবে না।'); input.value=''; return; }
+        const reader = new FileReader();
+        reader.onload = e => {
+            const src = e.target.result;
+            document.getElementById('imgPreview').src = src;
+            document.getElementById('previewWrap').classList.add('show');
+            document.getElementById('uploadZone').style.display = 'none';
+            const bg = document.getElementById('slideBg');
+            bg.style.backgroundImage = `url('${src}')`;
+            bg.classList.add('show');
+            document.getElementById('noImgPh').classList.add('hidden');
+            document.getElementById('imgFileName').textContent = file.name;
+        };
+        reader.readAsDataURL(file);
     }
 
     function removeImage() {
         document.getElementById('imageInput').value = '';
         document.getElementById('imgPreview').src = '';
         document.getElementById('previewWrap').classList.remove('show');
-        document.getElementById('lpBg').style.backgroundImage = '';
-        document.getElementById('lpBg').classList.remove('show');
-        document.getElementById('uploadZone').style.display = 'block';
+        document.getElementById('uploadZone').style.display = '';
+        const bg = document.getElementById('slideBg');
+        bg.style.backgroundImage = '';
+        bg.classList.remove('show');
+        document.getElementById('noImgPh').classList.remove('hidden');
+        document.getElementById('imgFileName').textContent = '—';
     }
 
-    /* Drag and drop */
+    /* Drag & Drop */
     const zone = document.getElementById('uploadZone');
     if (zone) {
-        zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
-        zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+        zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('drag-over'); });
+        zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
         zone.addEventListener('drop', e => {
-            e.preventDefault();
-            zone.classList.remove('dragover');
-            const dt = e.dataTransfer;
-            if (dt.files.length) {
-                document.getElementById('imageInput').files = dt.files;
-                handleImageChange(document.getElementById('imageInput'));
+            e.preventDefault(); zone.classList.remove('drag-over');
+            if (e.dataTransfer.files.length) {
+                document.getElementById('imageInput').files = e.dataTransfer.files;
+                handleImage(document.getElementById('imageInput'));
             }
         });
     }
 
-    /* Toggle thumb sync */
-    document.getElementById('IsActive')?.addEventListener('change', function() {
-        this.nextElementSibling.nextElementSibling.style.transform = this.checked ? 'translateX(20px)' : '';
-    });
+    /* Init */
+    syncPreview();
 </script>

@@ -1,34 +1,51 @@
-@model VillageInfoSystem.Models.TickerNews
+@model VillageInfoSystem.Models.SliderItem
 @{
-    ViewData["Title"] = "নতুন ব্রেকিং নিউজ";
-    Layout = "_AdminLayout";
+    ViewData["Title"] = "নতুন স্লাইড যোগ করুন";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
 <style>
+    /* ════════════════════════════════════════
+           SLIDER CREATE — Design System
+           Deep forest green + warm gold palette
+        ════════════════════════════════════════ */
     :root {
-        --primary: #1a3a5c;
-        --primary-light: #2563a8;
-        --red: #c0392b;
-        --surface: #ffffff;
-        --surface-alt: #f5f7fa;
-        --border: #dde3ec;
-        --border-focus: #2563a8;
-        --text-main: #1a2636;
-        --text-muted: #5a6b80;
-        --shadow-sm: 0 2px 8px rgba(26,58,92,0.07);
-        --radius: 12px;
-        --input-radius: 8px;
+        --g900: #0d2918;
+        --g800: #1a4a2e;
+        --g700: #1e6b3c;
+        --g600: #2a8a52;
+        --g300: #7bc49a;
+        --g100: #e8f5ec;
+        --g50: #f2faf5;
+        --gold: #c8903a;
+        --gold-light: #f0c97a;
+        --gold-pale: #fdf6e8;
+        --ink: #111c16;
+        --ink-muted: #4a6658;
+        --ink-faint: #8aab97;
+        --canvas: #ffffff;
+        --surface: #f7fbf8;
+        --border: #d6e8dd;
+        --border-strong: #b8d4c4;
+        --shadow-xs: 0 1px 3px rgba(13,41,24,0.06);
+        --shadow-sm: 0 3px 10px rgba(13,41,24,0.08);
+        --shadow-md: 0 8px 28px rgba(13,41,24,0.11);
+        --shadow-lg: 0 20px 60px rgba(13,41,24,0.15);
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+        --radius-xl: 20px;
     }
 
-    .page-wrapper {
-        max-width: 680px;
-        animation: fadeUp 0.4s ease both;
+    /* ── Page entry animation ── */
+    .sc-page {
+        animation: scPageIn 0.5s cubic-bezier(0.22,1,0.36,1) both;
     }
 
-    @@keyframes fadeUp {
+    @@keyframes scPageIn {
         from {
             opacity: 0;
-            transform: translateY(14px);
+            transform: translateY(18px);
         }
 
         to {
@@ -37,528 +54,1101 @@
         }
     }
 
-    /* ── Breadcrumb ── */
-    .breadcrumb {
+    /* ── Page header ── */
+    .sc-header {
         display: flex;
-        align-items: center;
-        gap: 0.4rem;
-        font-size: 0.8rem;
-        color: var(--text-muted);
-        margin-bottom: 1.5rem;
+        align-items: flex-start;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 2rem;
     }
 
-        .breadcrumb a {
-            color: var(--primary-light);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-            .breadcrumb a:hover {
-                text-decoration: underline;
-            }
-
-    /* ── Live preview ── */
-    .preview-bar {
-        background: linear-gradient(90deg, var(--red) 0%, #a52820 100%);
-        border-radius: var(--radius);
-        margin-bottom: 1.5rem;
-        overflow: hidden;
-        box-shadow: 0 4px 18px rgba(192,57,43,0.2);
-        display: flex;
-        align-items: stretch;
-        min-height: 44px;
-        transition: opacity 0.3s;
-    }
-
-        .preview-bar.empty {
-            opacity: 0.5;
-        }
-
-    .preview-label {
-        background: rgba(0,0,0,0.25);
-        color: #fff;
-        font-size: 0.69rem;
-        font-weight: 800;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        padding: 0 1rem;
+    .sc-header-title {
         display: flex;
         align-items: center;
-        gap: 0.4rem;
-        white-space: nowrap;
+        gap: 0.9rem;
+    }
+
+    .sc-header-emblem {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, var(--g700), var(--g900));
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        box-shadow: 0 4px 14px rgba(13,41,24,0.25);
         flex-shrink: 0;
     }
 
-    .live-dot {
-        width: 7px;
-        height: 7px;
-        background: #ff6b6b;
-        border-radius: 50%;
-        animation: pulse 1.2s ease-in-out infinite;
+    .sc-header-text h1 {
+        font-size: 1.45rem;
+        font-weight: 800;
+        color: var(--g900);
+        margin: 0 0 0.2rem;
+        letter-spacing: -0.02em;
+        line-height: 1.15;
     }
 
-    @@keyframes pulse {
-        0%, 100% {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        50% {
-            opacity: 0.5;
-            transform: scale(0.75);
-        }
-    }
-
-    .preview-scroll-wrap {
-        flex: 1;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        position: relative;
-    }
-
-        .preview-scroll-wrap::before,
-        .preview-scroll-wrap::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 32px;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        .preview-scroll-wrap::before {
-            left: 0;
-            background: linear-gradient(to right, rgba(160,40,32,0.6), transparent);
-        }
-
-        .preview-scroll-wrap::after {
-            right: 0;
-            background: linear-gradient(to left, rgba(160,40,32,0.6), transparent);
-        }
-
-    .preview-text {
-        color: #fff;
+    .sc-header-text p {
         font-size: 0.82rem;
-        font-weight: 500;
+        color: var(--ink-muted);
+        margin: 0;
+    }
+
+    .sc-back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.55rem 1.1rem;
+        border: 1.5px solid var(--border-strong);
+        border-radius: var(--radius-sm);
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--ink-muted);
+        background: var(--canvas);
+        text-decoration: none;
+        transition: all 0.18s;
         white-space: nowrap;
-        padding: 0 1rem;
-        animation: scrollPreview 14s linear infinite;
     }
 
-    @@keyframes scrollPreview {
-        0% {
-            transform: translateX(100%);
+        .sc-back-btn:hover {
+            border-color: var(--g600);
+            color: var(--g700);
+            background: var(--g50);
         }
 
-        100% {
-            transform: translateX(-100%);
-        }
+    /* ── Main layout ── */
+    .sc-layout {
+        display: grid;
+        grid-template-columns: 1fr 360px;
+        gap: 1.5rem;
+        align-items: start;
     }
 
-    /* ── Card ── */
-    .form-card {
-        background: var(--surface);
+    /* ── Sections ── */
+    .sc-section {
+        background: var(--canvas);
         border: 1px solid var(--border);
-        border-radius: var(--radius);
+        border-radius: var(--radius-lg);
         box-shadow: var(--shadow-sm);
         overflow: hidden;
+        margin-bottom: 1.2rem;
+        transition: box-shadow 0.2s;
     }
 
-    .form-card-header {
-        padding: 1.2rem 1.5rem;
-        border-bottom: 1px solid var(--border);
-        background: var(--surface-alt);
+        .sc-section:focus-within {
+            box-shadow: var(--shadow-md);
+        }
+
+        .sc-section:last-child {
+            margin-bottom: 0;
+        }
+
+    .sc-section-head {
         display: flex;
         align-items: center;
         gap: 0.75rem;
+        padding: 1rem 1.4rem;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface);
     }
 
-    .header-icon {
-        width: 38px;
-        height: 38px;
-        background: linear-gradient(135deg, #fde8e8, #f8caca);
+    .sc-section-icon {
+        width: 34px;
+        height: 34px;
         border-radius: 9px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.1rem;
+        font-size: 0.9rem;
         flex-shrink: 0;
     }
 
-    .form-card-header h2 {
-        font-family: 'Noto Serif Bengali', Georgia, serif;
-        font-size: 1.1rem;
+    .icon-tag {
+        background: linear-gradient(135deg, #daeee4, #bcdece);
+    }
+
+    .icon-link {
+        background: linear-gradient(135deg, #dde8f8, #c5d7f4);
+    }
+
+    .icon-image {
+        background: linear-gradient(135deg, #fde8d8, #fac9ad);
+    }
+
+    .sc-section-head-text h3 {
+        font-size: 0.9rem;
         font-weight: 700;
-        color: var(--primary);
+        color: var(--g900);
+        margin: 0 0 0.1rem;
+    }
+
+    .sc-section-head-text p {
+        font-size: 0.74rem;
+        color: var(--ink-muted);
         margin: 0;
     }
 
-    .form-card-header p {
-        font-size: 0.77rem;
-        color: var(--text-muted);
-        margin: 0.12rem 0 0;
+    .sc-section-body {
+        padding: 1.3rem 1.4rem;
     }
 
-    /* ── Form body ── */
-    .form-body {
-        padding: 1.5rem;
-    }
-
-    .section-label {
-        font-size: 0.69rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: var(--text-muted);
-        margin: 0 0 1rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 1px dashed var(--border);
-    }
-
-    .form-group {
-        display: flex;
-        flex-direction: column;
-        gap: 0.4rem;
-        margin-bottom: 1.1rem;
-    }
-
-        .form-group label {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--text-main);
-        }
-
-    .required-star {
-        color: #b53a2e;
-    }
-
-    .form-control {
-        width: 100%;
-        padding: 0.6rem 0.85rem;
-        border: 1.5px solid var(--border);
-        border-radius: var(--input-radius);
-        font-size: 0.875rem;
-        color: var(--text-main);
-        background: var(--surface);
-        transition: border-color 0.2s, box-shadow 0.2s;
-        outline: none;
-        box-sizing: border-box;
-        font-family: inherit;
-    }
-
-        .form-control:focus {
-            border-color: var(--border-focus);
-            box-shadow: 0 0 0 3px rgba(37,99,168,0.12);
-        }
-
-        .form-control::placeholder {
-            color: #b0bcc8;
-        }
-
-    textarea.form-control {
-        resize: vertical;
-        min-height: 120px;
-        line-height: 1.65;
-    }
-
-    .char-counter {
-        font-size: 0.73rem;
-        color: var(--text-muted);
-        text-align: right;
-        margin-top: 0.15rem;
-    }
-
-        .char-counter.warn {
-            color: #e07b30;
-        }
-
-        .char-counter.over {
-            color: #b53a2e;
-            font-weight: 600;
-        }
-
-    .field-error {
-        font-size: 0.76rem;
-        color: #b53a2e;
-        margin-top: 0.1rem;
-    }
-
-    .form-grid {
+    /* ── Form fields ── */
+    .fg-2 {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 1rem;
     }
 
-    .form-hint {
-        font-size: 0.75rem;
-        color: var(--text-muted);
-        margin-top: 0.15rem;
+    .fg-4 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 0.85rem;
     }
 
-    /* ── Toggle ── */
-    .toggle-group {
+    .form-group {
         display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        background: var(--surface-alt);
-        border: 1.5px solid var(--border);
-        border-radius: var(--input-radius);
-        padding: 0.65rem 0.9rem;
-        cursor: pointer;
-        transition: border-color 0.2s;
+        flex-direction: column;
+        gap: 0.38rem;
+        margin-bottom: 1rem;
     }
 
-        .toggle-group:hover {
-            border-color: var(--border-focus);
+        .form-group:last-child {
+            margin-bottom: 0;
         }
 
-    .toggle-switch {
+    .form-label {
+        font-size: 0.79rem;
+        font-weight: 700;
+        color: var(--g900);
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        letter-spacing: 0.01em;
+    }
+
+    .req {
+        color: #d04040;
+        font-size: 0.72rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.62rem 0.9rem;
+        border: 1.5px solid var(--border);
+        border-radius: var(--radius-sm);
+        font-size: 0.875rem;
+        color: var(--ink);
+        background: var(--canvas);
+        outline: none;
+        box-sizing: border-box;
+        font-family: inherit;
+        transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+    }
+
+        .form-control:focus {
+            border-color: var(--g600);
+            box-shadow: 0 0 0 3px rgba(42,138,82,0.12);
+            background: #fafffc;
+        }
+
+        .form-control::placeholder {
+            color: var(--ink-faint);
+        }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 88px;
+        line-height: 1.6;
+    }
+
+    .form-hint {
+        font-size: 0.72rem;
+        color: var(--ink-faint);
+        display: flex;
+        align-items: center;
+        gap: 0.28rem;
+        margin-top: 0.05rem;
+    }
+
+    .val-msg {
+        font-size: 0.74rem;
+        color: #c0392b;
+        margin-top: 0.18rem;
+    }
+
+    /* ── Upload zone ── */
+    .upload-zone {
+        border: 2px dashed var(--border-strong);
+        border-radius: var(--radius-md);
+        padding: 2rem 1.5rem;
+        text-align: center;
+        cursor: pointer;
         position: relative;
-        width: 38px;
-        height: 22px;
+        background: var(--surface);
+        transition: all 0.22s;
+    }
+
+        .upload-zone:hover,
+        .upload-zone.drag-over {
+            border-color: var(--g600);
+            background: var(--g50);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .upload-zone input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+    .uz-icon-wrap {
+        width: 52px;
+        height: 52px;
+        background: linear-gradient(135deg, var(--g100), #d0ead8);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        margin: 0 auto 0.8rem;
+        transition: transform 0.2s;
+    }
+
+    .upload-zone:hover .uz-icon-wrap {
+        transform: scale(1.08) rotate(-3deg);
+    }
+
+    .uz-main {
+        font-size: 0.875rem;
+        color: var(--ink-muted);
+        font-weight: 500;
+    }
+
+        .uz-main strong {
+            color: var(--g700);
+        }
+
+    .uz-sub {
+        font-size: 0.72rem;
+        color: var(--ink-faint);
+        margin-top: 0.3rem;
+    }
+
+    /* ── Image preview ── */
+    .img-preview-wrap {
+        display: none;
+        position: relative;
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        border: 2px solid var(--border);
+        box-shadow: var(--shadow-xs);
+    }
+
+        .img-preview-wrap.show {
+            display: block;
+        }
+
+        .img-preview-wrap img {
+            width: 100%;
+            max-height: 220px;
+            object-fit: cover;
+            display: block;
+        }
+
+    .img-meta-bar {
+        background: var(--surface);
+        padding: 0.55rem 0.85rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.75rem;
+        color: var(--ink-muted);
+        border-top: 1px solid var(--border);
+    }
+
+    .img-remove-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        background: none;
+        border: 1px solid var(--border-strong);
+        border-radius: 6px;
+        padding: 0.22rem 0.6rem;
+        font-size: 0.72rem;
+        color: #c0392b;
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+        .img-remove-btn:hover {
+            background: #fff0f0;
+            border-color: #f0a0a0;
+        }
+
+    /* ── Sidebar ── */
+    .sc-sidebar {
+        position: sticky;
+        top: 1.5rem;
+    }
+
+    .sc-card {
+        background: var(--canvas);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        margin-bottom: 1.2rem;
+    }
+
+        .sc-card:last-child {
+            margin-bottom: 0;
+        }
+
+    .sc-card-head {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.85rem 1.2rem;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface);
+        font-size: 0.83rem;
+        font-weight: 700;
+        color: var(--g900);
+    }
+
+    .sc-card-body {
+        padding: 1.1rem 1.2rem;
+    }
+
+    /* ── Live preview card ── */
+    .slide-canvas {
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        height: 180px;
+        background: var(--g900);
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .slide-bg {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+
+        .slide-bg.show {
+            opacity: 1;
+        }
+
+    .slide-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(8,30,18,0.88) 0%, rgba(8,30,18,0.45) 60%, rgba(8,30,18,0.2) 100%);
+    }
+
+    .slide-no-img {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 0.5rem;
+        opacity: 0.35;
+        transition: opacity 0.3s;
+    }
+
+        .slide-no-img.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .slide-no-img svg {
+            color: var(--g300);
+        }
+
+        .slide-no-img span {
+            font-size: 0.7rem;
+            color: var(--g300);
+        }
+
+    .slide-content {
+        position: relative;
+        z-index: 2;
+        padding: 1.2rem;
+        width: 100%;
+    }
+
+    .slide-badge {
+        display: inline-block;
+        background: rgba(200,144,58,0.22);
+        border: 1px solid rgba(200,144,58,0.45);
+        color: #f0c060;
+        padding: 0.12rem 0.65rem;
+        border-radius: 999px;
+        font-size: 0.62rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        margin-bottom: 0.5rem;
+    }
+
+    .slide-title {
+        font-size: 1.05rem;
+        font-weight: 900;
+        color: #fff;
+        line-height: 1.2;
+        text-shadow: 0 1px 8px rgba(0,0,0,0.4);
+    }
+
+        .slide-title .hl {
+            color: var(--gold-light);
+        }
+
+    .slide-sub {
+        font-size: 0.65rem;
+        color: rgba(255,255,255,0.6);
+        margin-top: 0.4rem;
+        line-height: 1.4;
+    }
+
+    .slide-btns {
+        display: flex;
+        gap: 0.4rem;
+        justify-content: center;
+        margin-top: 0.65rem;
+    }
+
+    .slide-btn-preview {
+        padding: 0.2rem 0.65rem;
+        border-radius: 999px;
+        font-size: 0.55rem;
+        font-weight: 700;
+    }
+
+    .slide-btn-primary {
+        background: var(--g600);
+        color: #fff;
+    }
+
+    .slide-btn-outline {
+        background: transparent;
+        border: 1px solid rgba(255,255,255,0.4);
+        color: rgba(255,255,255,0.85);
+    }
+
+    /* ── Toggle switch ── */
+    .toggle-row {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+        background: var(--surface);
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        padding: 0.85rem 1rem;
+        cursor: pointer;
+        transition: all 0.18s;
+    }
+
+        .toggle-row:hover {
+            border-color: var(--g600);
+            background: var(--g50);
+        }
+
+    .ts-switch {
+        position: relative;
+        width: 42px;
+        height: 23px;
         flex-shrink: 0;
     }
 
-        .toggle-switch input {
+        .ts-switch input {
             opacity: 0;
             width: 0;
             height: 0;
+            position: absolute;
         }
 
-    .toggle-track {
+    .ts-track {
         position: absolute;
         inset: 0;
-        background: #cdd5df;
+        background: #ccdad4;
         border-radius: 999px;
-        transition: background 0.2s;
+        transition: background 0.22s;
         cursor: pointer;
     }
 
-        .toggle-track::after {
+        .ts-track::after {
             content: '';
             position: absolute;
             top: 3px;
             left: 3px;
-            width: 16px;
-            height: 16px;
+            width: 17px;
+            height: 17px;
             background: #fff;
             border-radius: 50%;
-            transition: transform 0.2s;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+            box-shadow: 0 1px 5px rgba(0,0,0,0.18);
+            transition: transform 0.22s;
         }
 
-    .toggle-switch input:checked + .toggle-track {
-        background: #1a7a4a;
+    .ts-switch input:checked ~ .ts-track {
+        background: var(--g600);
     }
 
-        .toggle-switch input:checked + .toggle-track::after {
-            transform: translateX(16px);
+        .ts-switch input:checked ~ .ts-track::after {
+            transform: translateX(19px);
         }
 
-    .toggle-label {
-        font-size: 0.85rem;
-        color: var(--text-main);
-        font-weight: 500;
-        user-select: none;
+    .ts-info strong {
+        display: block;
+        font-size: 0.84rem;
+        font-weight: 700;
+        color: var(--g900);
     }
 
-    .toggle-sub {
-        font-size: 0.74rem;
-        color: var(--text-muted);
+    .ts-info span {
+        font-size: 0.73rem;
+        color: var(--ink-muted);
     }
 
-    /* ── Actions ── */
-    .form-actions {
+    /* ── Tips card ── */
+    .tip-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.6rem;
+        padding: 0.55rem 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.77rem;
+        color: var(--ink-muted);
+        line-height: 1.45;
+    }
+
+        .tip-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .tip-item:first-child {
+            padding-top: 0;
+        }
+
+    .tip-dot {
+        width: 5px;
+        height: 5px;
+        background: var(--g300);
+        border-radius: 50%;
+        margin-top: 0.45rem;
+        flex-shrink: 0;
+    }
+
+    /* ── Actions card ── */
+    .sc-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+        padding: 1.1rem 1.2rem;
+    }
+
+    .btn-save {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        background: linear-gradient(135deg, var(--g700), var(--g900));
+        color: #fff;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 3px 12px rgba(13,41,24,0.25);
+        transition: all 0.18s;
+        width: 100%;
+        letter-spacing: 0.01em;
+    }
+
+        .btn-save:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(13,41,24,0.3);
+            background: linear-gradient(135deg, var(--g600), var(--g800));
+        }
+
+        .btn-save:active {
+            transform: translateY(0);
+        }
+
+    .btn-cancel {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.45rem;
+        background: transparent;
+        border: 1.5px solid var(--border-strong);
+        color: var(--ink-muted);
+        padding: 0.65rem 1.5rem;
+        border-radius: 10px;
+        font-size: 0.86rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.18s;
+        width: 100%;
+    }
+
+        .btn-cancel:hover {
+            border-color: var(--ink-faint);
+            color: var(--ink);
+            background: var(--surface);
+        }
+
+    .save-note {
+        text-align: center;
+        font-size: 0.71rem;
+        color: var(--ink-faint);
+        padding: 0 1.2rem 0.9rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.3rem;
+    }
+
+    /* ── Field char counter ── */
+    .field-footer {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-        padding: 1.2rem 1.5rem;
-        border-top: 1px solid var(--border);
-        background: var(--surface-alt);
+        margin-top: 0.22rem;
     }
 
-    .btn-primary {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: var(--primary);
-        color: #fff;
-        border: none;
-        padding: 0.65rem 1.4rem;
-        border-radius: 8px;
-        font-size: 0.88rem;
-        font-weight: 600;
-        cursor: pointer;
-        box-shadow: 0 2px 8px rgba(26,58,92,0.18);
-        transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    .char-count {
+        font-size: 0.7rem;
+        color: var(--ink-faint);
+        font-variant-numeric: tabular-nums;
     }
 
-        .btn-primary:hover {
-            background: var(--primary-light);
-            transform: translateY(-1px);
-            box-shadow: 0 5px 18px rgba(26,58,92,0.22);
+        .char-count.near {
+            color: #c87a30;
         }
 
-    .btn-outline {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: transparent;
-        color: var(--text-muted);
-        border: 1.5px solid var(--border);
-        padding: 0.6rem 1.2rem;
-        border-radius: 8px;
-        font-size: 0.88rem;
-        font-weight: 500;
-        text-decoration: none;
-        transition: color 0.2s, border-color 0.2s, background 0.2s;
-    }
-
-        .btn-outline:hover {
-            color: var(--text-main);
-            border-color: #b0bcc8;
-            background: #eef1f5;
+        .char-count.over {
+            color: #c03020;
+            font-weight: 600;
         }
 
-    @@media (max-width: 540px) {
-        .form-grid {
+    /* ── Responsive ── */
+    @@media (max-width: 920px) {
+        .sc-layout {
             grid-template-columns: 1fr;
         }
 
-        .form-body {
-            padding: 1.25rem;
+        .sc-sidebar {
+            position: static;
         }
 
-        .form-card-header {
-            padding: 1rem 1.25rem;
+        .slide-canvas {
+            height: 200px;
+        }
+    }
+
+    @@media (max-width: 640px) {
+        .fg-2 {
+            grid-template-columns: 1fr;
         }
 
-        .form-actions {
-            padding: 1rem 1.25rem;
-            flex-direction: column-reverse;
-            align-items: stretch;
+        .fg-4 {
+            grid-template-columns: 1fr 1fr;
         }
 
-        .btn-primary, .btn-outline {
-            justify-content: center;
+        .sc-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+
+    @@media (max-width: 420px) {
+        .fg-4 {
+            grid-template-columns: 1fr;
+        }
+
+        .sc-section-body {
+            padding: 1.1rem;
+        }
+
+        .sc-section-head {
+            padding: 0.9rem 1.1rem;
         }
     }
 </style>
 
-<div class="page-wrapper">
+<div class="sc-page">
 
-    <!-- Breadcrumb -->
-    <div class="breadcrumb">
-        <a href="/Admin/TickerList">ব্রেকিং নিউজ</a>
-        <span>›</span>
-        <span>নতুন টিকার</span>
-    </div>
-
-    <!-- Live preview -->
-    <div class="preview-bar empty" id="previewBar">
-        <div class="preview-label">
-            <span class="live-dot"></span>
-            প্রিভিউ
-        </div>
-        <div class="preview-scroll-wrap">
-            <div class="preview-text" id="previewText">এখানে আপনার সংবাদ টেক্সট দেখাবে…</div>
-        </div>
-    </div>
-
-    <div class="form-card">
-        <!-- Header -->
-        <div class="form-card-header">
-            <div class="header-icon">📺</div>
-            <div>
-                <h2>নতুন ব্রেকিং নিউজ টিকার</h2>
-                <p>নিচের ফর্মটি পূরণ করে স্ক্রলিং নিউজ যোগ করুন</p>
+    <!-- ── Header ── -->
+    <div class="sc-header">
+        <div class="sc-header-title">
+            <div class="sc-header-emblem">🖼️</div>
+            <div class="sc-header-text">
+                <h1>নতুন স্লাইড যোগ করুন</h1>
+                <p>হোমপেজ হিরো স্লাইডারে একটি নতুন স্লাইড কনফিগার করুন</p>
             </div>
         </div>
+        <a href="/Admin/SliderList" class="sc-back-btn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
+            তালিকায় ফিরুন
+        </a>
+    </div>
 
-        <form asp-action="TickerCreate" method="post">
-            @Html.AntiForgeryToken()
-            <div class="form-body">
-                <div class="section-label">সংবাদ বিষয়বস্তু</div>
+    <form method="post" enctype="multipart/form-data" id="sliderForm">
+        @Html.AntiForgeryToken()
 
-                <div class="form-group">
-                    <label asp-for="Text">সংবাদ টেক্সট <span class="required-star">*</span></label>
-                    <textarea asp-for="Text"
-                              class="form-control"
-                              placeholder="স্ক্রলিং টিকারে যে সংবাদটি দেখাতে চান তা লিখুন…"
-                              id="newsText"
-                              oninput="updatePreview(this)"
-                              maxlength="300"></textarea>
-                    <div class="char-counter" id="charCount">০ / ৩০০</div>
-                    <span asp-validation-for="Text" class="field-error"></span>
+        <div class="sc-layout">
+
+            <!-- ════ LEFT: MAIN FIELDS ════ -->
+            <div>
+
+                <!-- Section 1: Basic Info -->
+                <div class="sc-section">
+                    <div class="sc-section-head">
+                        <div class="sc-section-icon icon-tag">🏷️</div>
+                        <div class="sc-section-head-text">
+                            <h3>স্লাইডের মূল তথ্য</h3>
+                            <p>Badge, শিরোনাম ও সাবটেক্সট সেট করুন</p>
+                        </div>
+                    </div>
+                    <div class="sc-section-body">
+                        <div class="fg-2" style="margin-bottom:1rem">
+                            <div class="form-group">
+                                <label class="form-label">Badge টেক্সট <span class="req">✦</span></label>
+                                <input asp-for="Badge" class="form-control" id="badgeInput"
+                                       placeholder="🌿 খুলনা বিভাগ, বাংলাদেশ"
+                                       maxlength="60"
+                                       oninput="syncPreview(); countChars(this,'badgeCount',60)" />
+                                <div class="field-footer">
+                                    <span asp-validation-for="Badge" class="val-msg"></span>
+                                    <span class="char-count" id="badgeCount">০/৬০</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">ক্রম নম্বর</label>
+                                <input asp-for="SortOrder" type="number" class="form-control"
+                                       value="0" min="0" placeholder="0" />
+                                <div class="form-hint">ছোট সংখ্যা আগে দেখাবে</div>
+                            </div>
+                        </div>
+
+                        <div class="fg-2" style="margin-bottom:1rem">
+                            <div class="form-group">
+                                <label class="form-label">Title <span class="req">✦</span></label>
+                                <input asp-for="Title" class="form-control" id="titleInput"
+                                       placeholder="স্বাগতম"
+                                       oninput="syncPreview()" />
+                                <span asp-validation-for="Title" class="val-msg"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Title Highlight <span class="req">✦</span>
+                                    <span style="font-weight:400;color:var(--ink-faint);font-size:0.7rem">(সোনালি রঙে)</span>
+                                </label>
+                                <input asp-for="TitleHighlight" class="form-control" id="highlightInput"
+                                       placeholder="খোকসা মল্লিক পাড়া"
+                                       oninput="syncPreview()" />
+                                <span asp-validation-for="TitleHighlight" class="val-msg"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">সাব টেক্সট</label>
+                            <textarea asp-for="SubText" class="form-control"
+                                      id="subInput"
+                                      rows="2"
+                                      maxlength="160"
+                                      placeholder="স্লাইডের সংক্ষিপ্ত বিবরণ লিখুন…"
+                                      oninput="syncPreview(); countChars(this,'subCount',160)"></textarea>
+                            <div class="field-footer">
+                                <span class="form-hint">প্রিভিউতে সর্বোচ্চ ৮০ অক্ষর দেখাবে</span>
+                                <span class="char-count" id="subCount">০/১৬০</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="form-grid">
-                    <div class="form-group" style="margin-bottom:0">
-                        <label asp-for="SortOrder">প্রদর্শন ক্রম</label>
-                        <input asp-for="SortOrder" type="number" class="form-control" placeholder="1" min="0" />
-                        <span class="form-hint">ছোট সংখ্যা আগে দেখাবে</span>
+                <!-- Section 2: Buttons -->
+                <div class="sc-section">
+                    <div class="sc-section-head">
+                        <div class="sc-section-icon icon-link">🔗</div>
+                        <div class="sc-section-head-text">
+                            <h3>বাটন কনফিগারেশন</h3>
+                            <p>স্লাইডে সর্বোচ্চ দুটি CTA বাটন যোগ করুন</p>
+                        </div>
                     </div>
-                    <div class="form-group" style="justify-content:flex-end;margin-bottom:0">
-                        <label style="visibility:hidden;font-size:0.8rem">অবস্থা</label>
-                        <label class="toggle-group" for="IsActive">
-                            <div class="toggle-switch">
-                                <input asp-for="IsActive" type="checkbox" id="IsActive" checked />
-                                <span class="toggle-track"></span>
+                    <div class="sc-section-body">
+                        <div class="fg-4">
+                            <div class="form-group">
+                                <label class="form-label">বাটন ১ লেখা</label>
+                                <input asp-for="Btn1Text" class="form-control"
+                                       placeholder="গ্রাম সম্পর্কে" id="btn1TextInput"
+                                       oninput="syncPreview()" />
                             </div>
-                            <div>
-                                <div class="toggle-label">সক্রিয় করুন</div>
-                                <div class="toggle-sub">এখনই টিকারে দেখাবে</div>
+                            <div class="form-group">
+                                <label class="form-label">বাটন ১ লিংক</label>
+                                <input asp-for="Btn1Link" class="form-control" placeholder="#about" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">বাটন ২ লেখা</label>
+                                <input asp-for="Btn2Text" class="form-control"
+                                       placeholder="যোগাযোগ" id="btn2TextInput"
+                                       oninput="syncPreview()" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">বাটন ২ লিংক</label>
+                                <input asp-for="Btn2Link" class="form-control" placeholder="#contact" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Image Upload -->
+                <div class="sc-section">
+                    <div class="sc-section-head">
+                        <div class="sc-section-icon icon-image">🖼️</div>
+                        <div class="sc-section-head-text">
+                            <h3>ব্যাকগ্রাউন্ড ইমেজ</h3>
+                            <p>স্লাইডের পেছনে দেখানো ছবি আপলোড করুন</p>
+                        </div>
+                    </div>
+                    <div class="sc-section-body">
+                        <div class="upload-zone" id="uploadZone">
+                            <input type="file" name="imageFile" id="imageInput"
+                                   accept="image/*" onchange="handleImageChange(this)" />
+                            <div class="uz-icon-wrap">📤</div>
+                            <div class="uz-main">
+                                <strong>ক্লিক করুন</strong> বা ছবি এখানে টেনে আনুন
+                            </div>
+                            <div class="uz-sub">JPG, PNG, WEBP · সর্বোচ্চ ৫MB · প্রস্তাবিত 1280×720px</div>
+                        </div>
+
+                        <div class="img-preview-wrap" id="previewWrap">
+                            <img id="imgPreview" src="" alt="Preview" />
+                            <div class="img-meta-bar">
+                                <span id="imgFileName" style="font-size:0.75rem;color:var(--ink-muted)">—</span>
+                                <button type="button" class="img-remove-btn" onclick="removeImage()">
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                                    সরিয়ে দিন
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ════ RIGHT: SIDEBAR ════ -->
+            <div class="sc-sidebar">
+
+                <!-- Live Preview -->
+                <div class="sc-card">
+                    <div class="sc-card-head">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
+                        লাইভ প্রিভিউ
+                    </div>
+                    <div class="sc-card-body" style="padding:1rem">
+                        <div class="slide-canvas">
+                            <div class="slide-bg" id="slideBg"></div>
+                            <div class="slide-overlay"></div>
+
+                            <!-- No image placeholder -->
+                            <div class="slide-no-img" id="noImgPlaceholder">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><polyline points="21 15 16 10 5 21" /></svg>
+                                <span>ছবি আপলোড করুন</span>
+                            </div>
+
+                            <div class="slide-content">
+                                <div class="slide-badge" id="prev-badge">🌿 Badge</div>
+                                <div class="slide-title">
+                                    <span id="prev-title">Title</span>
+                                    <span class="hl"> <span id="prev-highlight">Highlight</span></span>
+                                </div>
+                                <div class="slide-sub" id="prev-sub">সাব টেক্সট এখানে দেখাবে</div>
+                                <div class="slide-btns" id="prev-btns">
+                                    <span class="slide-btn-preview slide-btn-primary" id="prev-btn1">বাটন ১</span>
+                                    <span class="slide-btn-preview slide-btn-outline" id="prev-btn2">বাটন ২</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p style="font-size:0.71rem;color:var(--ink-faint);text-align:center;margin:0.65rem 0 0;display:flex;align-items:center;justify-content:center;gap:0.3rem;">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
+                            তথ্য লিখলে প্রিভিউ আপডেট হবে
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Status Toggle -->
+                <div class="sc-card">
+                    <div class="sc-card-head">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14" /></svg>
+                        প্রকাশনা অবস্থা
+                    </div>
+                    <div class="sc-card-body">
+                        <label class="toggle-row" for="IsActive">
+                            <div class="ts-switch">
+                                <input asp-for="IsActive" type="checkbox" id="IsActive" checked />
+                                <div class="ts-track"></div>
+                            </div>
+                            <div class="ts-info">
+                                <strong>স্লাইড সক্রিয় রাখুন</strong>
+                                <span>বন্ধ থাকলে ওয়েবসাইটে দেখাবে না</span>
                             </div>
                         </label>
                     </div>
                 </div>
-            </div>
 
-            <div class="form-actions">
-                <a href="/Admin/TickerList" class="btn-outline">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
-                    বাতিল
-                </a>
-                <button type="submit" class="btn-primary">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" /><polyline points="17 21 17 13 7 13 7 21" /><polyline points="7 3 7 8 15 8" /></svg>
-                    টিকার সংরক্ষণ
-                </button>
+                <!-- Tips -->
+                <div class="sc-card">
+                    <div class="sc-card-head">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
+                        ডিজাইন টিপস
+                    </div>
+                    <div class="sc-card-body">
+                        <div class="tip-item"><span class="tip-dot"></span>ইমেজ কমপক্ষে <strong>1280×720px</strong> হলে সেরা মানের দেখাবে</div>
+                        <div class="tip-item"><span class="tip-dot"></span><strong>Title Highlight</strong> অংশটি সোনালি রঙে প্রদর্শিত হবে</div>
+                        <div class="tip-item"><span class="tip-dot"></span>ক্রম নম্বর ছোট হলে স্লাইড তালিকায় আগে আসবে</div>
+                        <div class="tip-item"><span class="tip-dot"></span>লিংকে <code style="background:var(--g100);padding:1px 5px;border-radius:4px;font-size:0.7rem">#about</code> ধরনের anchor ব্যবহার করুন</div>
+                    </div>
+                </div>
+
+                <!-- Save Actions -->
+                <div class="sc-card">
+                    <div class="sc-actions">
+                        <button type="submit" class="btn-save">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" /><polyline points="17 21 17 13 7 13 7 21" /><polyline points="7 3 7 8 15 8" /></svg>
+                            স্লাইড সংরক্ষণ করুন
+                        </button>
+                        <a href="/Admin/SliderList" class="btn-cancel">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                            বাতিল করুন
+                        </a>
+                    </div>
+                    <div class="save-note">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
+                        সংরক্ষণের পর ওয়েবসাইটে প্রকাশ পাবে
+                    </div>
+                </div>
+
             </div>
-        </form>
-    </div>
+        </div>
+    </form>
 </div>
 
 <script>
-    const toBanglaNum = n => n.toString().replace(/\d/g, d => '০১২৩৪৫৬৭৮৯'[d]);
+    /* ── Live preview sync ── */
+    function syncPreview() {
+        const badge     = document.getElementById('badgeInput')?.value.trim()     || 'Badge';
+        const title     = document.getElementById('titleInput')?.value.trim()     || 'Title';
+        const highlight = document.getElementById('highlightInput')?.value.trim() || 'Highlight';
+        const sub       = document.getElementById('subInput')?.value.trim()       || 'সাব টেক্সট এখানে দেখাবে';
+        const btn1      = document.getElementById('btn1TextInput')?.value.trim()  || 'বাটন ১';
+        const btn2      = document.getElementById('btn2TextInput')?.value.trim()  || 'বাটন ২';
 
-    function updatePreview(textarea) {
-        const val = textarea.value.trim();
-        const len = textarea.value.length;
-        const preview = document.getElementById('previewText');
-        const bar = document.getElementById('previewBar');
-        const counter = document.getElementById('charCount');
+        document.getElementById('prev-badge').textContent     = badge;
+        document.getElementById('prev-title').textContent     = title;
+        document.getElementById('prev-highlight').textContent = highlight;
+        document.getElementById('prev-sub').textContent       = sub.substring(0, 80);
+        document.getElementById('prev-btn1').textContent      = btn1;
+        document.getElementById('prev-btn2').textContent      = btn2;
 
-        // Update preview
-        if (val) {
-            preview.textContent = val;
-            bar.classList.remove('empty');
-        } else {
-            preview.textContent = 'এখানে আপনার সংবাদ টেক্সট দেখাবে…';
-            bar.classList.add('empty');
-        }
-
-        // Update counter
-        counter.textContent = `${toBanglaNum(len)} / ৩০০`;
-        counter.className = 'char-counter';
-        if (len > 250) counter.classList.add('warn');
-        if (len >= 300) counter.classList.add('over');
+        // Show/hide btn row
+        const btnsRow = document.getElementById('prev-btns');
+        btnsRow.style.display = (btn1 || btn2) ? 'flex' : 'none';
     }
 
-    // Init if model has value (validation error return)
-    const ta = document.getElementById('newsText');
-    if (ta && ta.value) updatePreview(ta);
+    /* ── Character counter (Bengali numerals) ── */
+    const toB = n => n.toString().replace(/\d/g, d => '০১২৩৪৫৬৭৮৯'[d]);
+
+    function countChars(el, counterId, max) {
+        const len   = el.value.length;
+        const el2   = document.getElementById(counterId);
+        if (!el2) return;
+        el2.textContent = `${toB(len)}/${toB(max)}`;
+        el2.className   = 'char-count';
+        if (len > max * 0.8) el2.classList.add('near');
+        if (len >= max)      el2.classList.add('over');
+    }
+
+    /* ── Image upload handler ── */
+    function handleImageChange(input) {
+        if (!input.files || !input.files[0]) return;
+        const file = input.files[0];
+
+        if (file.size > 5 * 1024 * 1024) {
+            alert('ফাইলের সাইজ ৫MB-এর বেশি হওয়া যাবে না।');
+            input.value = '';
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = e => {
+            const src = e.target.result;
+            // Main preview
+            document.getElementById('imgPreview').src   = src;
+            document.getElementById('previewWrap').classList.add('show');
+            document.getElementById('uploadZone').style.display = 'none';
+            // Slide canvas bg
+            const bg = document.getElementById('slideBg');
+            bg.style.backgroundImage = `url('${src}')`;
+            bg.classList.add('show');
+            document.getElementById('noImgPlaceholder').classList.add('hidden');
+            // Filename
+            document.getElementById('imgFileName').textContent = file.name;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function removeImage() {
+        document.getElementById('imageInput').value = '';
+        document.getElementById('imgPreview').src   = '';
+        document.getElementById('previewWrap').classList.remove('show');
+        document.getElementById('uploadZone').style.display = '';
+        const bg = document.getElementById('slideBg');
+        bg.style.backgroundImage = '';
+        bg.classList.remove('show');
+        document.getElementById('noImgPlaceholder').classList.remove('hidden');
+        document.getElementById('imgFileName').textContent = '—';
+    }
+
+    /* ── Drag & drop ── */
+    const zone = document.getElementById('uploadZone');
+    if (zone) {
+        zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+        zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+        zone.addEventListener('drop', e => {
+            e.preventDefault();
+            zone.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length) {
+                document.getElementById('imageInput').files = files;
+                handleImageChange(document.getElementById('imageInput'));
+            }
+        });
+    }
+
+    /* ── Init on load ── */
+    syncPreview();
+
+    // Init char counts if form has values (e.g. validation failed return)
+    const badgeEl = document.getElementById('badgeInput');
+    const subEl   = document.getElementById('subInput');
+    if (badgeEl?.value) countChars(badgeEl, 'badgeCount', 60);
+    if (subEl?.value)   countChars(subEl,   'subCount',  160);
 </script>
