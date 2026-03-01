@@ -1,8 +1,353 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "উজালপুর গ্রাম";
+    var info = ViewBag.Info as VillageInfoSystem.Models.VillageInfo;
+    var featuredNews = ViewBag.FeaturedNews as VillageInfoSystem.Models.News;
+    var newsList = ViewBag.NewsList as List<VillageInfoSystem.Models.News>;
+    var facilities = ViewBag.Facilities as List<VillageInfoSystem.Models.Facility>;
+    var committee = ViewBag.Committee as List<VillageInfoSystem.Models.CommitteeMember>;
+    var gallery = ViewBag.Gallery as List<VillageInfoSystem.Models.GalleryItem>;
+    var tickers = ViewBag.Tickers as List<VillageInfoSystem.Models.TickerNews>;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- BREAKING NEWS TICKER -->
+<div class="ticker-bar">
+    <div class="ticker-label">🔴 সর্বশেষ খবর</div>
+    <div class="ticker-track">
+        <div class="ticker-inner" id="tickerInner">
+            @if (tickers != null && tickers.Any())
+            {
+                foreach (var t in tickers)
+                {
+                    <span class="ticker-item"><span class="ticker-dot">◆</span> @t.Text</span>
+                }
+                <!-- Duplicate for seamless loop -->
+                foreach (var t in tickers)
+                {
+                    <span class="ticker-item"><span class="ticker-dot">◆</span> @t.Text</span>
+                }
+            }
+        </div>
+    </div>
 </div>
+
+<!-- NAV -->
+<nav>
+    <div class="nav-inner">
+        <a href="#home" class="nav-logo">
+            <div class="nav-logo-icon">🌿</div>
+            <div>
+                <div class="nav-logo-text">@(info?.VillageName ?? "উজালপুর গ্রাম")</div>
+                <span class="nav-logo-sub">@(info?.Division ?? "Khulna Division"), Bangladesh</span>
+            </div>
+        </a>
+        <ul class="nav-links">
+            <li><a href="#home">হোম</a></li>
+            <li><a href="#news">সংবাদ</a></li>
+            <li><a href="#about">পরিচিতি</a></li>
+            <li><a href="#population">তথ্য</a></li>
+            <li><a href="#facilities">সুবিধা</a></li>
+            <li><a href="#committee">কমিটি</a></li>
+            <li><a href="#gallery">গ্যালারি</a></li>
+            <li><a href="#contact">যোগাযোগ</a></li>
+        </ul>
+        <div class="nav-dev">✦ Developed by Md Firoz Ali</div>
+        <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+    </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+    <a href="#home" onclick="toggleMenu()">🏠 হোম</a>
+    <a href="#news" onclick="toggleMenu()">📰 সংবাদ</a>
+    <a href="#about" onclick="toggleMenu()">📖 পরিচিতি</a>
+    <a href="#population" onclick="toggleMenu()">📊 তথ্য</a>
+    <a href="#facilities" onclick="toggleMenu()">🕌 সুবিধা</a>
+    <a href="#committee" onclick="toggleMenu()">👥 কমিটি</a>
+    <a href="#gallery" onclick="toggleMenu()">🖼️ গ্যালারি</a>
+    <a href="#contact" onclick="toggleMenu()">📍 যোগাযোগ</a>
+</div>
+
+<!-- HERO SLIDER -->
+<div id="home">
+    <div class="slide s1 active">
+        <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+        <div class="slide-content">
+            <div class="slide-badge">🌿 খুলনা বিভাগ, বাংলাদেশ</div>
+            <h1 class="slide-title">স্বাগতম<br><span>@(info?.VillageName ?? "উজালপুর গ্রামে")</span></h1>
+            <p class="slide-sub">সবুজে ঘেরা এই শান্তির গ্রামে আপনাকে স্বাগতম। ইতিহাস, ঐতিহ্য ও মানুষের সাথে পরিচিত হন।</p>
+            <div class="slide-btns"><a href="#about" class="btn btn-primary">গ্রাম সম্পর্কে জানুন</a><a href="#contact" class="btn btn-outline">যোগাযোগ করুন</a></div>
+        </div>
+    </div>
+    <div class="slide s2">
+        <div class="blob b1"></div><div class="blob b2"></div>
+        <div class="slide-content">
+            <div class="slide-badge">🌾 কৃষি ও প্রকৃতি</div>
+            <h1 class="slide-title">সোনালি ফসলের<br><span>মাঠ ও মাটি</span></h1>
+            <p class="slide-sub">উজালপুরের কৃষকরা প্রতি মৌসুমে সোনালি ধান ফলান। পরিশ্রমী মানুষের ঘামে সিক্ত এই মাটির গল্প।</p>
+            <div class="slide-btns"><a href="#facilities" class="btn btn-primary">সুবিধা দেখুন</a><a href="#gallery" class="btn btn-outline">গ্যালারি দেখুন</a></div>
+        </div>
+    </div>
+    <div class="slide s3">
+        <div class="blob b1"></div><div class="blob b2"></div>
+        <div class="slide-content">
+            <div class="slide-badge">🕌 ধর্ম ও সংস্কৃতি</div>
+            <h1 class="slide-title">ঐতিহাসিক<br><span>জামে মসজিদ</span></h1>
+            <p class="slide-sub">শতাব্দীপ্রাচীন জামে মসজিদ আমাদের ধর্মীয় চেতনার প্রতীক।</p>
+            <div class="slide-btns"><a href="#facilities" class="btn btn-primary">প্রতিষ্ঠান দেখুন</a><a href="#about" class="btn btn-outline">ইতিহাস জানুন</a></div>
+        </div>
+    </div>
+    <div class="slide s4">
+        <div class="blob b1"></div><div class="blob b2"></div>
+        <div class="slide-content">
+            <div class="slide-badge">📚 শিক্ষা ও উন্নয়ন</div>
+            <h1 class="slide-title">জ্ঞানের আলোয়<br><span>আলোকিত গ্রাম</span></h1>
+            <p class="slide-sub">উজালপুর গ্রামের @(info?.LiteracyRate ?? "৭৮%") মানুষ সাক্ষর।</p>
+            <div class="slide-btns"><a href="#population" class="btn btn-primary">পরিসংখ্যান দেখুন</a><a href="#committee" class="btn btn-outline">কমিটি দেখুন</a></div>
+        </div>
+    </div>
+    <div class="slide s5">
+        <div class="blob b1"></div><div class="blob b2"></div>
+        <div class="slide-content">
+            <div class="slide-badge">🤝 সম্প্রীতি ও ঐক্য</div>
+            <h1 class="slide-title">একতাবদ্ধ<br><span>আমাদের গ্রাম</span></h1>
+            <p class="slide-sub">সুখে-দুঃখে একসাথে উজালপুরের মানুষ। পারস্পরিক সহযোগিতাই আমাদের সবচেয়ে বড় শক্তি।</p>
+            <div class="slide-btns"><a href="#committee" class="btn btn-primary">গণ্যমান্য ব্যক্তি</a><a href="#news" class="btn btn-outline">সর্বশেষ খবর</a></div>
+        </div>
+    </div>
+
+    <div class="s-arrow s-prev" onclick="changeSlide(-1)">&#8592;</div>
+    <div class="s-arrow s-next" onclick="changeSlide(1)">&#8594;</div>
+    <div class="s-counter"><b id="curNum">1</b> / 5</div>
+    <div class="s-dots" id="dotsContainer">
+        <div class="dot active" onclick="goTo(0)"></div>
+        <div class="dot" onclick="goTo(1)"></div>
+        <div class="dot" onclick="goTo(2)"></div>
+        <div class="dot" onclick="goTo(3)"></div>
+        <div class="dot" onclick="goTo(4)"></div>
+    </div>
+    <div class="s-progress" id="sProgress"></div>
+    <div class="s-dev">✦ Developed by <span>Md Firoz Ali</span></div>
+    <a href="#news" class="scroll-arrow">⬇</a>
+</div>
+
+<!-- NEWS -->
+<section id="news">
+    <div class="container">
+        <div class="section-header reveal">
+            <div class="section-tag">📰 গ্রামের সংবাদ</div>
+            <h2 class="section-title">সর্বশেষ খবর ও ঘটনাবলি</h2>
+            <p class="section-desc">উজালপুর গ্রামের সাম্প্রতিক খবর, উন্নয়ন ও বিভিন্ন অনুষ্ঠানের বিবরণ</p>
+            <div class="divider"></div>
+        </div>
+        <div class="news-grid">
+            @if (featuredNews != null)
+            {
+                <div class="news-featured reveal">
+                    <div class="nf-img">
+                        <div class="nf-cat">⭐ শীর্ষ সংবাদ</div>
+                        <div class="nf-img-icon">@featuredNews.Icon</div>
+                    </div>
+                    <div class="nf-body">
+                        <div class="nf-date">📅 @featuredNews.PublishedAt.ToString("dd MMMM, yyyy")</div>
+                        <h3>@featuredNews.Title</h3>
+                        <p>@featuredNews.Description</p>
+                        <a href="#" class="nf-more">বিস্তারিত পড়ুন →</a>
+                    </div>
+                </div>
+            }
+            <div class="news-list">
+                @if (newsList != null)
+                {
+                    foreach (var n in newsList)
+                    {
+                        <div class="ni reveal">
+                            <div class="ni-icon">@n.Icon</div>
+                            <div class="ni-body">
+                                <div class="ni-cat">@n.Category</div>
+                                <h4>@n.Title</h4>
+                                <span class="ni-date">📅 @n.PublishedAt.ToString("dd MMMM, yyyy")</span>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+    <div class="container">
+        <div class="about-grid">
+            <div class="about-img reveal">
+                <div class="about-img-inner">
+                    <div class="about-img-icon">🏡</div>
+                    <div class="about-img-text">@(info?.VillageName ?? "উজালপুর গ্রাম")</div>
+                    <p style="color:rgba(255,255,255,0.7);font-size:0.88rem;">সবুজে ঘেরা শান্তির আবাস</p>
+                </div>
+                <div class="about-img-badge">🏆 আদর্শ গ্রাম</div>
+            </div>
+            <div class="about-content reveal">
+                <div class="section-tag">📖 আমাদের ইতিহাস</div>
+                <h2>@(info?.VillageName ?? "উজালপুর গ্রামের") গৌরবময় ইতিহাস</h2>
+                <p>@(info?.History ?? "উজালপুর গ্রাম খুলনা বিভাগের একটি সমৃদ্ধ ও ঐতিহ্যবাহী গ্রাম।")</p>
+                <p>গ্রামের মানুষ কৃষিকাজ, মৎস্যচাষ এবং ক্ষুদ্র ব্যবসার মাধ্যমে জীবিকা নির্বাহ করেন।</p>
+                <div class="about-tags">
+                    <span class="tag">🌾 কৃষিপ্রধান</span>
+                    <span class="tag">🐟 মৎস্যচাষ</span>
+                    <span class="tag">📚 শিক্ষিত সমাজ</span>
+                    <span class="tag">🕌 ধর্মীয় ঐতিহ্য</span>
+                    <span class="tag">🌿 সবুজ পরিবেশ</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- POPULATION -->
+<section id="population">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-tag" style="background:rgba(200,153,58,0.2);color:var(--gold-light);border:1px solid rgba(200,153,58,0.3)">📊 পরিসংখ্যান</div>
+            <h2 class="section-title" style="color:white">গ্রামের মূল তথ্য</h2>
+            <p class="section-desc">উজালপুর গ্রামের জনসংখ্যা, আয়তন এবং অন্যান্য গুরুত্বপূর্ণ তথ্য</p>
+            <div class="divider"></div>
+        </div>
+        <div class="info-grid">
+            <div class="info-card reveal"><div class="info-icon">👨‍👩‍👧‍👦</div><span class="info-num">@(info?.TotalPopulation ?? "৩,৫০০+")</span><span class="info-label">মোট জনসংখ্যা</span></div>
+            <div class="info-card reveal"><div class="info-icon">🏠</div><span class="info-num">@(info?.TotalFamilies ?? "৭৫০+")</span><span class="info-label">মোট পরিবার</span></div>
+            <div class="info-card reveal"><div class="info-icon">📏</div><span class="info-num">@(info?.Area ?? "৪.২ কিমি²")</span><span class="info-label">মোট আয়তন</span></div>
+            <div class="info-card reveal"><div class="info-icon">👨</div><span class="info-num">@(info?.MalePopulation ?? "১,৮৫০")</span><span class="info-label">পুরুষ</span></div>
+            <div class="info-card reveal"><div class="info-icon">👩</div><span class="info-num">@(info?.FemalePopulation ?? "১,৬৫০")</span><span class="info-label">মহিলা</span></div>
+            <div class="info-card reveal"><div class="info-icon">📖</div><span class="info-num">@(info?.LiteracyRate ?? "৭৮%")</span><span class="info-label">সাক্ষরতার হার</span></div>
+        </div>
+    </div>
+</section>
+
+<!-- FACILITIES -->
+<section id="facilities">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-tag">🏛️ প্রতিষ্ঠানসমূহ</div>
+            <h2 class="section-title">গ্রামের সুবিধাসমূহ</h2>
+            <p class="section-desc">আমাদের গ্রামে রয়েছে বিভিন্ন ধর্মীয়, শিক্ষা ও ব্যবসায়িক প্রতিষ্ঠান</p>
+            <div class="divider"></div>
+        </div>
+        <div class="facility-grid">
+            @if (facilities != null)
+            {
+                foreach (var f in facilities)
+                {
+                    <div class="facility-card reveal">
+                        <div class="facility-icon">@f.Icon</div>
+                        <h3>@f.Name</h3>
+                        <p>@f.Description</p>
+                        <span class="facility-count">@f.Count</span>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</section>
+
+<!-- COMMITTEE -->
+<section id="committee">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-tag">👥 গণ্যমান্য ব্যক্তিবর্গ</div>
+            <h2 class="section-title">গ্রামের কমিটি ও গুরুত্বপূর্ণ ব্যক্তি</h2>
+            <p class="section-desc">আমাদের গ্রামের উন্নয়নে যারা নিরলস কাজ করে যাচ্ছেন</p>
+            <div class="divider"></div>
+        </div>
+        <div class="committee-grid">
+            @if (committee != null)
+            {
+                foreach (var m in committee)
+                {
+                    <div class="person-card reveal">
+                        <div class="person-avatar">@m.Avatar</div>
+                        <div class="person-name">@m.Name</div>
+                        <div class="person-role">@m.Role</div>
+                        <div class="person-phone">📞 @m.Phone</div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-tag" style="background:rgba(200,153,58,0.2);color:var(--gold-light);border:1px solid rgba(200,153,58,0.3)">🖼️ আমাদের গ্রাম</div>
+            <h2 class="section-title" style="color:white">ফটো গ্যালারি</h2>
+            <p class="section-desc">উজালপুর গ্রামের সুন্দর মুহূর্তগুলো</p>
+            <div class="divider"></div>
+        </div>
+        <div class="gallery-grid">
+            @if (gallery != null)
+            {
+                bool first = true;
+                foreach (var g in gallery)
+                {
+                    <div class="gallery-item @(first || g.IsFeatured ? "featured" : "")">
+                        <div class="gallery-inner" style="background: @g.GradientColor;">
+                            @if (!string.IsNullOrEmpty(g.ImagePath))
+                            {
+                                <img src="@g.ImagePath" alt="@g.Title" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" />
+                            }
+                            <div class="gallery-icon">@g.Icon</div>
+                            <div class="gallery-label">@g.Title</div>
+                        </div>
+                        <div class="gallery-overlay"><div class="gallery-overlay-icon">🔍</div></div>
+                    </div>
+                    first = false;
+                }
+            }
+        </div>
+    </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-tag">📍 যোগাযোগ</div>
+            <h2 class="section-title">আমাদের সাথে যোগাযোগ করুন</h2>
+            <p class="section-desc">যেকোনো প্রয়োজনে আমাদের সাথে যোগাযোগ করুন</p>
+            <div class="divider"></div>
+        </div>
+        <div class="contact-grid">
+            <div class="contact-info reveal">
+                <h3>যোগাযোগের তথ্য</h3>
+                <div class="contact-item"><div class="contact-icon">📍</div><div class="contact-text"><strong>ঠিকানা</strong><span>@(info?.Address ?? "উজালপুর গ্রাম, খুলনা বিভাগ, বাংলাদেশ")</span></div></div>
+                <div class="contact-item"><div class="contact-icon">📞</div><div class="contact-text"><strong>ফোন নম্বর</strong><span>@(info?.Phone ?? "—")</span></div></div>
+                <div class="contact-item"><div class="contact-icon">✉️</div><div class="contact-text"><strong>ইমেইল</strong><span>@(info?.Email ?? "—")</span></div></div>
+                <div class="contact-item"><div class="contact-icon">⏰</div><div class="contact-text"><strong>যোগাযোগের সময়</strong><span>@(info?.OfficeHours ?? "সকাল ৯টা - বিকাল ৫টা")</span></div></div>
+                <div class="contact-item"><div class="contact-icon">📱</div><div class="contact-text"><strong>ফেসবুক পেজ</strong><span>@(info?.Facebook ?? "—")</span></div></div>
+            </div>
+            <div class="map-container reveal">
+                <div class="map-placeholder">
+                    <div class="map-placeholder-icon">🗺️</div>
+                    <h4>@(info?.VillageName ?? "উজালপুর গ্রামের") অবস্থান</h4>
+                    <p>@(info?.Division ?? "খুলনা বিভাগ"), বাংলাদেশ</p>
+                    <a href="@(info?.MapsLink ?? "https://maps.google.com")" target="_blank" class="map-btn">📍 Google Maps-এ দেখুন</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-logo">🌿 @(info?.VillageName ?? "উজালপুর গ্রাম")</div>
+    <p style="font-size:0.88rem;margin-bottom:0.45rem;">@(info?.Division ?? "খুলনা বিভাগ"), বাংলাদেশ | আমাদের গর্বিত গ্রাম</p>
+    <div class="footer-links">
+        <a href="#home">হোম</a><a href="#news">সংবাদ</a><a href="#about">পরিচিতি</a>
+        <a href="#facilities">সুবিধা</a><a href="#committee">কমিটি</a>
+        <a href="#gallery">গ্যালারি</a><a href="#contact">যোগাযোগ</a>
+    </div>
+    <div class="footer-copy">© ২০২৬ @(info?.VillageName ?? "উজালপুর গ্রাম") | সর্বস্বত্ব সংরক্ষিত</div>
+    <div class="footer-dev">✦ Developed by <span>Md Firoz Ali</span> with ❤️ | <a href="/Admin/Login" style="color:rgba(200,153,58,0.6);font-size:0.72rem;">Admin</a></div>
+</footer>

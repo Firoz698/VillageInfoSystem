@@ -1,0 +1,41 @@
+@model VillageInfoSystem.Models.GalleryItem
+@{
+    ViewData["Title"] = "গ্যালারি সম্পাদনা";
+    Layout = "_AdminLayout";
+}
+<div class="breadcrumb"><a href="/Admin/GalleryList">গ্যালারি</a> › সম্পাদনা</div>
+<div class="card" style="max-width:650px">
+    <div class="card-title" style="margin-bottom:1.2rem">✏️ গ্যালারি সম্পাদনা</div>
+    <form asp-action="GalleryEdit" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <input asp-for="Id" type="hidden" />
+        <input asp-for="ImagePath" type="hidden" />
+        <div class="form-grid">
+            <div class="form-group"><label asp-for="Title"></label><input asp-for="Title" class="form-control" /></div>
+            <div class="form-group"><label asp-for="Icon"></label><input asp-for="Icon" class="form-control" /></div>
+        </div>
+        @if (!string.IsNullOrEmpty(Model.ImagePath))
+        {
+            <div class="form-group">
+                <label>বর্তমান ছবি</label>
+                <img src="@Model.ImagePath" style="max-width:200px;border-radius:8px;" />
+            </div>
+        }
+        <div class="form-group">
+            <label>নতুন ছবি আপলোড</label>
+            <input type="file" name="imageFile" class="form-control" accept="image/*" />
+        </div>
+        <div class="form-group">
+            <label asp-for="GradientColor"></label>
+            <input asp-for="GradientColor" class="form-control" />
+        </div>
+        <div class="form-grid">
+            <div class="form-group"><label asp-for="SortOrder"></label><input asp-for="SortOrder" type="number" class="form-control" /></div>
+            <div class="form-group" style="display:flex;align-items:center;gap:1.5rem;padding-top:1.8rem">
+                <div class="form-check"><input asp-for="IsFeatured" type="checkbox" /><label asp-for="IsFeatured">ফিচার্ড</label></div>
+                <div class="form-check"><input asp-for="IsActive" type="checkbox" /><label asp-for="IsActive">সক্রিয়</label></div>
+            </div>
+        </div>
+        <div style="display:flex;gap:1rem"><button type="submit" class="btn btn-primary">💾 আপডেট</button><a href="/Admin/GalleryList" class="btn btn-outline">বাতিল</a></div>
+    </form>
+</div>

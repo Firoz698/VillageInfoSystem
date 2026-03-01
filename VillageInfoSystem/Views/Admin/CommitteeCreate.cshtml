@@ -1,0 +1,28 @@
+@model VillageInfoSystem.Models.CommitteeMember
+@{
+    ViewData["Title"] = "নতুন সদস্য যোগ";
+    Layout = "_AdminLayout";
+}
+<div class="breadcrumb"><a href="/Admin/CommitteeList">কমিটি</a> › নতুন</div>
+<div class="card" style="max-width:650px">
+    <div class="card-title" style="margin-bottom:1.2rem">👤 নতুন সদস্য যোগ</div>
+    <form asp-action="CommitteeCreate" method="post">
+        @Html.AntiForgeryToken()
+        <div class="form-grid">
+            <div class="form-group"><label asp-for="Name"></label><input asp-for="Name" class="form-control" /><span asp-validation-for="Name" style="color:red;font-size:0.82rem"></span></div>
+            <div class="form-group"><label asp-for="Role"></label><input asp-for="Role" class="form-control" placeholder="গ্রাম প্রধান" /></div>
+        </div>
+        <div class="form-grid">
+            <div class="form-group"><label asp-for="Phone"></label><input asp-for="Phone" class="form-control" placeholder="০১৭১২-XXXXXX" /></div>
+            <div class="form-group"><label asp-for="Avatar"></label><input asp-for="Avatar" class="form-control" placeholder="👨" /></div>
+        </div>
+        <div class="form-group"><label asp-for="Bio"></label><textarea asp-for="Bio" class="form-control" placeholder="সংক্ষিপ্ত পরিচয়"></textarea></div>
+        <div class="form-grid">
+            <div class="form-group"><label asp-for="SortOrder"></label><input asp-for="SortOrder" type="number" class="form-control" /></div>
+            <div class="form-group" style="display:flex;align-items:center;padding-top:1.8rem">
+                <div class="form-check"><input asp-for="IsActive" type="checkbox" /><label asp-for="IsActive">সক্রিয়</label></div>
+            </div>
+        </div>
+        <div style="display:flex;gap:1rem"><button type="submit" class="btn btn-primary">💾 সংরক্ষণ</button><a href="/Admin/CommitteeList" class="btn btn-outline">বাতিল</a></div>
+    </form>
+</div>

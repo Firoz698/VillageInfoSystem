@@ -1,0 +1,39 @@
+@model List<VillageInfoSystem.Models.News>
+@{
+    ViewData["Title"] = "সংবাদ ব্যবস্থাপনা";
+    Layout = "_AdminLayout";
+}
+
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">📰 সকল সংবাদ (@Model.Count টি)</div>
+        <a href="/Admin/NewsCreate" class="btn btn-primary">➕ নতুন সংবাদ যোগ</a>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>আইকন</th><th>শিরোনাম</th><th>বিভাগ</th><th>তারিখ</th><th>শীর্ষ</th><th>অবস্থা</th><th>কার্যক্রম</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var n in Model)
+            {
+                <tr>
+                    <td style="font-size:1.4rem">@n.Icon</td>
+                    <td style="max-width:280px">@n.Title</td>
+                    <td><span class="badge badge-gold">@n.Category</span></td>
+                    <td>@n.PublishedAt.ToString("dd/MM/yyyy")</td>
+                    <td>@(n.IsFeatured ? "⭐" : "—")</td>
+                    <td><span class="badge @(n.IsActive ? "badge-success" : "badge-danger")">@(n.IsActive ? "সক্রিয়" : "নিষ্ক্রিয়")</span></td>
+                    <td style="white-space:nowrap">
+                        <a href="/Admin/NewsEdit/@n.Id" class="btn btn-edit" style="padding:0.3rem 0.65rem;font-size:0.78rem;">✏️ সম্পাদনা</a>
+                        <form method="post" action="/Admin/NewsDelete/@n.Id" style="display:inline;" onsubmit="return confirm('মুছে ফেলবেন?')">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger" style="padding:0.3rem 0.65rem;font-size:0.78rem;">🗑️ মুছুন</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

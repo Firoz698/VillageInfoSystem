@@ -1,0 +1,29 @@
+@model VillageInfoSystem.Models.CommitteeMember
+@{
+    ViewData["Title"] = "সদস্য সম্পাদনা";
+    Layout = "_AdminLayout";
+}
+<div class="breadcrumb"><a href="/Admin/CommitteeList">কমিটি</a> › সম্পাদনা</div>
+<div class="card" style="max-width:650px">
+    <div class="card-title" style="margin-bottom:1.2rem">✏️ সদস্য সম্পাদনা</div>
+    <form asp-action="CommitteeEdit" method="post">
+        @Html.AntiForgeryToken()
+        <input asp-for="Id" type="hidden" />
+        <div class="form-grid">
+            <div class="form-group"><label asp-for="Name"></label><input asp-for="Name" class="form-control" /></div>
+            <div class="form-group"><label asp-for="Role"></label><input asp-for="Role" class="form-control" /></div>
+        </div>
+        <div class="form-grid">
+            <div class="form-group"><label asp-for="Phone"></label><input asp-for="Phone" class="form-control" /></div>
+            <div class="form-group"><label asp-for="Avatar"></label><input asp-for="Avatar" class="form-control" /></div>
+        </div>
+        <div class="form-group"><label asp-for="Bio"></label><textarea asp-for="Bio" class="form-control"></textarea></div>
+        <div class="form-grid">
+            <div class="form-group"><label asp-for="SortOrder"></label><input asp-for="SortOrder" type="number" class="form-control" /></div>
+            <div class="form-group" style="display:flex;align-items:center;padding-top:1.8rem">
+                <div class="form-check"><input asp-for="IsActive" type="checkbox" /><label asp-for="IsActive">সক্রিয়</label></div>
+            </div>
+        </div>
+        <div style="display:flex;gap:1rem"><button type="submit" class="btn btn-primary">💾 আপডেট</button><a href="/Admin/CommitteeList" class="btn btn-outline">বাতিল</a></div>
+    </form>
+</div>

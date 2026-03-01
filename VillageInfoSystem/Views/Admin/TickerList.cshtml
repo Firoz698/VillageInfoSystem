@@ -1,0 +1,30 @@
+@model List<VillageInfoSystem.Models.TickerNews>
+@{
+    ViewData["Title"] = "ব্রেকিং নিউজ";
+    Layout = "_AdminLayout";
+}
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">📺 ব্রেকিং নিউজ টিকার</div>
+        <a href="/Admin/TickerCreate" class="btn btn-primary">➕ নতুন যোগ</a>
+    </div>
+    <table>
+        <thead><tr><th>#</th><th>টেক্সট</th><th>অবস্থা</th><th>কার্যক্রম</th></tr></thead>
+        <tbody>
+            @foreach (var t in Model)
+            {
+                <tr>
+                    <td>@t.SortOrder</td>
+                    <td style="max-width:400px">@t.Text</td>
+                    <td><span class="badge @(t.IsActive ? "badge-success" : "badge-danger")">@(t.IsActive ? "সক্রিয়" : "নিষ্ক্রিয়")</span></td>
+                    <td>
+                        <form method="post" action="/Admin/TickerDelete/@t.Id" style="display:inline;" onsubmit="return confirm('মুছে ফেলবেন?')">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger" style="padding:0.3rem 0.65rem;font-size:0.78rem;">🗑️ মুছুন</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

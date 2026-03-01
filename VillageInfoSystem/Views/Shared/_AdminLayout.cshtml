@@ -1,0 +1,450 @@
+﻿<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - অ্যাডমিন প্যানেল</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #1a6b3c;
+            --green-dark: #0f4226;
+            --gold: #c8993a;
+            --cream: #faf6ef;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background: #f0f4f0;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--green-dark);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            min-height: 100vh;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-logo {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .sidebar-sub {
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.5);
+            margin-top: 2px;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+            flex: 1;
+        }
+
+        .nav-section {
+            padding: 0.5rem 1.2rem;
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.35);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-top: 0.5rem;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.65rem 1.4rem;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-size: 0.88rem;
+            transition: all 0.2s;
+        }
+
+            .sidebar-nav a:hover, .sidebar-nav a.active {
+                background: rgba(255,255,255,0.1);
+                color: white;
+                padding-left: 1.7rem;
+            }
+
+            .sidebar-nav a span.icon {
+                font-size: 1rem;
+                width: 20px;
+                text-align: center;
+            }
+
+        .sidebar-footer {
+            padding: 1rem 1.4rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.4);
+        }
+
+            .sidebar-footer a {
+                color: var(--gold);
+                text-decoration: none;
+            }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: auto;
+        }
+
+        .topbar {
+            background: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        }
+
+        .topbar-title {
+            font-weight: 700;
+            color: var(--green-dark);
+            font-size: 1.1rem;
+        }
+
+        .topbar-user {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .page-content {
+            padding: 1.5rem;
+            flex: 1;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+        }
+
+        .card-title {
+            font-weight: 700;
+            color: var(--green-dark);
+            font-size: 1rem;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.2rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--green);
+        }
+
+        .stat-num {
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: var(--green-dark);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+
+        th {
+            background: #f8faf8;
+            color: var(--green-dark);
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #e8f0e8;
+        }
+
+        td {
+            padding: 0.7rem 1rem;
+            border-bottom: 1px solid #f0f4f0;
+            color: #333;
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background: #f8fbf8;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-family: 'Hind Siliguri', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--green);
+            color: white;
+        }
+
+            .btn-primary:hover {
+                background: var(--green-dark);
+            }
+
+        .btn-edit {
+            background: #e8f4fd;
+            color: #1a6b9a;
+        }
+
+            .btn-edit:hover {
+                background: #d0eaf9;
+            }
+
+        .btn-danger {
+            background: #fdeaea;
+            color: #c0392b;
+        }
+
+            .btn-danger:hover {
+                background: #f8d0d0;
+            }
+
+        .btn-gold {
+            background: var(--gold);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--green);
+            color: var(--green);
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 1.1rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: var(--green-dark);
+            margin-bottom: 0.35rem;
+            font-size: 0.88rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.65rem 0.9rem;
+            border: 1.5px solid #dde8dd;
+            border-radius: 8px;
+            font-family: 'Hind Siliguri', sans-serif;
+            font-size: 0.9rem;
+            transition: border 0.2s;
+        }
+
+            .form-control:focus {
+                outline: none;
+                border-color: var(--green);
+                box-shadow: 0 0 0 3px rgba(26,107,60,0.1);
+            }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+            .form-check input {
+                width: 18px;
+                height: 18px;
+                cursor: pointer;
+            }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+        }
+
+        /* Alert */
+        .alert {
+            padding: 0.8rem 1.1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .alert-success {
+            background: #e8f8ee;
+            color: #1a7a3c;
+            border: 1px solid #b8e8c8;
+        }
+
+        .alert-danger {
+            background: #fdeaea;
+            color: #c0392b;
+            border: 1px solid #f8c0c0;
+        }
+
+        /* Badge */
+        .badge {
+            padding: 0.2rem 0.6rem;
+            border-radius: 50px;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        .badge-success {
+            background: #e8f8ee;
+            color: #1a7a3c;
+        }
+
+        .badge-danger {
+            background: #fdeaea;
+            color: #c0392b;
+        }
+
+        .badge-gold {
+            background: rgba(200,153,58,0.15);
+            color: var(--gold);
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            font-size: 0.82rem;
+            color: #888;
+            margin-bottom: 1rem;
+        }
+
+            .breadcrumb a {
+                color: var(--green);
+                text-decoration: none;
+            }
+
+        @@media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .form-grid, .form-grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">🌿 খোকসা মল্লিক পাড়া</div>
+            <div class="sidebar-sub">অ্যাডমিন প্যানেল</div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">প্রধান</div>
+            <a href="/Admin/Dashboard" class="@(ViewContext.RouteData.Values["action"]?.ToString() == "Dashboard" ? "active" : "")">
+                <span class="icon">📊</span> ড্যাশবোর্ড
+            </a>
+            <a href="/" target="_blank"><span class="icon">🏠</span> ওয়েবসাইট দেখুন</a>
+
+            <div class="nav-section">ব্যবস্থাপনা</div>
+            <a href="/Admin/NewsList" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.Contains("News") == true ? "active" : "")">
+                <span class="icon">📰</span> সংবাদ
+            </a>
+            <a href="/Admin/TickerList" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.Contains("Ticker") == true ? "active" : "")">
+                <span class="icon">📺</span> ব্রেকিং নিউজ
+            </a>
+            <a href="/Admin/FacilityList" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.Contains("Facility") == true ? "active" : "")">
+                <span class="icon">🏛️</span> সুবিধাসমূহ
+            </a>
+            <a href="/Admin/CommitteeList" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.Contains("Committee") == true ? "active" : "")">
+                <span class="icon">👥</span> কমিটি সদস্য
+            </a>
+            <a href="/Admin/GalleryList" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.Contains("Gallery") == true ? "active" : "")">
+                <span class="icon">🖼️</span> গ্যালারি
+            </a>
+
+            <div class="nav-section">সেটিংস</div>
+            <a href="/Admin/VillageInfoEdit" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.Contains("VillageInfo") == true ? "active" : "")">
+                <span class="icon">⚙️</span> গ্রামের তথ্য
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            স্বাগতম, <strong>@User.Identity?.Name</strong><br>
+            <a href="/Admin/Logout">লগআউট করুন</a>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="main-content">
+        <div class="topbar">
+            <div class="topbar-title">@ViewData["Title"]</div>
+            <div class="topbar-user">🟢 অ্যাডমিন</div>
+        </div>
+        <div class="page-content">
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">✅ @TempData["Success"]</div>
+            }
+            @RenderBody()
+        </div>
+    </div>
+</body>
+</html>

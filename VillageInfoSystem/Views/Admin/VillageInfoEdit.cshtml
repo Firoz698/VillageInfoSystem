@@ -1,0 +1,44 @@
+@model VillageInfoSystem.Models.VillageInfo
+@{
+    ViewData["Title"] = "গ্রামের তথ্য সম্পাদনা";
+    Layout = "_AdminLayout";
+}
+<div class="card">
+    <div class="card-title" style="margin-bottom:1.2rem">⚙️ গ্রামের মূল তথ্য সম্পাদনা</div>
+    <form asp-action="VillageInfoEdit" method="post">
+        @Html.AntiForgeryToken()
+        <input asp-for="Id" type="hidden" />
+
+        <h4 style="color:#1a6b3c;margin-bottom:0.8rem;font-size:0.95rem">📍 মৌলিক তথ্য</h4>
+        <div class="form-grid">
+            <div class="form-group"><label asp-for="VillageName"></label><input asp-for="VillageName" class="form-control" /></div>
+            <div class="form-group"><label asp-for="Division"></label><input asp-for="Division" class="form-control" /></div>
+        </div>
+        <div class="form-group"><label asp-for="History"></label><textarea asp-for="History" class="form-control" style="min-height:130px"></textarea></div>
+
+        <h4 style="color:#1a6b3c;margin-bottom:0.8rem;font-size:0.95rem;margin-top:1rem">📊 পরিসংখ্যান</h4>
+        <div class="form-grid-3">
+            <div class="form-group"><label asp-for="TotalPopulation"></label><input asp-for="TotalPopulation" class="form-control" /></div>
+            <div class="form-group"><label asp-for="TotalFamilies"></label><input asp-for="TotalFamilies" class="form-control" /></div>
+            <div class="form-group"><label asp-for="Area"></label><input asp-for="Area" class="form-control" /></div>
+            <div class="form-group"><label asp-for="MalePopulation"></label><input asp-for="MalePopulation" class="form-control" /></div>
+            <div class="form-group"><label asp-for="FemalePopulation"></label><input asp-for="FemalePopulation" class="form-control" /></div>
+            <div class="form-group"><label asp-for="LiteracyRate"></label><input asp-for="LiteracyRate" class="form-control" /></div>
+        </div>
+
+        <h4 style="color:#1a6b3c;margin-bottom:0.8rem;font-size:0.95rem;margin-top:1rem">📞 যোগাযোগ</h4>
+        <div class="form-group"><label asp-for="Address"></label><input asp-for="Address" class="form-control" /></div>
+        <div class="form-grid">
+            <div class="form-group"><label asp-for="Phone"></label><input asp-for="Phone" class="form-control" /></div>
+            <div class="form-group"><label asp-for="Email"></label><input asp-for="Email" class="form-control" /></div>
+            <div class="form-group"><label asp-for="Facebook"></label><input asp-for="Facebook" class="form-control" /></div>
+            <div class="form-group"><label asp-for="OfficeHours"></label><input asp-for="OfficeHours" class="form-control" /></div>
+        </div>
+        <div class="form-group"><label asp-for="MapsLink"></label><input asp-for="MapsLink" class="form-control" placeholder="https://maps.google.com/..." /></div>
+
+        <div style="display:flex;gap:1rem;margin-top:0.5rem">
+            <button type="submit" class="btn btn-primary">💾 সংরক্ষণ করুন</button>
+            <a href="/Admin/Dashboard" class="btn btn-outline">বাতিল</a>
+        </div>
+    </form>
+</div>

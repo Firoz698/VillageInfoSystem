@@ -1,0 +1,33 @@
+@model List<VillageInfoSystem.Models.CommitteeMember>
+@{
+    ViewData["Title"] = "কমিটি সদস্য";
+    Layout = "_AdminLayout";
+}
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">👥 কমিটি সদস্যগণ</div>
+        <a href="/Admin/CommitteeCreate" class="btn btn-primary">➕ নতুন সদস্য</a>
+    </div>
+    <table>
+        <thead><tr><th>আভাটার</th><th>নাম</th><th>পদবী</th><th>ফোন</th><th>অবস্থা</th><th>কার্যক্রম</th></tr></thead>
+        <tbody>
+            @foreach (var m in Model)
+            {
+                <tr>
+                    <td style="font-size:1.4rem">@m.Avatar</td>
+                    <td>@m.Name</td>
+                    <td><span class="badge badge-gold">@m.Role</span></td>
+                    <td>@m.Phone</td>
+                    <td><span class="badge @(m.IsActive ? "badge-success" : "badge-danger")">@(m.IsActive ? "সক্রিয়" : "নিষ্ক্রিয়")</span></td>
+                    <td style="white-space:nowrap">
+                        <a href="/Admin/CommitteeEdit/@m.Id" class="btn btn-edit" style="padding:0.3rem 0.65rem;font-size:0.78rem;">✏️</a>
+                        <form method="post" action="/Admin/CommitteeDelete/@m.Id" style="display:inline;" onsubmit="return confirm('মুছে ফেলবেন?')">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger" style="padding:0.3rem 0.65rem;font-size:0.78rem;">🗑️</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

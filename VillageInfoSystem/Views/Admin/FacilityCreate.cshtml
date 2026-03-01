@@ -1,0 +1,33 @@
+@model VillageInfoSystem.Models.Facility
+@{
+    ViewData["Title"] = "নতুন সুবিধা যোগ";
+    Layout = "_AdminLayout";
+}
+<div class="breadcrumb"><a href="/Admin/FacilityList">সুবিধাসমূহ</a> › নতুন</div>
+<div class="card" style="max-width:650px">
+    <div class="card-title" style="margin-bottom:1.2rem">🏛️ নতুন সুবিধা যোগ করুন</div>
+    <form asp-action="FacilityCreate" method="post">
+        @Html.AntiForgeryToken()
+        <div class="form-grid">
+            <div class="form-group"><label asp-for="Name"></label><input asp-for="Name" class="form-control" /><span asp-validation-for="Name" style="color:red;font-size:0.82rem"></span></div>
+            <div class="form-group"><label asp-for="Icon"></label><input asp-for="Icon" class="form-control" placeholder="🕌" /></div>
+        </div>
+        <div class="form-group"><label asp-for="Description"></label><textarea asp-for="Description" class="form-control"></textarea></div>
+        <div class="form-grid">
+            <div class="form-group"><label asp-for="Count"></label><input asp-for="Count" class="form-control" placeholder="৩টি মসজিদ" /></div>
+            <div class="form-group">
+                <label asp-for="Category"></label>
+                <select asp-for="Category" class="form-control">
+                    <option>সাধারণ</option><option>ধর্মীয়</option><option>শিক্ষা</option><option>স্বাস্থ্য</option><option>ব্যবসা</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-grid">
+            <div class="form-group"><label asp-for="SortOrder"></label><input asp-for="SortOrder" type="number" class="form-control" /></div>
+            <div class="form-group" style="display:flex;align-items:center;padding-top:1.8rem">
+                <div class="form-check"><input asp-for="IsActive" type="checkbox" /><label asp-for="IsActive">সক্রিয়</label></div>
+            </div>
+        </div>
+        <div style="display:flex;gap:1rem"><button type="submit" class="btn btn-primary">💾 সংরক্ষণ</button><a href="/Admin/FacilityList" class="btn btn-outline">বাতিল</a></div>
+    </form>
+</div>

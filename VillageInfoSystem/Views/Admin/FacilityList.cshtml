@@ -1,0 +1,34 @@
+@model List<VillageInfoSystem.Models.Facility>
+@{
+    ViewData["Title"] = "সুবিধা ব্যবস্থাপনা";
+    Layout = "_AdminLayout";
+}
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">🏛️ সুবিধাসমূহ</div>
+        <a href="/Admin/FacilityCreate" class="btn btn-primary">➕ নতুন যোগ</a>
+    </div>
+    <table>
+        <thead><tr><th>আইকন</th><th>নাম</th><th>বিভাগ</th><th>সংখ্যা</th><th>ক্রম</th><th>অবস্থা</th><th>কার্যক্রম</th></tr></thead>
+        <tbody>
+            @foreach (var f in Model)
+            {
+                <tr>
+                    <td style="font-size:1.4rem">@f.Icon</td>
+                    <td>@f.Name</td>
+                    <td><span class="badge badge-gold">@f.Category</span></td>
+                    <td>@f.Count</td>
+                    <td>@f.SortOrder</td>
+                    <td><span class="badge @(f.IsActive ? "badge-success" : "badge-danger")">@(f.IsActive ? "সক্রিয়" : "নিষ্ক্রিয়")</span></td>
+                    <td style="white-space:nowrap">
+                        <a href="/Admin/FacilityEdit/@f.Id" class="btn btn-edit" style="padding:0.3rem 0.65rem;font-size:0.78rem;">✏️</a>
+                        <form method="post" action="/Admin/FacilityDelete/@f.Id" style="display:inline;" onsubmit="return confirm('মুছে ফেলবেন?')">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger" style="padding:0.3rem 0.65rem;font-size:0.78rem;">🗑️</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
