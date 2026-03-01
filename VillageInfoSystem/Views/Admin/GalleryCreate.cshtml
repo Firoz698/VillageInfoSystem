@@ -3,32 +3,753 @@
     ViewData["Title"] = "নতুন গ্যালারি আইটেম";
     Layout = "_AdminLayout";
 }
-<div class="breadcrumb"><a href="/Admin/GalleryList">গ্যালারি</a> › নতুন</div>
-<div class="card" style="max-width:650px">
-    <div class="card-title" style="margin-bottom:1.2rem">🖼️ নতুন গ্যালারি আইটেম</div>
-    <form asp-action="GalleryCreate" method="post" enctype="multipart/form-data">
-        @Html.AntiForgeryToken()
-        <div class="form-grid">
-            <div class="form-group"><label asp-for="Title"></label><input asp-for="Title" class="form-control" /><span asp-validation-for="Title" style="color:red;font-size:0.82rem"></span></div>
-            <div class="form-group"><label asp-for="Icon"></label><input asp-for="Icon" class="form-control" placeholder="🕌" /></div>
-        </div>
-        <div class="form-group">
-            <label>ছবি আপলোড (ঐচ্ছিক)</label>
-            <input type="file" name="imageFile" class="form-control" accept="image/*" />
-            <small style="color:#888;font-size:0.8rem;">ছবি না থাকলে নিচের রং ব্যবহার হবে</small>
-        </div>
-        <div class="form-group">
-            <label asp-for="GradientColor"></label>
-            <input asp-for="GradientColor" class="form-control" placeholder="linear-gradient(135deg, #2d9b5a, #1a6b3c)" />
-            <small style="color:#888;font-size:0.8rem;">CSS gradient কোড দিন</small>
-        </div>
-        <div class="form-grid">
-            <div class="form-group"><label asp-for="SortOrder"></label><input asp-for="SortOrder" type="number" class="form-control" /></div>
-            <div class="form-group" style="display:flex;align-items:center;gap:1.5rem;padding-top:1.8rem">
-                <div class="form-check"><input asp-for="IsFeatured" type="checkbox" /><label asp-for="IsFeatured">ফিচার্ড</label></div>
-                <div class="form-check"><input asp-for="IsActive" type="checkbox" /><label asp-for="IsActive">সক্রিয়</label></div>
+
+<style>
+    .form-page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.6rem;
+    }
+
+    .fph-left h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.4rem;
+        color: var(--green-dark);
+        font-weight: 900;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .fph-left p {
+        font-size: 0.84rem;
+        color: var(--text-muted);
+        margin-top: 2px;
+    }
+
+    .form-layout {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 1.4rem;
+        align-items: start;
+    }
+
+    .form-section {
+        background: white;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        margin-bottom: 1.2rem;
+    }
+
+        .form-section:last-child {
+            margin-bottom: 0;
+        }
+
+    .fs-header {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 1rem 1.4rem;
+        border-bottom: 1px solid var(--border);
+        background: #fafcfa;
+    }
+
+    .fs-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 7px;
+        background: var(--green-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+        flex-shrink: 0;
+    }
+
+    .fs-header h3 {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--green-dark);
+    }
+
+    .fs-header p {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-top: 1px;
+    }
+
+    .fs-body {
+        padding: 1.3rem 1.4rem;
+    }
+
+    .field-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.1rem;
+    }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+    .form-label {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-weight: 600;
+        color: var(--green-dark);
+        margin-bottom: 0.42rem;
+        font-size: 0.84rem;
+    }
+
+    .req {
+        color: #e74c3c;
+        font-size: 0.75rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.68rem 0.95rem;
+        border: 1.5px solid var(--border);
+        border-radius: 9px;
+        font-family: 'Hind Siliguri', sans-serif;
+        font-size: 0.9rem;
+        color: var(--text);
+        background: white;
+        transition: all 0.2s;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(26,107,60,0.09);
+        }
+
+        .form-control::placeholder {
+            color: #b5c8ba;
+        }
+
+    .field-hint {
+        font-size: 0.74rem;
+        color: var(--text-muted);
+        margin-top: 0.28rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .validation-msg {
+        font-size: 0.75rem;
+        color: #c0392b;
+        margin-top: 0.25rem;
+        display: block;
+    }
+
+    /* Icon picker */
+    .icon-picker {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-top: 0.6rem;
+    }
+
+    .icon-opt {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        border: 1.5px solid var(--border);
+        background: white;
+        cursor: pointer;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+
+        .icon-opt:hover {
+            border-color: var(--green);
+            background: var(--green-muted);
+            transform: scale(1.1);
+        }
+
+        .icon-opt.selected {
+            border-color: var(--green);
+            background: var(--green-muted);
+            box-shadow: 0 0 0 2px rgba(26,107,60,0.15);
+        }
+
+    /* Gradient presets */
+    .gradient-presets {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        margin-top: 0.7rem;
+    }
+
+    .gp-swatch {
+        width: 40px;
+        height: 32px;
+        border-radius: 8px;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all 0.2s;
+    }
+
+        .gp-swatch:hover {
+            transform: scale(1.12);
+        }
+
+        .gp-swatch.selected {
+            border-color: var(--green-dark);
+            box-shadow: 0 0 0 2px rgba(26,107,60,0.3);
+        }
+
+    /* Upload zone */
+    .upload-zone {
+        border: 2px dashed var(--border);
+        border-radius: 12px;
+        padding: 1.4rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.25s;
+        position: relative;
+        background: #fafcfa;
+    }
+
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: var(--green);
+            background: rgba(26,107,60,0.04);
+        }
+
+        .upload-zone input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+    .uz-icon {
+        font-size: 1.8rem;
+        display: block;
+        margin-bottom: 0.4rem;
+    }
+
+    .uz-text {
+        font-size: 0.83rem;
+        color: var(--text-muted);
+    }
+
+        .uz-text strong {
+            color: var(--green);
+        }
+
+    .uz-hint {
+        font-size: 0.72rem;
+        color: #b5c8ba;
+        margin-top: 0.2rem;
+    }
+
+    .img-preview-wrap {
+        display: none;
+        margin-top: 1rem;
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 2px solid var(--border);
+    }
+
+        .img-preview-wrap img {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .img-preview-wrap.show {
+            display: block;
+        }
+
+    .img-remove-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 28px;
+        height: 28px;
+        background: rgba(231,76,60,0.85);
+        border: none;
+        border-radius: 50%;
+        color: white;
+        font-size: 0.85rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+    }
+
+        .img-remove-btn:hover {
+            background: #c0392b;
+        }
+
+    /* Toggle */
+    .toggle-row {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .toggle-item {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.8rem 1rem;
+        background: #f8fbf8;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+        .toggle-item:hover {
+            border-color: var(--green);
+            background: #f0f8f3;
+        }
+
+        .toggle-item.checked {
+            border-color: var(--green);
+            background: rgba(26,107,60,0.06);
+        }
+
+    .toggle-sw {
+        position: relative;
+        width: 40px;
+        height: 22px;
+        flex-shrink: 0;
+    }
+
+        .toggle-sw input {
+            display: none;
+        }
+
+    .ts-track {
+        position: absolute;
+        inset: 0;
+        background: #dde8dd;
+        border-radius: 50px;
+        transition: background 0.25s;
+    }
+
+    .ts-thumb {
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 16px;
+        height: 16px;
+        background: white;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        transition: transform 0.25s;
+    }
+
+    .toggle-sw input:checked ~ .ts-track {
+        background: var(--green);
+    }
+
+    .toggle-sw input:checked ~ .ts-thumb {
+        transform: translateX(18px);
+    }
+
+    .ti-info strong {
+        display: block;
+        font-size: 0.82rem;
+        color: var(--green-dark);
+        font-weight: 700;
+    }
+
+    .ti-info span {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+    }
+
+    /* Sidebar */
+    .sidebar-card {
+        background: white;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        margin-bottom: 1.2rem;
+    }
+
+        .sidebar-card:last-child {
+            margin-bottom: 0;
+        }
+
+    .sc-hd {
+        padding: 0.9rem 1.2rem;
+        border-bottom: 1px solid var(--border);
+        background: #fafcfa;
+        font-size: 0.86rem;
+        font-weight: 700;
+        color: var(--green-dark);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .sc-bd {
+        padding: 1.1rem 1.2rem;
+    }
+
+    /* Gallery preview card */
+    .gallery-preview {
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+    }
+
+    .gp-visual {
+        height: 130px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        transition: background 0.3s;
+        background: linear-gradient(135deg, #1a6b3c, #2d9b5a);
+        overflow: hidden;
+    }
+
+    .gp-visual-bg {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+        .gp-visual-bg.show {
+            opacity: 1;
+        }
+
+    .gp-vis-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,0.25);
+    }
+
+    .gp-icon-large {
+        font-size: 3rem;
+        position: relative;
+        z-index: 1;
+        transition: all 0.2s;
+    }
+
+    .gp-info {
+        padding: 0.8rem;
+        background: white;
+    }
+
+    .gp-info-title {
+        font-weight: 700;
+        font-size: 0.88rem;
+        color: var(--green-dark);
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 0.7rem;
+        padding: 1.1rem 1.2rem;
+        border-top: 1px solid var(--border);
+        background: #fafcfa;
+    }
+
+        .form-actions .btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+    @@media (max-width: 860px) {
+        .form-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 500px) {
+        .field-grid-2 {
+            grid-template-columns: 1fr;
+        }
+
+        .toggle-row {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<!-- Header -->
+<div class="form-page-header">
+    <div class="fph-left">
+        <h2>🖼️ নতুন গ্যালারি আইটেম</h2>
+        <p>গ্যালারিতে নতুন ছবি বা আইটেম যোগ করুন</p>
+    </div>
+    <a href="/Admin/GalleryList" class="btn btn-outline btn-sm">← গ্যালারি তালিকা</a>
+</div>
+
+<form asp-action="GalleryCreate" method="post" enctype="multipart/form-data" id="galleryForm">
+    @Html.AntiForgeryToken()
+    <div class="form-layout">
+
+        <!-- LEFT -->
+        <div>
+            <!-- Title & Icon -->
+            <div class="form-section">
+                <div class="fs-header">
+                    <div class="fs-icon">🏷️</div>
+                    <div><h3>মূল তথ্য</h3><p>শিরোনাম ও আইকন নির্ধারণ করুন</p></div>
+                </div>
+                <div class="fs-body">
+                    <div class="field-grid-2">
+                        <div class="form-group">
+                            <label class="form-label">শিরোনাম <span class="req">*</span></label>
+                            <input asp-for="Title" class="form-control" id="titleInput"
+                                   placeholder="যেমন: গ্রামের মসজিদ"
+                                   oninput="updatePreview()" />
+                            <span asp-validation-for="Title" class="validation-msg"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">আইকন ইমোজি</label>
+                            <input asp-for="Icon" class="form-control" id="iconInput"
+                                   placeholder="🕌" oninput="updatePreview()" maxlength="8" />
+                            <div class="icon-picker">
+                                @foreach (var ic in new[] { "🕌", "🏫", "🌾", "🏡", "🌿", "⛪", "🌊", "🏞️", "🎭", "🌺", "🦋", "🏆" })
+                                {
+                                    <div class="icon-opt" onclick="selectIcon('@ic')">@ic</div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image Upload -->
+            <div class="form-section">
+                <div class="fs-header">
+                    <div class="fs-icon">📸</div>
+                    <div><h3>ছবি আপলোড</h3><p>ছবি না থাকলে গ্রেডিয়েন্ট রং ব্যবহার হবে</p></div>
+                </div>
+                <div class="fs-body">
+                    <div class="upload-zone" id="uploadZone">
+                        <input type="file" name="imageFile" id="imageInput"
+                               accept="image/*" onchange="handleImageChange(this)" />
+                        <span class="uz-icon">📤</span>
+                        <div class="uz-text"><strong>ছবি বেছে নিন</strong> বা এখানে টেনে আনুন</div>
+                        <div class="uz-hint">JPG, PNG, WEBP · সর্বোচ্চ 5MB</div>
+                    </div>
+                    <div class="img-preview-wrap" id="previewWrap">
+                        <img id="imgPreview" src="" alt="প্রিভিউ" />
+                        <button type="button" class="img-remove-btn" onclick="removeImage()">✕</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gradient -->
+            <div class="form-section">
+                <div class="fs-header">
+                    <div class="fs-icon">🎨</div>
+                    <div><h3>ব্যাকগ্রাউন্ড রং</h3><p>ছবি না থাকলে এই গ্রেডিয়েন্ট দেখাবে</p></div>
+                </div>
+                <div class="fs-body">
+                    <div class="form-group">
+                        <label class="form-label">CSS Gradient কোড</label>
+                        <input asp-for="GradientColor" class="form-control" id="gradientInput"
+                               placeholder="linear-gradient(135deg, #2d9b5a, #1a6b3c)"
+                               oninput="updatePreview()" />
+                        <div class="field-hint">💡 নিচে থেকে রেডিমেড রং বেছে নিন</div>
+                        <div class="gradient-presets" id="gradientPresets">
+                            @{
+                                var gradients = new (string label, string css)[] {
+                                                        ("সবুজ","linear-gradient(135deg,#1a6b3c,#2d9b5a)"),
+                                                        ("গাঢ় সবুজ","linear-gradient(135deg,#0f4226,#1a6b3c)"),
+                                                        ("নীল","linear-gradient(135deg,#1a4878,#2d70b8)"),
+                                                        ("বেগুনি","linear-gradient(135deg,#5a1a7a,#8840b0)"),
+                                                        ("কমলা","linear-gradient(135deg,#8b5a10,#c8993a)"),
+                                                        ("লাল","linear-gradient(135deg,#7a1a1a,#b84040)"),
+                                                        ("সায়ান","linear-gradient(135deg,#1a6b6b,#2d9b9b)"),
+                                                        ("ধূসর","linear-gradient(135deg,#3a4a3a,#6a7a6a)"),
+                                                        };
+                                foreach (var g in gradients)
+                                {
+                                    <div class="gp-swatch" style="background:@g.css"
+                                         onclick="selectGradient('@g.css')"
+                                         title="@g.label"></div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order & Flags -->
+            <div class="form-section">
+                <div class="fs-header">
+                    <div class="fs-icon">⚙️</div>
+                    <div><h3>ক্রম ও সেটিংস</h3></div>
+                </div>
+                <div class="fs-body">
+                    <div class="form-group">
+                        <label class="form-label">ক্রম নম্বর (SortOrder)</label>
+                        <input asp-for="SortOrder" type="number" class="form-control" value="0" min="0" />
+                        <div class="field-hint">ℹ️ ছোট সংখ্যা আগে দেখাবে</div>
+                    </div>
+                    <div class="toggle-row">
+                        <label class="toggle-item" id="featuredToggle" for="IsFeatured">
+                            <div class="toggle-sw">
+                                <input asp-for="IsFeatured" type="checkbox" id="IsFeatured"
+                                       onchange="syncToggle('featuredToggle','IsFeatured')" />
+                                <div class="ts-track"></div>
+                                <div class="ts-thumb"></div>
+                            </div>
+                            <div class="ti-info">
+                                <strong>⭐ ফিচার্ড</strong>
+                                <span>গ্যালারিতে বড় করে দেখাবে</span>
+                            </div>
+                        </label>
+                        <label class="toggle-item checked" id="activeToggle" for="IsActive">
+                            <div class="toggle-sw">
+                                <input asp-for="IsActive" type="checkbox" id="IsActive" checked
+                                       onchange="syncToggle('activeToggle','IsActive')" />
+                                <div class="ts-track"></div>
+                                <div class="ts-thumb" style="transform:translateX(18px)"></div>
+                            </div>
+                            <div class="ti-info">
+                                <strong>✅ সক্রিয়</strong>
+                                <span>ওয়েবসাইটে দেখাবে</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
             </div>
         </div>
-        <div style="display:flex;gap:1rem"><button type="submit" class="btn btn-primary">💾 সংরক্ষণ</button><a href="/Admin/GalleryList" class="btn btn-outline">বাতিল</a></div>
-    </form>
-</div>
+
+        <!-- SIDEBAR -->
+        <div>
+            <div class="sidebar-card">
+                <div class="sc-hd">👁️ প্রিভিউ</div>
+                <div class="sc-bd">
+                    <div class="gallery-preview">
+                        <div class="gp-visual" id="gpVisual">
+                            <div class="gp-visual-bg" id="gpBg"></div>
+                            <div class="gp-vis-overlay"></div>
+                            <span class="gp-icon-large" id="gpIcon">🖼️</span>
+                        </div>
+                        <div class="gp-info">
+                            <div class="gp-info-title" id="gpTitle">শিরোনাম এখানে দেখাবে</div>
+                        </div>
+                    </div>
+                    <div class="field-hint" style="margin-top:0.6rem;">ℹ️ লাইভ প্রিভিউ</div>
+                </div>
+            </div>
+
+            <div class="sidebar-card">
+                <div class="sc-hd">💡 নির্দেশিকা</div>
+                <div class="sc-bd" style="display:flex;flex-direction:column;gap:0.65rem;">
+                    <div class="field-hint">📸 ছবি আপলোড করলে gradient দেখাবে না</div>
+                    <div class="field-hint">⭐ ফিচার্ড আইটেম গ্যালারিতে বড় করে দেখায়</div>
+                    <div class="field-hint">🔢 SortOrder দিয়ে সাজানো যায়</div>
+                    <div class="field-hint">📐 ছবি অনুপাত 4:3 বা 16:9 ভালো দেখায়</div>
+                </div>
+            </div>
+
+            <div class="sidebar-card">
+                <div class="form-actions">
+                    <a href="/Admin/GalleryList" class="btn btn-outline">বাতিল</a>
+                    <button type="submit" class="btn btn-primary">💾 সংরক্ষণ করুন</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    const ICONS = ["🕌","🏫","🌾","🏡","🌿","⛪","🌊","🏞️","🎭","🌺","🦋","🏆"];
+    const GRADS = [
+        "linear-gradient(135deg,#1a6b3c,#2d9b5a)",
+        "linear-gradient(135deg,#0f4226,#1a6b3c)",
+        "linear-gradient(135deg,#1a4878,#2d70b8)",
+        "linear-gradient(135deg,#5a1a7a,#8840b0)",
+        "linear-gradient(135deg,#8b5a10,#c8993a)",
+        "linear-gradient(135deg,#7a1a1a,#b84040)",
+        "linear-gradient(135deg,#1a6b6b,#2d9b9b)",
+        "linear-gradient(135deg,#3a4a3a,#6a7a6a)",
+    ];
+
+    function updatePreview() {
+        const title = document.getElementById('titleInput')?.value || 'শিরোনাম এখানে দেখাবে';
+        const icon = document.getElementById('iconInput')?.value || '🖼️';
+        const grad = document.getElementById('gradientInput')?.value || 'linear-gradient(135deg,#1a6b3c,#2d9b5a)';
+        document.getElementById('gpTitle').textContent = title;
+        document.getElementById('gpIcon').textContent = icon || '🖼️';
+        const bg = document.getElementById('gpBg');
+        if (!bg.classList.contains('show')) {
+            document.getElementById('gpVisual').style.background = grad;
+        }
+    }
+    function selectIcon(ic) {
+        document.getElementById('iconInput').value = ic;
+        document.querySelectorAll('.icon-opt').forEach(el => el.classList.toggle('selected', el.textContent === ic));
+        updatePreview();
+    }
+    function selectGradient(grad) {
+        document.getElementById('gradientInput').value = grad;
+        document.querySelectorAll('.gp-swatch').forEach((el, i) => el.classList.toggle('selected', GRADS[i] === grad));
+        updatePreview();
+    }
+    function handleImageChange(input) {
+        if (input.files && input.files[0]) {
+            if (input.files[0].size > 5*1024*1024) { alert('ফাইল ৫MB-এর বেশি হবে না।'); input.value=''; return; }
+            const reader = new FileReader();
+            reader.onload = e => {
+                document.getElementById('imgPreview').src = e.target.result;
+                document.getElementById('previewWrap').classList.add('show');
+                document.getElementById('gpBg').style.backgroundImage = `url('${e.target.result}')`;
+                document.getElementById('gpBg').classList.add('show');
+                document.getElementById('uploadZone').style.display = 'none';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    function removeImage() {
+        document.getElementById('imageInput').value = '';
+        document.getElementById('imgPreview').src = '';
+        document.getElementById('previewWrap').classList.remove('show');
+        document.getElementById('gpBg').style.backgroundImage = '';
+        document.getElementById('gpBg').classList.remove('show');
+        document.getElementById('uploadZone').style.display = 'block';
+        updatePreview();
+    }
+    function syncToggle(wrapId, inputId) {
+        document.getElementById(wrapId).classList.toggle('checked', document.getElementById(inputId).checked);
+    }
+    const zone = document.getElementById('uploadZone');
+    if (zone) {
+        zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+        zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+        zone.addEventListener('drop', e => {
+            e.preventDefault(); zone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) { document.getElementById('imageInput').files = e.dataTransfer.files; handleImageChange(document.getElementById('imageInput')); }
+        });
+    }
+    window.addEventListener('DOMContentLoaded', updatePreview);
+</script>

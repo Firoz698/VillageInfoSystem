@@ -4,60 +4,661 @@
     Layout = "_AdminLayout";
 }
 
-<div class="breadcrumb"><a href="/Admin/NewsList">সংবাদ</a> › সম্পাদনা</div>
+<style>
+    /* ── REUSE SAME STYLES ── */
+    .form-page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.6rem;
+    }
 
-<div class="card" style="max-width:750px">
-    <div class="card-title" style="margin-bottom:1.2rem">✏️ সংবাদ সম্পাদনা করুন</div>
-    <form asp-action="NewsEdit" method="post">
-        @Html.AntiForgeryToken()
-        <input asp-for="Id" type="hidden" />
-        <div class="form-group">
-            <label asp-for="Title"></label>
-            <input asp-for="Title" class="form-control" />
-            <span asp-validation-for="Title" style="color:red;font-size:0.82rem"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="Description"></label>
-            <textarea asp-for="Description" class="form-control"></textarea>
-        </div>
-        <div class="form-grid">
-            <div class="form-group">
-                <label asp-for="Category"></label>
-                <select asp-for="Category" class="form-control">
-                    <option>সাধারণ</option>
-                    <option>শিক্ষা</option>
-                    <option>উন্নয়ন</option>
-                    <option>কৃষি</option>
-                    <option>স্বাস্থ্য</option>
-                    <option>ধর্মীয়</option>
-                    <option>খেলাধুলা</option>
-                    <option>সংস্কৃতি</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Icon"></label>
-                <input asp-for="Icon" class="form-control" />
-            </div>
-        </div>
-        <div class="form-grid">
-            <div class="form-group">
-                <label asp-for="PublishedAt"></label>
-                <input asp-for="PublishedAt" type="datetime-local" class="form-control" />
-            </div>
-            <div class="form-group" style="display:flex;align-items:center;gap:2rem;padding-top:1.8rem">
-                <div class="form-check">
-                    <input asp-for="IsFeatured" type="checkbox" />
-                    <label asp-for="IsFeatured" style="font-weight:500">শীর্ষ সংবাদ</label>
-                </div>
-                <div class="form-check">
-                    <input asp-for="IsActive" type="checkbox" />
-                    <label asp-for="IsActive" style="font-weight:500">সক্রিয়</label>
-                </div>
-            </div>
-        </div>
-        <div style="display:flex;gap:1rem;margin-top:0.5rem">
-            <button type="submit" class="btn btn-primary">💾 আপডেট করুন</button>
-            <a href="/Admin/NewsList" class="btn btn-outline">বাতিল</a>
-        </div>
-    </form>
+    .fph-left h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.4rem;
+        color: var(--green-dark);
+        font-weight: 900;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .fph-left p {
+        font-size: 0.84rem;
+        color: var(--text-muted);
+        margin-top: 2px;
+    }
+
+    .edit-id-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.3rem 0.8rem;
+        background: rgba(26,107,60,0.07);
+        border: 1px solid rgba(26,107,60,0.15);
+        border-radius: 50px;
+        font-size: 0.76rem;
+        color: var(--green-dark);
+        font-weight: 600;
+    }
+
+    .form-layout {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 1.4rem;
+        align-items: start;
+    }
+
+    .form-section {
+        background: white;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        margin-bottom: 1.2rem;
+    }
+
+        .form-section:last-child {
+            margin-bottom: 0;
+        }
+
+    .fs-header {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 1rem 1.4rem;
+        border-bottom: 1px solid var(--border);
+        background: #fafcfa;
+    }
+
+    .fs-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 7px;
+        background: var(--green-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+        flex-shrink: 0;
+    }
+
+    .fs-header h3 {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--green-dark);
+    }
+
+    .fs-header p {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-top: 1px;
+    }
+
+    .fs-body {
+        padding: 1.3rem 1.4rem;
+    }
+
+    .field-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.1rem;
+    }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+    .form-label {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-weight: 600;
+        color: var(--green-dark);
+        margin-bottom: 0.42rem;
+        font-size: 0.84rem;
+    }
+
+    .req {
+        color: #e74c3c;
+        font-size: 0.75rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.68rem 0.95rem;
+        border: 1.5px solid var(--border);
+        border-radius: 9px;
+        font-family: 'Hind Siliguri', sans-serif;
+        font-size: 0.9rem;
+        color: var(--text);
+        background: white;
+        transition: all 0.2s;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(26,107,60,0.09);
+        }
+
+        .form-control::placeholder {
+            color: #b5c8ba;
+        }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 110px;
+    }
+
+    select.form-control {
+        cursor: pointer;
+    }
+
+    .field-hint {
+        font-size: 0.74rem;
+        color: var(--text-muted);
+        margin-top: 0.28rem;
+    }
+
+    .validation-msg {
+        font-size: 0.75rem;
+        color: #c0392b;
+        margin-top: 0.25rem;
+        display: block;
+    }
+
+    .label-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.42rem;
+    }
+
+    .char-counter {
+        font-size: 0.72rem;
+        color: var(--text-muted);
+    }
+
+        .char-counter.warn {
+            color: #e67e22;
+        }
+
+    .icon-picker {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-top: 0.6rem;
+    }
+
+    .icon-option {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        border: 1.5px solid var(--border);
+        background: white;
+        cursor: pointer;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+
+        .icon-option:hover {
+            border-color: var(--green);
+            background: var(--green-muted);
+            transform: scale(1.1);
+        }
+
+        .icon-option.selected {
+            border-color: var(--green);
+            background: var(--green-muted);
+        }
+
+    .cat-pills {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-top: 0.6rem;
+    }
+
+    .cat-pill {
+        padding: 0.3rem 0.75rem;
+        border-radius: 50px;
+        border: 1.5px solid var(--border);
+        background: white;
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        color: var(--text-muted);
+    }
+
+        .cat-pill:hover {
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        .cat-pill.selected {
+            background: var(--green);
+            color: white;
+            border-color: var(--green);
+        }
+
+    .toggle-row {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .toggle-item {
+        flex: 1;
+        min-width: 140px;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.8rem 1rem;
+        background: #f8fbf8;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+        .toggle-item:hover {
+            border-color: var(--green);
+            background: #f0f8f3;
+        }
+
+        .toggle-item.checked {
+            border-color: var(--green);
+            background: rgba(26,107,60,0.06);
+        }
+
+    .toggle-sw {
+        position: relative;
+        width: 40px;
+        height: 22px;
+        flex-shrink: 0;
+    }
+
+        .toggle-sw input {
+            display: none;
+        }
+
+    .ts-track {
+        position: absolute;
+        inset: 0;
+        background: #dde8dd;
+        border-radius: 50px;
+        transition: background 0.25s;
+    }
+
+    .ts-thumb {
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 16px;
+        height: 16px;
+        background: white;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        transition: transform 0.25s;
+    }
+
+    .toggle-sw input:checked ~ .ts-track {
+        background: var(--green);
+    }
+
+    .toggle-sw input:checked ~ .ts-thumb {
+        transform: translateX(18px);
+    }
+
+    .ti-info strong {
+        display: block;
+        font-size: 0.83rem;
+        color: var(--green-dark);
+        font-weight: 700;
+    }
+
+    .ti-info span {
+        font-size: 0.72rem;
+        color: var(--text-muted);
+    }
+
+    .sidebar-card {
+        background: white;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        margin-bottom: 1.2rem;
+    }
+
+        .sidebar-card:last-child {
+            margin-bottom: 0;
+        }
+
+    .sc-hd {
+        padding: 0.9rem 1.2rem;
+        border-bottom: 1px solid var(--border);
+        background: #fafcfa;
+        font-size: 0.86rem;
+        font-weight: 700;
+        color: var(--green-dark);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .sc-bd {
+        padding: 1.1rem 1.2rem;
+    }
+
+    .news-preview {
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+    }
+
+    .np-header {
+        background: linear-gradient(135deg, var(--green-dark), #2d9b5a);
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        position: relative;
+    }
+
+    .np-cat-badge {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        background: rgba(200,153,58,0.9);
+        color: var(--green-dark);
+        padding: 0.15rem 0.6rem;
+        border-radius: 50px;
+        font-size: 0.65rem;
+        font-weight: 800;
+    }
+
+    .np-body {
+        padding: 0.9rem;
+    }
+
+    .np-title {
+        font-weight: 700;
+        font-size: 0.88rem;
+        color: var(--green-dark);
+        line-height: 1.3;
+        margin-bottom: 0.35rem;
+    }
+
+    .np-desc {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        line-height: 1.5;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 0.7rem;
+        padding: 1.1rem 1.2rem;
+        border-top: 1px solid var(--border);
+        background: #fafcfa;
+    }
+
+        .form-actions .btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+    @@media (max-width: 860px) {
+        .form-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 500px) {
+        .field-grid-2 {
+            grid-template-columns: 1fr;
+        }
+
+        .toggle-row {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<!-- Header -->
+<div class="form-page-header">
+    <div class="fph-left">
+        <h2>✏️ সংবাদ সম্পাদনা করুন</h2>
+        <p>বিদ্যমান সংবাদের তথ্য আপডেট করুন</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;">
+        <div class="edit-id-badge">🆔 সংবাদ #@Model.Id</div>
+        <a href="/Admin/NewsList" class="btn btn-outline btn-sm">← সংবাদ তালিকা</a>
+    </div>
 </div>
+
+<form asp-action="NewsEdit" method="post" id="newsForm">
+    @Html.AntiForgeryToken()
+    <input asp-for="Id" type="hidden" />
+
+    <div class="form-layout">
+        <!-- LEFT -->
+        <div>
+            <!-- Title & Description -->
+            <div class="form-section">
+                <div class="fs-header">
+                    <div class="fs-icon">📝</div>
+                    <div><h3>সংবাদের বিষয়বস্তু</h3><p>শিরোনাম ও বিস্তারিত বিবরণ সম্পাদনা করুন</p></div>
+                </div>
+                <div class="fs-body">
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label class="form-label" style="margin:0">শিরোনাম <span class="req">*</span></label>
+                            <span class="char-counter" id="titleCounter">০/১০০</span>
+                        </div>
+                        <input asp-for="Title" class="form-control" id="titleInput"
+                               oninput="updateTitleCounter(); updatePreview();" maxlength="100" />
+                        <span asp-validation-for="Title" class="validation-msg"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label class="form-label" style="margin:0">বিস্তারিত বিবরণ</label>
+                            <span class="char-counter" id="descCounter">০</span>
+                        </div>
+                        <textarea asp-for="Description" class="form-control" id="descInput"
+                                  rows="5" oninput="updateDescCounter(); updatePreview();"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category & Icon -->
+            <div class="form-section">
+                <div class="fs-header">
+                    <div class="fs-icon">🏷️</div>
+                    <div><h3>বিভাগ ও আইকন</h3><p>বিভাগ ও প্রতীক পরিবর্তন করুন</p></div>
+                </div>
+                <div class="fs-body">
+                    <div class="field-grid-2">
+                        <div class="form-group">
+                            <label class="form-label">বিভাগ</label>
+                            <select asp-for="Category" class="form-control" id="catSelect"
+                                    onchange="syncCatPills(); updatePreview();">
+                                <option>সাধারণ</option>
+                                <option>শিক্ষা</option>
+                                <option>উন্নয়ন</option>
+                                <option>কৃষি</option>
+                                <option>স্বাস্থ্য</option>
+                                <option>ধর্মীয়</option>
+                                <option>খেলাধুলা</option>
+                                <option>সংস্কৃতি</option>
+                            </select>
+                            <div class="cat-pills" id="catPills">
+                                @foreach (var cat in new[] { "সাধারণ", "শিক্ষা", "উন্নয়ন", "কৃষি", "স্বাস্থ্য", "ধর্মীয়", "খেলাধুলা", "সংস্কৃতি" })
+                                {
+                                    <div class="cat-pill" onclick="selectCat('@cat')">@cat</div>
+                                }
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">আইকন ইমোজি</label>
+                            <input asp-for="Icon" class="form-control" id="iconInput"
+                                   oninput="updatePreview()" maxlength="8" />
+                            <div class="icon-picker">
+                                @foreach (var ic in new[] { "📰", "🏫", "🛣️", "🌾", "🏥", "🕌", "⚽", "🎭", "🌿", "📢", "🏆", "🔨" })
+                                {
+                                    <div class="icon-option" onclick="selectIcon('@ic')">@ic</div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Date & Flags -->
+            <div class="form-section">
+                <div class="fs-header">
+                    <div class="fs-icon">📅</div>
+                    <div><h3>তারিখ ও সেটিংস</h3></div>
+                </div>
+                <div class="fs-body">
+                    <div class="form-group">
+                        <label class="form-label">প্রকাশের তারিখ ও সময়</label>
+                        <input asp-for="PublishedAt" type="datetime-local" class="form-control" />
+                    </div>
+                    <div class="toggle-row">
+                        <label class="toggle-item @(Model.IsFeatured ? "checked" : "")" id="featuredToggle" for="IsFeatured">
+                            <div class="toggle-sw">
+                                <input asp-for="IsFeatured" type="checkbox" id="IsFeatured"
+                                       onchange="syncToggleStyle('featuredToggle','IsFeatured')" />
+                                <div class="ts-track"></div>
+                                <div class="ts-thumb" style="@(Model.IsFeatured ? "transform:translateX(18px)" : "")"></div>
+                            </div>
+                            <div class="ti-info">
+                                <strong>⭐ শীর্ষ সংবাদ</strong>
+                                <span>হোমপেজে বড় করে দেখাবে</span>
+                            </div>
+                        </label>
+                        <label class="toggle-item @(Model.IsActive ? "checked" : "")" id="activeToggle" for="IsActive">
+                            <div class="toggle-sw">
+                                <input asp-for="IsActive" type="checkbox" id="IsActive"
+                                       onchange="syncToggleStyle('activeToggle','IsActive')" />
+                                <div class="ts-track"></div>
+                                <div class="ts-thumb" style="@(Model.IsActive ? "transform:translateX(18px)" : "")"></div>
+                            </div>
+                            <div class="ti-info">
+                                <strong>✅ সক্রিয়</strong>
+                                <span>ওয়েবসাইটে প্রকাশিত থাকবে</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SIDEBAR -->
+        <div>
+            <div class="sidebar-card">
+                <div class="sc-hd">👁️ প্রিভিউ</div>
+                <div class="sc-bd">
+                    <div class="news-preview">
+                        <div class="np-header">
+                            <span id="prevIcon">@(Model.Icon ?? "📰")</span>
+                            <div class="np-cat-badge" id="prevCat">@(Model.Category ?? "সাধারণ")</div>
+                        </div>
+                        <div class="np-body">
+                            <div class="np-title" id="prevTitle">@(Model.Title ?? "শিরোনাম")</div>
+                            <div class="np-desc" id="prevDesc">@(Model.Description?.Substring(0, Math.Min(Model.Description?.Length ?? 0, 80)) ?? "বিবরণ...")</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="sidebar-card" style="border-color:rgba(231,76,60,0.2);">
+                <div class="sc-hd" style="color:#c0392b;background:#fdf5f5;border-color:rgba(231,76,60,0.15);">⚠️ ডিলিট জোন</div>
+                <div class="sc-bd">
+                    <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.9rem;">এই সংবাদ স্থায়ীভাবে মুছে ফেলতে নিচের বাটনে ক্লিক করুন।</p>
+                    <form method="post" action="/Admin/NewsDelete/@Model.Id"
+                          onsubmit="return confirm('এই সংবাদ মুছে ফেলবেন?')">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger btn-sm" style="width:100%;justify-content:center;">
+                            🗑️ সংবাদ মুছুন
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="sidebar-card">
+                <div class="form-actions">
+                    <a href="/Admin/NewsList" class="btn btn-outline">বাতিল</a>
+                    <button type="submit" class="btn btn-primary">💾 আপডেট করুন</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    function updateTitleCounter() {
+        const v = document.getElementById('titleInput').value.length;
+        const el = document.getElementById('titleCounter');
+        el.textContent = v + '/১০০';
+        el.className = 'char-counter' + (v > 90 ? ' warn' : '');
+    }
+    function updateDescCounter() {
+        const v = document.getElementById('descInput').value.length;
+        document.getElementById('descCounter').textContent = v;
+    }
+    function updatePreview() {
+        const title = document.getElementById('titleInput')?.value || 'শিরোনাম';
+        const desc = document.getElementById('descInput')?.value || 'বিবরণ...';
+        const icon = document.getElementById('iconInput')?.value || '📰';
+        const cat = document.getElementById('catSelect')?.value || 'সাধারণ';
+        document.getElementById('prevTitle').textContent = title.substring(0, 60);
+        document.getElementById('prevDesc').textContent = desc.substring(0, 80);
+        document.getElementById('prevIcon').textContent = icon || '📰';
+        document.getElementById('prevCat').textContent = cat;
+    }
+    function selectIcon(icon) {
+        document.getElementById('iconInput').value = icon;
+        document.querySelectorAll('.icon-option').forEach(el => el.classList.toggle('selected', el.textContent === icon));
+        updatePreview();
+    }
+    function selectCat(cat) {
+        document.getElementById('catSelect').value = cat;
+        syncCatPills();
+        updatePreview();
+    }
+    function syncCatPills() {
+        const cat = document.getElementById('catSelect').value;
+        document.querySelectorAll('.cat-pill').forEach(el => el.classList.toggle('selected', el.textContent === cat));
+    }
+    function syncToggleStyle(wrapId, inputId) {
+        document.getElementById(wrapId).classList.toggle('checked', document.getElementById(inputId).checked);
+    }
+    window.addEventListener('DOMContentLoaded', () => {
+        syncCatPills(); updatePreview();
+        updateTitleCounter(); updateDescCounter();
+        // sync current icon
+        const curIcon = document.getElementById('iconInput')?.value;
+        if (curIcon) {
+            document.querySelectorAll('.icon-option').forEach(el => {
+                if (el.textContent.trim() === curIcon.trim()) el.classList.add('selected');
+            });
+        }
+    });
+</script>

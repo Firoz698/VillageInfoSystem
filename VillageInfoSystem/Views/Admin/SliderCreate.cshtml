@@ -4,102 +4,730 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="fw-bold text-success mb-0">➕ নতুন স্লাইড যোগ করুন</h4>
-    <a href="/Admin/SliderList" class="btn btn-outline-secondary">← ফিরে যান</a>
-</div>
+<style>
+    /* ── SHARED FORM STYLES ── */
+    .form-page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.6rem;
+    }
 
-<div class="card shadow-sm border-0">
-    <div class="card-body p-4">
-        <form method="post" enctype="multipart/form-data">
-            @Html.AntiForgeryToken()
+    .fph-left h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.4rem;
+        color: var(--green-dark);
+        font-weight: 900;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
 
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold">Badge টেক্সট <span class="text-danger">*</span></label>
-                    <input asp-for="Badge" class="form-control" placeholder="🌿 খুলনা বিভাগ, বাংলাদেশ" />
-                    <span asp-validation-for="Badge" class="text-danger small"></span>
-                </div>
+    .fph-left p {
+        font-size: 0.84rem;
+        color: var(--text-muted);
+        margin-top: 2px;
+    }
 
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold">ক্রম নম্বর (SortOrder)</label>
-                    <input asp-for="SortOrder" type="number" class="form-control" value="0" />
-                </div>
+    .form-layout {
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 1.4rem;
+        align-items: start;
+    }
 
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold">Title <span class="text-danger">*</span></label>
-                    <input asp-for="Title" class="form-control" placeholder="স্বাগতম" />
-                    <span asp-validation-for="Title" class="text-danger small"></span>
-                </div>
+    /* ── FORM SECTIONS ── */
+    .form-section {
+        background: white;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        margin-bottom: 1.2rem;
+    }
 
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold">Title Highlight <span class="text-danger">*</span></label>
-                    <input asp-for="TitleHighlight" class="form-control" placeholder="খোকসা মল্লিক পাড়া" />
-                    <span asp-validation-for="TitleHighlight" class="text-danger small"></span>
-                </div>
+        .form-section:last-child {
+            margin-bottom: 0;
+        }
 
-                <div class="col-12">
-                    <label class="form-label fw-semibold">সাব টেক্সট</label>
-                    <textarea asp-for="SubText" class="form-control" rows="2"
-                              placeholder="স্লাইডের বিবরণ লিখুন..."></textarea>
-                </div>
+    .fs-header {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 1rem 1.4rem;
+        border-bottom: 1px solid var(--border);
+        background: #fafcfa;
+    }
 
-                <div class="col-md-3">
-                    <label class="form-label fw-semibold">বাটন ১ টেক্সট</label>
-                    <input asp-for="Btn1Text" class="form-control" placeholder="গ্রাম সম্পর্কে জানুন" />
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label fw-semibold">বাটন ১ লিংক</label>
-                    <input asp-for="Btn1Link" class="form-control" placeholder="#about" />
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label fw-semibold">বাটন ২ টেক্সট</label>
-                    <input asp-for="Btn2Text" class="form-control" placeholder="যোগাযোগ করুন" />
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label fw-semibold">বাটন ২ লিংক</label>
-                    <input asp-for="Btn2Link" class="form-control" placeholder="#contact" />
-                </div>
+    .fs-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 7px;
+        background: var(--green-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+        flex-shrink: 0;
+    }
 
-                <div class="col-md-8">
-                    <label class="form-label fw-semibold">ব্যাকগ্রাউন্ড ইমেজ</label>
-                    <input type="file" name="imageFile" class="form-control"
-                           accept="image/*" onchange="previewImage(this)" />
-                    <small class="text-muted">JPG, PNG, WEBP — সর্বোচ্চ 5MB</small>
-                </div>
+    .fs-header h3 {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--green-dark);
+    }
 
-                <div class="col-md-4">
-                    <label class="form-label fw-semibold">সক্রিয়</label>
-                    <div class="form-check form-switch mt-2">
-                        <input asp-for="IsActive" class="form-check-input" type="checkbox" checked />
-                        <label class="form-check-label">সক্রিয় রাখুন</label>
-                    </div>
-                </div>
+    .fs-header p {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-top: 1px;
+    }
 
-                <!-- Image Preview -->
-                <div class="col-12" id="previewBox" style="display:none;">
-                    <label class="form-label fw-semibold">প্রিভিউ</label>
-                    <img id="imgPreview"
-                         style="width:100%;max-height:220px;object-fit:cover;border-radius:12px;border:2px solid #dee2e6;" />
-                </div>
-            </div>
+    .fs-body {
+        padding: 1.3rem 1.4rem;
+    }
 
-            <div class="mt-4 d-flex gap-2">
-                <button type="submit" class="btn btn-success px-4">💾 সংরক্ষণ করুন</button>
-                <a href="/Admin/SliderList" class="btn btn-outline-secondary px-4">বাতিল</a>
-            </div>
-        </form>
-    </div>
-</div>
+    /* ── FORM FIELDS ── */
+    .field-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
 
-<script>
-    function previewImage(input) {
-        const box = document.getElementById('previewBox');
-        const img = document.getElementById('imgPreview');
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = e => { img.src = e.target.result; box.style.display = 'block'; };
-            reader.readAsDataURL(input.files[0]);
+    .field-grid-4 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.1rem;
+    }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+    .form-label {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-weight: 600;
+        color: var(--green-dark);
+        margin-bottom: 0.42rem;
+        font-size: 0.84rem;
+    }
+
+    .req {
+        color: #e74c3c;
+        font-size: 0.75rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.68rem 0.95rem;
+        border: 1.5px solid var(--border);
+        border-radius: 9px;
+        font-family: 'Hind Siliguri', sans-serif;
+        font-size: 0.9rem;
+        color: var(--text);
+        background: white;
+        transition: all 0.2s;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(26,107,60,0.09);
+        }
+
+        .form-control::placeholder {
+            color: #b5c8ba;
+        }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 90px;
+    }
+
+    .field-hint {
+        font-size: 0.74rem;
+        color: var(--text-muted);
+        margin-top: 0.28rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .validation-msg {
+        font-size: 0.75rem;
+        color: #c0392b;
+        margin-top: 0.25rem;
+    }
+
+    /* ── TOGGLE SWITCH ── */
+    .toggle-wrap {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+        padding: 0.85rem 1rem;
+        background: #f8fbf8;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+        .toggle-wrap:hover {
+            border-color: var(--green);
+            background: #f0f8f3;
+        }
+
+    .toggle-switch {
+        position: relative;
+        width: 44px;
+        height: 24px;
+        flex-shrink: 0;
+    }
+
+        .toggle-switch input {
+            display: none;
+        }
+
+    .toggle-track {
+        position: absolute;
+        inset: 0;
+        background: #dde8dd;
+        border-radius: 50px;
+        transition: background 0.25s;
+        cursor: pointer;
+    }
+
+    .toggle-thumb {
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 18px;
+        height: 18px;
+        background: white;
+        border-radius: 50%;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        transition: transform 0.25s;
+    }
+
+    .toggle-switch input:checked ~ .toggle-track {
+        background: var(--green);
+    }
+
+    .toggle-switch input:checked ~ .toggle-thumb {
+        transform: translateX(20px);
+    }
+
+    .toggle-info strong {
+        display: block;
+        font-size: 0.86rem;
+        color: var(--green-dark);
+        font-weight: 700;
+    }
+
+    .toggle-info span {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+    }
+
+    /* ── IMAGE UPLOAD ── */
+    .upload-zone {
+        border: 2px dashed var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.25s;
+        position: relative;
+        background: #fafcfa;
+    }
+
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: var(--green);
+            background: rgba(26,107,60,0.04);
+        }
+
+        .upload-zone input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+    .uz-icon {
+        font-size: 2rem;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .uz-text {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+        .uz-text strong {
+            color: var(--green);
+        }
+
+    .uz-hint {
+        font-size: 0.73rem;
+        color: #b5c8ba;
+        margin-top: 0.25rem;
+    }
+
+    /* ── IMAGE PREVIEW ── */
+    .img-preview-wrap {
+        display: none;
+        margin-top: 1rem;
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 2px solid var(--border);
+    }
+
+        .img-preview-wrap img {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .img-preview-wrap.show {
+            display: block;
+        }
+
+    .img-remove-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 28px;
+        height: 28px;
+        background: rgba(231,76,60,0.85);
+        border: none;
+        border-radius: 50%;
+        color: white;
+        font-size: 0.85rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+    }
+
+        .img-remove-btn:hover {
+            background: #c0392b;
+        }
+
+    /* ── SIDEBAR CARD ── */
+    .sidebar-card {
+        background: white;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        margin-bottom: 1.2rem;
+    }
+
+        .sidebar-card:last-child {
+            margin-bottom: 0;
+        }
+
+    .sc-hd {
+        padding: 0.9rem 1.2rem;
+        border-bottom: 1px solid var(--border);
+        background: #fafcfa;
+        font-size: 0.86rem;
+        font-weight: 700;
+        color: var(--green-dark);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .sc-bd {
+        padding: 1.1rem 1.2rem;
+    }
+
+    /* LIVE PREVIEW CARD */
+    .live-preview {
+        border-radius: 12px;
+        overflow: hidden;
+        height: 160px;
+        background: linear-gradient(135deg, var(--green-dark), #2d9b5a);
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 1.2rem;
+    }
+
+    .lp-bg {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+        .lp-bg.show {
+            opacity: 1;
+        }
+
+    .lp-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(8,40,24,0.6);
+    }
+
+    .lp-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .lp-badge {
+        display: inline-block;
+        background: rgba(200,153,58,0.25);
+        border: 1px solid rgba(200,153,58,0.5);
+        color: #e8b84b;
+        padding: 0.15rem 0.65rem;
+        border-radius: 50px;
+        font-size: 0.65rem;
+        font-weight: 700;
+        margin-bottom: 0.45rem;
+    }
+
+    .lp-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1rem;
+        color: white;
+        font-weight: 900;
+        line-height: 1.2;
+    }
+
+        .lp-title span {
+            color: #e8b84b;
+        }
+
+    .lp-sub {
+        font-size: 0.68rem;
+        color: rgba(255,255,255,0.65);
+        margin-top: 0.3rem;
+    }
+
+    /* FORM ACTIONS */
+    .form-actions {
+        display: flex;
+        gap: 0.7rem;
+        padding: 1.1rem 1.2rem;
+        border-top: 1px solid var(--border);
+        background: #fafcfa;
+    }
+
+        .form-actions .btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+    /* ── CURRENT IMAGE ── */
+    .current-img-wrap {
+        border-radius: 10px;
+        overflow: hidden;
+        border: 2px solid var(--border);
+        margin-bottom: 0.8rem;
+        position: relative;
+    }
+
+        .current-img-wrap img {
+            width: 100%;
+            max-height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+
+    .ci-label {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0,0,0,0.55);
+        color: rgba(255,255,255,0.8);
+        font-size: 0.7rem;
+        padding: 0.35rem 0.7rem;
+        text-align: center;
+    }
+
+    @@media (max-width: 900px) {
+        .form-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .field-grid-4 {
+            grid-template-columns: 1fr 1fr;
         }
     }
+
+    @@media (max-width: 560px) {
+        .field-grid-2 {
+            grid-template-columns: 1fr;
+        }
+
+        .field-grid-4 {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- ── HEADER ── -->
+<div class="form-page-header">
+    <div class="fph-left">
+        <h2>➕ নতুন স্লাইড যোগ করুন</h2>
+        <p>হোমপেজ হিরো স্লাইডারে নতুন স্লাইড যোগ করুন</p>
+    </div>
+    <a href="/Admin/SliderList" class="btn btn-outline btn-sm">← ফিরে যান</a>
+</div>
+
+<form method="post" enctype="multipart/form-data" id="sliderForm">
+    @Html.AntiForgeryToken()
+
+    <div class="form-layout">
+
+        <!-- ── LEFT: MAIN FIELDS ── -->
+        <div>
+            <!-- Basic Info -->
+            <div class="form-section">
+                <div class="fs-header">
+                    <div class="fs-icon">🏷️</div>
+                    <div>
+                        <h3>মূল তথ্য</h3>
+                        <p>স্লাইডের শিরোনাম ও badge সেট করুন</p>
+                    </div>
+                </div>
+                <div class="fs-body">
+                    <div class="field-grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Badge টেক্সট <span class="req">*</span></label>
+                            <input asp-for="Badge" class="form-control" id="badgeInput"
+                                   placeholder="🌿 খুলনা বিভাগ, বাংলাদেশ"
+                                   oninput="updatePreview()" />
+                            <span asp-validation-for="Badge" class="validation-msg"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">ক্রম নম্বর</label>
+                            <input asp-for="SortOrder" type="number" class="form-control"
+                                   value="0" min="0" placeholder="0" />
+                            <div class="field-hint">ℹ️ ছোট সংখ্যা আগে দেখাবে</div>
+                        </div>
+                    </div>
+                    <div class="field-grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Title <span class="req">*</span></label>
+                            <input asp-for="Title" class="form-control" id="titleInput"
+                                   placeholder="স্বাগতম" oninput="updatePreview()" />
+                            <span asp-validation-for="Title" class="validation-msg"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Title Highlight <span class="req">*</span></label>
+                            <input asp-for="TitleHighlight" class="form-control" id="highlightInput"
+                                   placeholder="খোকসা মল্লিক পাড়া" oninput="updatePreview()" />
+                            <span asp-validation-for="TitleHighlight" class="validation-msg"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">সাব টেক্সট</label>
+                        <textarea asp-for="SubText" class="form-control" rows="2"
+                                  id="subInput" placeholder="স্লাইডের সংক্ষিপ্ত বিবরণ লিখুন..."
+                                  oninput="updatePreview()"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="form-section">
+                <div class="fs-header">
+                    <div class="fs-icon">🔗</div>
+                    <div>
+                        <h3>বাটন কনফিগারেশন</h3>
+                        <p>স্লাইডে দুটি পর্যন্ত বাটন যোগ করুন</p>
+                    </div>
+                </div>
+                <div class="fs-body">
+                    <div class="field-grid-4">
+                        <div class="form-group">
+                            <label class="form-label">বাটন ১ লেখা</label>
+                            <input asp-for="Btn1Text" class="form-control" placeholder="গ্রাম সম্পর্কে জানুন" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">বাটন ১ লিংক</label>
+                            <input asp-for="Btn1Link" class="form-control" placeholder="#about" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">বাটন ২ লেখা</label>
+                            <input asp-for="Btn2Text" class="form-control" placeholder="যোগাযোগ করুন" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">বাটন ২ লিংক</label>
+                            <input asp-for="Btn2Link" class="form-control" placeholder="#contact" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image Upload -->
+            <div class="form-section">
+                <div class="fs-header">
+                    <div class="fs-icon">🖼️</div>
+                    <div>
+                        <h3>ব্যাকগ্রাউন্ড ইমেজ</h3>
+                        <p>স্লাইডের পেছনে দেখানো ছবি আপলোড করুন</p>
+                    </div>
+                </div>
+                <div class="fs-body">
+                    <div class="upload-zone" id="uploadZone">
+                        <input type="file" name="imageFile" id="imageInput"
+                               accept="image/*" onchange="handleImageChange(this)" />
+                        <span class="uz-icon">📤</span>
+                        <div class="uz-text"><strong>ক্লিক করুন</strong> বা ছবি এখানে টেনে আনুন</div>
+                        <div class="uz-hint">JPG, PNG, WEBP · সর্বোচ্চ 5MB</div>
+                    </div>
+                    <div class="img-preview-wrap" id="previewWrap">
+                        <img id="imgPreview" src="" alt="Preview" />
+                        <button type="button" class="img-remove-btn" onclick="removeImage()" title="সরান">✕</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── RIGHT: SIDEBAR ── -->
+        <div>
+            <!-- Live Preview -->
+            <div class="sidebar-card">
+                <div class="sc-hd">👁️ লাইভ প্রিভিউ</div>
+                <div class="sc-bd">
+                    <div class="live-preview">
+                        <div class="lp-bg" id="lpBg"></div>
+                        <div class="lp-overlay"></div>
+                        <div class="lp-content">
+                            <div class="lp-badge" id="lpBadge">🌿 Badge</div>
+                            <div class="lp-title" id="lpTitle">
+                                Title <span id="lpHighlight">Highlight</span>
+                            </div>
+                            <div class="lp-sub" id="lpSub">সাব টেক্সট এখানে দেখাবে</div>
+                        </div>
+                    </div>
+                    <div class="field-hint" style="margin-top:0.6rem;">ℹ️ তথ্য টাইপ করলে প্রিভিউ আপডেট হবে</div>
+                </div>
+            </div>
+
+            <!-- Active Toggle -->
+            <div class="sidebar-card">
+                <div class="sc-hd">⚙️ স্ট্যাটাস</div>
+                <div class="sc-bd">
+                    <label class="toggle-wrap" for="IsActive">
+                        <div class="toggle-switch">
+                            <input asp-for="IsActive" type="checkbox" id="IsActive" checked />
+                            <div class="toggle-track" onclick=""></div>
+                            <div class="toggle-thumb"></div>
+                        </div>
+                        <div class="toggle-info">
+                            <strong>স্লাইড সক্রিয় রাখুন</strong>
+                            <span>বন্ধ করলে ওয়েবসাইটে দেখাবে না</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Tips -->
+            <div class="sidebar-card">
+                <div class="sc-hd">💡 টিপস</div>
+                <div class="sc-bd" style="display:flex;flex-direction:column;gap:0.7rem;">
+                    <div class="field-hint">🖼️ ইমেজ কমপক্ষে 1280×720px হলে ভালো দেখাবে</div>
+                    <div class="field-hint">🔢 ক্রম নম্বর ছোট হলে স্লাইড আগে দেখাবে</div>
+                    <div class="field-hint">✦ Title Highlight সোনালি রঙে দেখাবে</div>
+                    <div class="field-hint">🔗 লিংকে <code style="background:#f0f5f0;padding:0 4px;border-radius:3px;">#about</code> ধরনের anchor ব্যবহার করুন</div>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="sidebar-card">
+                <div class="form-actions">
+                    <a href="/Admin/SliderList" class="btn btn-outline">বাতিল</a>
+                    <button type="submit" class="btn btn-primary">💾 সংরক্ষণ করুন</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    function updatePreview() {
+        const badge = document.getElementById('badgeInput')?.value || 'Badge';
+        const title = document.getElementById('titleInput')?.value || 'Title';
+        const highlight = document.getElementById('highlightInput')?.value || 'Highlight';
+        const sub = document.getElementById('subInput')?.value || 'সাব টেক্সট এখানে দেখাবে';
+        document.getElementById('lpBadge').textContent = badge;
+        document.getElementById('lpTitle').childNodes[0].nodeValue = title + ' ';
+        document.getElementById('lpHighlight').textContent = highlight;
+        document.getElementById('lpSub').textContent = sub.substring(0, 80);
+    }
+
+    function handleImageChange(input) {
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            if (file.size > 5 * 1024 * 1024) {
+                alert('ফাইলের সাইজ ৫MB-এর বেশি হওয়া যাবে না।');
+                input.value = '';
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = e => {
+                document.getElementById('imgPreview').src = e.target.result;
+                document.getElementById('previewWrap').classList.add('show');
+                document.getElementById('lpBg').style.backgroundImage = `url('${e.target.result}')`;
+                document.getElementById('lpBg').classList.add('show');
+                document.getElementById('uploadZone').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function removeImage() {
+        document.getElementById('imageInput').value = '';
+        document.getElementById('imgPreview').src = '';
+        document.getElementById('previewWrap').classList.remove('show');
+        document.getElementById('lpBg').style.backgroundImage = '';
+        document.getElementById('lpBg').classList.remove('show');
+        document.getElementById('uploadZone').style.display = 'block';
+    }
+
+    /* Drag and drop */
+    const zone = document.getElementById('uploadZone');
+    if (zone) {
+        zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+        zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+        zone.addEventListener('drop', e => {
+            e.preventDefault();
+            zone.classList.remove('dragover');
+            const dt = e.dataTransfer;
+            if (dt.files.length) {
+                document.getElementById('imageInput').files = dt.files;
+                handleImageChange(document.getElementById('imageInput'));
+            }
+        });
+    }
+
+    /* Toggle thumb sync */
+    document.getElementById('IsActive')?.addEventListener('change', function() {
+        this.nextElementSibling.nextElementSibling.style.transform = this.checked ? 'translateX(20px)' : '';
+    });
 </script>

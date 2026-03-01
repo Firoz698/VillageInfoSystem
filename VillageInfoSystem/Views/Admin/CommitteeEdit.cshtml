@@ -3,27 +3,573 @@
     ViewData["Title"] = "সদস্য সম্পাদনা";
     Layout = "_AdminLayout";
 }
-<div class="breadcrumb"><a href="/Admin/CommitteeList">কমিটি</a> › সম্পাদনা</div>
-<div class="card" style="max-width:650px">
-    <div class="card-title" style="margin-bottom:1.2rem">✏️ সদস্য সম্পাদনা</div>
-    <form asp-action="CommitteeEdit" method="post">
-        @Html.AntiForgeryToken()
-        <input asp-for="Id" type="hidden" />
-        <div class="form-grid">
-            <div class="form-group"><label asp-for="Name"></label><input asp-for="Name" class="form-control" /></div>
-            <div class="form-group"><label asp-for="Role"></label><input asp-for="Role" class="form-control" /></div>
-        </div>
-        <div class="form-grid">
-            <div class="form-group"><label asp-for="Phone"></label><input asp-for="Phone" class="form-control" /></div>
-            <div class="form-group"><label asp-for="Avatar"></label><input asp-for="Avatar" class="form-control" /></div>
-        </div>
-        <div class="form-group"><label asp-for="Bio"></label><textarea asp-for="Bio" class="form-control"></textarea></div>
-        <div class="form-grid">
-            <div class="form-group"><label asp-for="SortOrder"></label><input asp-for="SortOrder" type="number" class="form-control" /></div>
-            <div class="form-group" style="display:flex;align-items:center;padding-top:1.8rem">
-                <div class="form-check"><input asp-for="IsActive" type="checkbox" /><label asp-for="IsActive">সক্রিয়</label></div>
+
+<style>
+    :root {
+        --primary: #1a3a5c;
+        --primary-light: #2563a8;
+        --accent: #c8a94e;
+        --success: #1a7a4a;
+        --danger: #b53a2e;
+        --surface: #ffffff;
+        --surface-alt: #f5f7fa;
+        --border: #dde3ec;
+        --border-focus: #2563a8;
+        --text-main: #1a2636;
+        --text-muted: #5a6b80;
+        --shadow-sm: 0 2px 8px rgba(26,58,92,0.07);
+        --shadow-md: 0 6px 24px rgba(26,58,92,0.12);
+        --radius: 12px;
+        --input-radius: 8px;
+    }
+
+    .page-wrapper {
+        animation: fadeUp 0.4s ease both;
+        max-width: 740px;
+    }
+
+    @@keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(14px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-bottom: 1.5rem;
+    }
+
+        .breadcrumb a {
+            color: var(--primary-light);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+            .breadcrumb a:hover {
+                text-decoration: underline;
+            }
+
+    /* ── Card ── */
+    .form-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+    }
+
+    .form-card-header {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface-alt);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .header-info {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .header-avatar {
+        width: 44px;
+        height: 44px;
+        background: linear-gradient(135deg, #dde8f8, #c5d7f4);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 1.3rem;
+        border: 2px solid #c0d3ef;
+    }
+
+    .form-card-header h2 {
+        font-family: 'Noto Serif Bengali', Georgia, serif;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin: 0;
+    }
+
+    .form-card-header .member-role {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        margin: 0.1rem 0 0;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.28rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.76rem;
+        font-weight: 600;
+    }
+
+    .status-active {
+        background: #ecfdf3;
+        color: #1a7a4a;
+        border: 1px solid #a7e6c3;
+    }
+
+    .status-inactive {
+        background: #fff1f0;
+        color: #b53a2e;
+        border: 1px solid #f8bcb7;
+    }
+
+    /* ── Form ── */
+    .form-body {
+        padding: 1.5rem;
+    }
+
+    .section-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-muted);
+        margin: 0 0 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px dashed var(--border);
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+        .form-group label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+    .form-control {
+        width: 100%;
+        padding: 0.6rem 0.85rem;
+        border: 1.5px solid var(--border);
+        border-radius: var(--input-radius);
+        font-size: 0.875rem;
+        color: var(--text-main);
+        background: var(--surface);
+        transition: border-color 0.2s, box-shadow 0.2s;
+        outline: none;
+        box-sizing: border-box;
+        font-family: inherit;
+    }
+
+        .form-control:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(37,99,168,0.12);
+        }
+
+        .form-control::placeholder {
+            color: #b0bcc8;
+        }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 100px;
+        line-height: 1.5;
+    }
+
+    .form-hint {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-top: 0.1rem;
+    }
+
+    /* ── Emoji ── */
+    .emoji-input-group {
+        position: relative;
+    }
+
+    .emoji-preview {
+        position: absolute;
+        right: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.2rem;
+        pointer-events: none;
+    }
+
+    .emoji-input-group .form-control {
+        padding-right: 2.5rem;
+    }
+
+    /* ── Toggle ── */
+    .toggle-group {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: var(--surface-alt);
+        border: 1.5px solid var(--border);
+        border-radius: var(--input-radius);
+        padding: 0.65rem 0.9rem;
+        cursor: pointer;
+        transition: border-color 0.2s;
+    }
+
+        .toggle-group:hover {
+            border-color: var(--border-focus);
+        }
+
+    .toggle-switch {
+        position: relative;
+        width: 38px;
+        height: 22px;
+        flex-shrink: 0;
+    }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+    .toggle-track {
+        position: absolute;
+        inset: 0;
+        background: #cdd5df;
+        border-radius: 999px;
+        transition: background 0.2s;
+        cursor: pointer;
+    }
+
+        .toggle-track::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border-radius: 50%;
+            transition: transform 0.2s;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+        }
+
+    .toggle-switch input:checked + .toggle-track {
+        background: #1a7a4a;
+    }
+
+        .toggle-switch input:checked + .toggle-track::after {
+            transform: translateX(16px);
+        }
+
+    .toggle-label {
+        font-size: 0.85rem;
+        color: var(--text-main);
+        font-weight: 500;
+        user-select: none;
+    }
+
+    .toggle-sublabel {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+    }
+
+    /* ── Divider ── */
+    .form-divider {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 1.5rem 0;
+    }
+
+    /* ── Alert box ── */
+    .edit-notice {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.6rem;
+        background: #fffbeb;
+        border: 1px solid #f5d56a;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-size: 0.8rem;
+        color: #7a5c00;
+        margin-bottom: 1.25rem;
+    }
+
+        .edit-notice svg {
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+    /* ── Actions ── */
+    .form-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        padding: 1.25rem 1.5rem;
+        border-top: 1px solid var(--border);
+        background: var(--surface-alt);
+    }
+
+    .actions-right {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--primary);
+        color: #fff;
+        border: none;
+        padding: 0.65rem 1.4rem;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+        box-shadow: 0 2px 8px rgba(26,58,92,0.18);
+    }
+
+        .btn-primary:hover {
+            background: var(--primary-light);
+            transform: translateY(-1px);
+            box-shadow: 0 5px 18px rgba(26,58,92,0.22);
+        }
+
+    .btn-outline {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: transparent;
+        color: var(--text-muted);
+        border: 1.5px solid var(--border);
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: color 0.2s, border-color 0.2s, background 0.2s;
+    }
+
+        .btn-outline:hover {
+            color: var(--text-main);
+            border-color: #b0bcc8;
+            background: #eef1f5;
+        }
+
+    .btn-danger-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.82rem;
+        color: var(--danger);
+        text-decoration: none;
+        font-weight: 500;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.5rem 0;
+        opacity: 0.75;
+        transition: opacity 0.15s;
+    }
+
+        .btn-danger-link:hover {
+            opacity: 1;
+        }
+
+    @@media (max-width: 600px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-body {
+            padding: 1.25rem;
+        }
+
+        .form-card-header {
+            padding: 1rem 1.25rem;
+        }
+
+        .form-actions {
+            padding: 1rem 1.25rem;
+            flex-direction: column-reverse;
+            align-items: stretch;
+        }
+
+        .actions-right {
+            flex-direction: column;
+        }
+
+        .btn-primary, .btn-outline {
+            justify-content: center;
+        }
+
+        .btn-danger-link {
+            justify-content: center;
+            padding: 0.5rem;
+        }
+    }
+</style>
+
+<div class="page-wrapper">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="/Admin/CommitteeList">কমিটি সদস্য</a>
+        <span>›</span>
+        <a href="/Admin/CommitteeList">তালিকা</a>
+        <span>›</span>
+        <span>@Model.Name</span>
+    </div>
+
+    <div class="form-card">
+        <!-- Header -->
+        <div class="form-card-header">
+            <div class="header-info">
+                <div class="header-avatar" id="headerAvatar">@Model.Avatar</div>
+                <div>
+                    <h2>@Model.Name</h2>
+                    <p class="member-role">@Model.Role</p>
+                </div>
             </div>
+            <span class="status-badge @(Model.IsActive ? "status-active" : "status-inactive")" id="statusBadge">
+                @(Model.IsActive ? "সক্রিয়" : "নিষ্ক্রিয়")
+            </span>
         </div>
-        <div style="display:flex;gap:1rem"><button type="submit" class="btn btn-primary">💾 আপডেট</button><a href="/Admin/CommitteeList" class="btn btn-outline">বাতিল</a></div>
-    </form>
+
+        <!-- Form -->
+        <form asp-action="CommitteeEdit" method="post">
+            @Html.AntiForgeryToken()
+            <input asp-for="Id" type="hidden" />
+
+            <div class="form-body">
+                <div class="edit-notice">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
+                    তথ্য পরিবর্তন করার পর "আপডেট করুন" বোতামে ক্লিক করুন। পরিবর্তন সাথে সাথে কার্যকর হবে।
+                </div>
+
+                <div class="section-label">ব্যক্তিগত তথ্য</div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label asp-for="Name">নাম</label>
+                        <input asp-for="Name" class="form-control" autocomplete="off" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Role">পদবী</label>
+                        <input asp-for="Role" class="form-control" autocomplete="off" />
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label asp-for="Phone">ফোন নম্বর</label>
+                        <input asp-for="Phone" class="form-control" type="tel" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Avatar">আভাটার ইমোজি</label>
+                        <div class="emoji-input-group">
+                            <input asp-for="Avatar" class="form-control" maxlength="4" id="avatarInput" oninput="updateEmoji(this)" />
+                            <span class="emoji-preview" id="emojiPreview">@Model.Avatar</span>
+                        </div>
+                        <span class="form-hint">একটি ইমোজি দিন</span>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom:1.25rem">
+                    <label asp-for="Bio">পরিচয় / জীবনী</label>
+                    <textarea asp-for="Bio" class="form-control"></textarea>
+                </div>
+
+                <hr class="form-divider" />
+                <div class="section-label">অতিরিক্ত তথ্য</div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label asp-for="SortOrder">ক্রম নম্বর</label>
+                        <input asp-for="SortOrder" type="number" class="form-control" min="0" />
+                        <span class="form-hint">তালিকায় দেখানোর ক্রম</span>
+                    </div>
+                    <div class="form-group" style="justify-content:flex-end;padding-top:0.2rem">
+                        <label asp-for="IsActive" style="visibility:hidden">অবস্থা</label>
+                        <label class="toggle-group" for="IsActive">
+                            <div class="toggle-switch">
+                                <input asp-for="IsActive" type="checkbox" id="IsActive" onchange="updateStatusBadge(this)" />
+                                <span class="toggle-track"></span>
+                            </div>
+                            <div>
+                                <div class="toggle-label">সক্রিয় সদস্য</div>
+                                <div class="toggle-sublabel">তালিকায় প্রদর্শিত হবে</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <form method="post" action="/Admin/CommitteeDelete/@Model.Id" style="display:inline" onsubmit="return confirm('এই সদস্যকে স্থায়ীভাবে মুছে ফেলবেন?')">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn-danger-link">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" /></svg>
+                        সদস্য মুছুন
+                    </button>
+                </form>
+
+                <div class="actions-right">
+                    <a href="/Admin/CommitteeList" class="btn-outline">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
+                        বাতিল
+                    </a>
+                    <button type="submit" class="btn-primary">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" /><polyline points="17 21 17 13 7 13 7 21" /><polyline points="7 3 7 8 15 8" /></svg>
+                        আপডেট করুন
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
+
+<script>
+    function updateEmoji(input) {
+        const val = input.value || '👤';
+        document.getElementById('emojiPreview').textContent = val;
+        document.getElementById('headerAvatar').textContent = val;
+    }
+
+    function updateStatusBadge(checkbox) {
+        const badge = document.getElementById('statusBadge');
+        if (checkbox.checked) {
+            badge.className = 'status-badge status-active';
+            badge.textContent = 'সক্রিয়';
+        } else {
+            badge.className = 'status-badge status-inactive';
+            badge.textContent = 'নিষ্ক্রিয়';
+        }
+    }
+</script>

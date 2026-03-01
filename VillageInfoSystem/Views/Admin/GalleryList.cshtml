@@ -2,32 +2,348 @@
 @{
     ViewData["Title"] = "গ্যালারি ব্যবস্থাপনা";
     Layout = "_AdminLayout";
+    int activeCount = Model.Count(g => g.IsActive);
+    int featuredCount = Model.Count(g => g.IsFeatured);
+    int withImageCount = Model.Count(g => !string.IsNullOrEmpty(g.ImagePath));
 }
-<div class="card">
-    <div class="card-header">
-        <div class="card-title">🖼️ গ্যালারি (@Model.Count টি)</div>
-        <a href="/Admin/GalleryCreate" class="btn btn-primary">➕ নতুন যোগ</a>
+
+<style>
+    .page-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.4rem;
+    }
+
+    .ph-left h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.4rem;
+        color: var(--green-dark);
+        font-weight: 900;
+    }
+
+    .ph-left p {
+        font-size: 0.84rem;
+        color: var(--text-muted);
+        margin-top: 2px;
+    }
+
+    /* Stats */
+    .gallery-stats {
+        display: flex;
+        gap: 0.9rem;
+        margin-bottom: 1.4rem;
+        flex-wrap: wrap;
+    }
+
+    .gs-pill {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.52rem 1rem;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 50px;
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        box-shadow: var(--shadow-sm);
+    }
+
+        .gs-pill strong {
+            color: var(--green-dark);
+            font-size: 0.97rem;
+            font-weight: 800;
+        }
+
+    /* Gallery grid */
+    .gallery-admin-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1.2rem;
+    }
+
+    .gallery-admin-card {
+        background: white;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        transition: all 0.28s;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .gallery-admin-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(26,107,60,0.18);
+        }
+
+    /* Thumb */
+    .gac-thumb {
+        height: 150px;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, var(--green-dark), #2d9b5a);
+        flex-shrink: 0;
+    }
+
+        .gac-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+
+    .gallery-admin-card:hover .gac-thumb img {
+        transform: scale(1.07);
+    }
+
+    .gac-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+        color: rgba(255,255,255,0.6);
+    }
+
+        .gac-placeholder .gp-icon {
+            font-size: 2.2rem;
+            opacity: 0.6;
+        }
+
+        .gac-placeholder span {
+            font-size: 0.72rem;
+        }
+
+    /* Overlays */
+    .gac-order {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+        background: rgba(0,0,0,0.5);
+        backdrop-filter: blur(4px);
+        color: white;
+        font-size: 0.72rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .gac-badges {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        align-items: flex-end;
+    }
+
+    .gac-badge {
+        padding: 0.15rem 0.55rem;
+        border-radius: 50px;
+        font-size: 0.65rem;
+        font-weight: 800;
+        backdrop-filter: blur(4px);
+        border: 1px solid transparent;
+    }
+
+        .gac-badge.active {
+            background: rgba(45,190,108,0.25);
+            border-color: rgba(45,190,108,0.4);
+            color: #a8f0c8;
+        }
+
+        .gac-badge.inactive {
+            background: rgba(0,0,0,0.4);
+            border-color: rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.6);
+        }
+
+        .gac-badge.featured {
+            background: rgba(200,153,58,0.3);
+            border-color: rgba(200,153,58,0.5);
+            color: #e8c96a;
+        }
+
+    /* Body */
+    .gac-body {
+        padding: 0.9rem 1rem;
+        flex: 1;
+    }
+
+    .gac-icon-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .gac-icon {
+        font-size: 1.3rem;
+        line-height: 1;
+    }
+
+    .gac-title {
+        font-weight: 700;
+        color: var(--green-dark);
+        font-size: 0.88rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .gac-meta {
+        font-size: 0.73rem;
+        color: var(--text-muted);
+    }
+
+    /* Actions */
+    .gac-actions {
+        display: flex;
+        gap: 0.45rem;
+        padding: 0.75rem 1rem;
+        border-top: 1px solid var(--border);
+        background: #fafcfa;
+    }
+
+        .gac-actions .btn {
+            flex: 1;
+            justify-content: center;
+            font-size: 0.78rem;
+        }
+
+    /* Empty */
+    .empty-box {
+        background: white;
+        border-radius: var(--radius);
+        border: 2px dashed var(--border);
+        padding: 4rem 2rem;
+        text-align: center;
+    }
+
+        .empty-box .eb-icon {
+            font-size: 3.5rem;
+            display: block;
+            margin-bottom: 1rem;
+            opacity: 0.35;
+        }
+
+        .empty-box h4 {
+            color: var(--green-dark);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-box p {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            margin-bottom: 1.4rem;
+        }
+
+    @@media (max-width: 500px) {
+        .gallery-admin-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @@media (max-width: 360px) {
+        .gallery-admin-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- Header -->
+<div class="page-header">
+    <div class="ph-left">
+        <h2>🖼️ গ্যালারি ব্যবস্থাপনা</h2>
+        <p>গ্রামের ফটো গ্যালারি পরিচালনা করুন</p>
     </div>
-    <table>
-        <thead><tr><th>আইকন</th><th>শিরোনাম</th><th>ছবি</th><th>ফিচার্ড</th><th>অবস্থা</th><th>কার্যক্রম</th></tr></thead>
-        <tbody>
-            @foreach (var g in Model)
-            {
-                <tr>
-                    <td style="font-size:1.4rem">@g.Icon</td>
-                    <td>@g.Title</td>
-                    <td>@(string.IsNullOrEmpty(g.ImagePath) ? "—" : "✅ আপলোড করা")</td>
-                    <td>@(g.IsFeatured ? "⭐" : "—")</td>
-                    <td><span class="badge @(g.IsActive ? "badge-success" : "badge-danger")">@(g.IsActive ? "সক্রিয়" : "নিষ্ক্রিয়")</span></td>
-                    <td style="white-space:nowrap">
-                        <a href="/Admin/GalleryEdit/@g.Id" class="btn btn-edit" style="padding:0.3rem 0.65rem;font-size:0.78rem;">✏️</a>
-                        <form method="post" action="/Admin/GalleryDelete/@g.Id" style="display:inline;" onsubmit="return confirm('মুছে ফেলবেন?')">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-danger" style="padding:0.3rem 0.65rem;font-size:0.78rem;">🗑️</button>
-                        </form>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <a href="/Admin/GalleryCreate" class="btn btn-primary">➕ নতুন যোগ</a>
 </div>
+
+<!-- Stats -->
+@if (Model.Any())
+{
+    <div class="gallery-stats">
+        <div class="gs-pill">🖼️ মোট: <strong>@Model.Count</strong></div>
+        <div class="gs-pill">✅ সক্রিয়: <strong>@activeCount</strong></div>
+        <div class="gs-pill">⭐ ফিচার্ড: <strong>@featuredCount</strong></div>
+        <div class="gs-pill">📸 ছবি সহ: <strong>@withImageCount</strong></div>
+    </div>
+}
+
+<!-- Cards -->
+@if (Model.Any())
+{
+    <div class="gallery-admin-grid">
+        @foreach (var g in Model)
+        {
+            <div class="gallery-admin-card">
+                <div class="gac-thumb" style="@(!string.IsNullOrEmpty(g.GradientColor) && string.IsNullOrEmpty(g.ImagePath) ? $"background:{g.GradientColor}" : "")">
+                    @if (!string.IsNullOrEmpty(g.ImagePath))
+                    {
+                        <img src="@g.ImagePath" alt="@g.Title" />
+                    }
+                    else
+                    {
+                        <div class="gac-placeholder">
+                            <span class="gp-icon">@(string.IsNullOrEmpty(g.Icon) ? "🖼️" : g.Icon)</span>
+                            <span>ছবি নেই</span>
+                        </div>
+                    }
+                    <div class="gac-order">#@g.SortOrder</div>
+                    <div class="gac-badges">
+                        @if (g.IsFeatured)
+                        {
+                            <div class="gac-badge featured">⭐ ফিচার্ড</div>
+                        }
+                        <div class="gac-badge @(g.IsActive ? "active" : "inactive")">
+                            @(g.IsActive ? "● সক্রিয়" : "○ নিষ্ক্রিয়")
+                        </div>
+                    </div>
+                </div>
+                <div class="gac-body">
+                    <div class="gac-icon-title">
+                        <span class="gac-icon">@g.Icon</span>
+                        <span class="gac-title" title="@g.Title">@g.Title</span>
+                    </div>
+                    <div class="gac-meta">
+                        @(!string.IsNullOrEmpty(g.ImagePath) ? "📸 ছবি আপলোড করা" : "🎨 গ্রেডিয়েন্ট ব্যাকগ্রাউন্ড")
+                    </div>
+                </div>
+                <div class="gac-actions">
+                    <a href="/Admin/GalleryEdit/@g.Id" class="btn btn-edit btn-sm">✏️ সম্পাদনা</a>
+                    <form method="post" action="/Admin/GalleryDelete/@g.Id"
+                          style="flex:1;display:flex;"
+                          onsubmit="return confirm('এই গ্যালারি আইটেম মুছে ফেলবেন?')">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger btn-sm" style="flex:1;justify-content:center;">🗑️</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="empty-box">
+        <span class="eb-icon">🖼️</span>
+        <h4>গ্যালারি খালি আছে</h4>
+        <p>গ্রামের সুন্দর ছবি যোগ করে গ্যালারি সাজান।</p>
+        <a href="/Admin/GalleryCreate" class="btn btn-primary">➕ প্রথম ছবি যোগ করুন</a>
+    </div>
+}

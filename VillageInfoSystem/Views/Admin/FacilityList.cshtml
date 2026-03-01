@@ -2,33 +2,543 @@
 @{
     ViewData["Title"] = "সুবিধা ব্যবস্থাপনা";
     Layout = "_AdminLayout";
+    int activeCount = Model.Count(f => f.IsActive);
+    var categories = Model.Select(f => f.Category).Distinct().OrderBy(c => c).ToList();
 }
-<div class="card">
-    <div class="card-header">
-        <div class="card-title">🏛️ সুবিধাসমূহ</div>
-        <a href="/Admin/FacilityCreate" class="btn btn-primary">➕ নতুন যোগ</a>
-    </div>
-    <table>
-        <thead><tr><th>আইকন</th><th>নাম</th><th>বিভাগ</th><th>সংখ্যা</th><th>ক্রম</th><th>অবস্থা</th><th>কার্যক্রম</th></tr></thead>
-        <tbody>
-            @foreach (var f in Model)
-            {
-                <tr>
-                    <td style="font-size:1.4rem">@f.Icon</td>
-                    <td>@f.Name</td>
-                    <td><span class="badge badge-gold">@f.Category</span></td>
-                    <td>@f.Count</td>
-                    <td>@f.SortOrder</td>
-                    <td><span class="badge @(f.IsActive ? "badge-success" : "badge-danger")">@(f.IsActive ? "সক্রিয়" : "নিষ্ক্রিয়")</span></td>
-                    <td style="white-space:nowrap">
-                        <a href="/Admin/FacilityEdit/@f.Id" class="btn btn-edit" style="padding:0.3rem 0.65rem;font-size:0.78rem;">✏️</a>
-                        <form method="post" action="/Admin/FacilityDelete/@f.Id" style="display:inline;" onsubmit="return confirm('মুছে ফেলবেন?')">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-danger" style="padding:0.3rem 0.65rem;font-size:0.78rem;">🗑️</button>
-                        </form>
-                    </td>
-                </tr>
+
+<style>
+    .page-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.4rem;
+    }
+
+    .ph-left h2 {
+        font-family: 'Playfair Display',serif;
+        font-size: 1.4rem;
+        color: var(--green-dark);
+        font-weight: 900;
+    }
+
+    .ph-left p {
+        font-size: 0.84rem;
+        color: var(--text-muted);
+        margin-top: 2px;
+    }
+
+    .stats-strip {
+        display: flex;
+        gap: 0.9rem;
+        margin-bottom: 1.4rem;
+        flex-wrap: wrap;
+    }
+
+    .sp {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.52rem 1rem;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 50px;
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        box-shadow: var(--shadow-sm);
+    }
+
+        .sp strong {
+            color: var(--green-dark);
+            font-size: 0.97rem;
+            font-weight: 800;
+        }
+
+    .filter-bar {
+        background: white;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        padding: 0.85rem 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin-bottom: 1.3rem;
+        flex-wrap: wrap;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .search-wrap {
+        flex: 1;
+        min-width: 180px;
+        position: relative;
+    }
+
+        .search-wrap input {
+            width: 100%;
+            padding: 0.6rem 0.9rem 0.6rem 2.4rem;
+            border: 1.5px solid var(--border);
+            border-radius: 9px;
+            font-family: 'Hind Siliguri',sans-serif;
+            font-size: 0.88rem;
+            transition: all 0.2s;
+        }
+
+            .search-wrap input:focus {
+                outline: none;
+                border-color: var(--green);
+                box-shadow: 0 0 0 3px rgba(26,107,60,0.08);
             }
-        </tbody>
-    </table>
+
+    .si {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.85rem;
+        pointer-events: none;
+    }
+
+    .filter-select {
+        padding: 0.6rem 0.85rem;
+        border: 1.5px solid var(--border);
+        border-radius: 9px;
+        font-family: 'Hind Siliguri',sans-serif;
+        font-size: 0.85rem;
+        color: var(--text);
+        cursor: pointer;
+        transition: all 0.2s;
+        background: white;
+    }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--green);
+        }
+
+    .visible-count {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        white-space: nowrap;
+    }
+
+    .facility-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(265px,1fr));
+        gap: 1.2rem;
+    }
+
+    .facility-admin-card {
+        background: white;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        transition: all 0.28s;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .facility-admin-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(26,107,60,0.2);
+        }
+
+        .facility-admin-card.card-hidden {
+            display: none;
+        }
+
+    .fac-accent {
+        height: 3px;
+    }
+
+    .cat-general .fac-accent {
+        background: linear-gradient(90deg,#1a6b3c,#2d9b5a);
+    }
+
+    .cat-religious .fac-accent {
+        background: linear-gradient(90deg,#8b5a10,#c8993a);
+    }
+
+    .cat-education .fac-accent {
+        background: linear-gradient(90deg,#1a4878,#3a8ad4);
+    }
+
+    .cat-health .fac-accent {
+        background: linear-gradient(90deg,#7a2020,#b84040);
+    }
+
+    .cat-business .fac-accent {
+        background: linear-gradient(90deg,#5a1a7a,#8840b0);
+    }
+
+    .fac-head {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.9rem;
+        padding: 1.1rem 1.1rem 0.7rem;
+    }
+
+    .fac-icon-box {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+
+    .cat-general .fac-icon-box {
+        background: linear-gradient(135deg,#1a6b3c,#2d9b5a);
+    }
+
+    .cat-religious .fac-icon-box {
+        background: linear-gradient(135deg,#8b5a10,#c8993a);
+    }
+
+    .cat-education .fac-icon-box {
+        background: linear-gradient(135deg,#1a4878,#3a8ad4);
+    }
+
+    .cat-health .fac-icon-box {
+        background: linear-gradient(135deg,#7a2020,#b84040);
+    }
+
+    .cat-business .fac-icon-box {
+        background: linear-gradient(135deg,#5a1a7a,#8840b0);
+    }
+
+    .fac-head-right {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .fac-name {
+        font-weight: 700;
+        color: var(--green-dark);
+        font-size: 0.95rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .fac-cat-pill {
+        display: inline-block;
+        margin-top: 0.28rem;
+        padding: 0.16rem 0.6rem;
+        border-radius: 50px;
+        font-size: 0.68rem;
+        font-weight: 700;
+    }
+
+    .cat-general .fac-cat-pill {
+        background: rgba(26,107,60,0.1);
+        color: #1a6b3c;
+        border: 1px solid rgba(26,107,60,0.18);
+    }
+
+    .cat-religious .fac-cat-pill {
+        background: rgba(200,153,58,0.1);
+        color: #8a6518;
+        border: 1px solid rgba(200,153,58,0.2);
+    }
+
+    .cat-education .fac-cat-pill {
+        background: rgba(26,90,154,0.1);
+        color: #1a5a9a;
+        border: 1px solid rgba(26,90,154,0.18);
+    }
+
+    .cat-health .fac-cat-pill {
+        background: rgba(184,64,64,0.1);
+        color: #7a2020;
+        border: 1px solid rgba(184,64,64,0.18);
+    }
+
+    .cat-business .fac-cat-pill {
+        background: rgba(136,64,176,0.1);
+        color: #5a1a7a;
+        border: 1px solid rgba(136,64,176,0.18);
+    }
+
+    .fac-status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.22rem;
+        padding: 0.18rem 0.6rem;
+        border-radius: 50px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        white-space: nowrap;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+        .fac-status-pill.on {
+            background: #e2f8ec;
+            color: #1a7a3c;
+        }
+
+        .fac-status-pill.off {
+            background: #fdeaea;
+            color: #c0392b;
+        }
+
+    .fac-body {
+        padding: 0 1.1rem 0.9rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .fac-desc {
+        font-size: 0.79rem;
+        color: var(--text-muted);
+        line-height: 1.55;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .fac-footer-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 0.1rem;
+    }
+
+    .fac-count-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        background: var(--green-muted);
+        color: var(--green-dark);
+        padding: 0.22rem 0.7rem;
+        border-radius: 50px;
+        font-size: 0.77rem;
+        font-weight: 700;
+        border: 1px solid rgba(26,107,60,0.12);
+    }
+
+    .fac-order-chip {
+        font-size: 0.72rem;
+        color: #b5c8ba;
+    }
+
+    .fac-actions {
+        display: flex;
+        gap: 0.45rem;
+        padding: 0.75rem 1.1rem;
+        border-top: 1px solid var(--border);
+        background: #fafcfa;
+    }
+
+        .fac-actions .btn {
+            flex: 1;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+    .empty-box {
+        background: white;
+        border-radius: var(--radius);
+        border: 2px dashed var(--border);
+        padding: 4rem 2rem;
+        text-align: center;
+    }
+
+        .empty-box .ei {
+            font-size: 3.5rem;
+            display: block;
+            margin-bottom: 1rem;
+            opacity: 0.35;
+        }
+
+        .empty-box h4 {
+            color: var(--green-dark);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-box p {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            margin-bottom: 1.4rem;
+        }
+
+    .no-results {
+        text-align: center;
+        padding: 3.5rem 1.5rem;
+        background: white;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        display: none;
+    }
+
+        .no-results .nr-icon {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 0.7rem;
+            opacity: 0.4;
+        }
+
+        .no-results p {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+        }
+
+    @@media (max-width:500px) {
+        .facility-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-bar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .filter-select {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="page-header">
+    <div class="ph-left">
+        <h2>🏛️ সুবিধা ব্যবস্থাপনা</h2>
+        <p>গ্রামের সকল সুবিধা ও প্রতিষ্ঠান পরিচালনা করুন</p>
+    </div>
+    <a href="/Admin/FacilityCreate" class="btn btn-primary">➕ নতুন সুবিধা যোগ</a>
 </div>
+
+@if (Model.Any())
+{
+    <div class="stats-strip">
+        <div class="sp">🏛️ মোট: <strong>@Model.Count</strong></div>
+        <div class="sp">✅ সক্রিয়: <strong>@activeCount</strong></div>
+        @if (categories.Any())
+        {
+            <div class="sp">🏷️ বিভাগ: <strong>@categories.Count টি</strong></div>
+        }
+        @if (Model.Count - activeCount > 0)
+        {
+            <div class="sp">⏸️ নিষ্ক্রিয়: <strong>@(Model.Count - activeCount)</strong></div>
+        }
+    </div>
+
+    <div class="filter-bar">
+        <div class="search-wrap">
+            <span class="si">🔍</span>
+            <input type="text" id="searchInput" placeholder="সুবিধার নাম খুঁজুন..." oninput="filterCards()" />
+        </div>
+        <select class="filter-select" id="catFilter" onchange="filterCards()">
+            <option value="">সব বিভাগ</option>
+            <option>সাধারণ</option>
+            <option>ধর্মীয়</option>
+            <option>শিক্ষা</option>
+            <option>স্বাস্থ্য</option>
+            <option>ব্যবসা</option>
+        </select>
+        <select class="filter-select" id="statusFilter" onchange="filterCards()">
+            <option value="">সব অবস্থা</option>
+            <option value="active">সক্রিয়</option>
+            <option value="inactive">নিষ্ক্রিয়</option>
+        </select>
+        <span class="visible-count" id="visCount">@Model.Count টি দেখাচ্ছে</span>
+    </div>
+
+    <div class="facility-grid" id="facilityGrid">
+        @foreach (var f in Model)
+        {
+            string catClass = f.Category switch
+            {
+                "ধর্মীয়" => "cat-religious",
+                "শিক্ষা" => "cat-education",
+                "স্বাস্থ্য" => "cat-health",
+                "ব্যবসা" => "cat-business",
+                _ => "cat-general"
+            };
+            <div class="facility-admin-card @catClass"
+                 data-name="@f.Name?.ToLower()"
+                 data-cat="@f.Category"
+                 data-active="@f.IsActive.ToString().ToLower()">
+                <div class="fac-accent"></div>
+                <div class="fac-head">
+                    <div class="fac-icon-box">@f.Icon</div>
+                    <div class="fac-head-right">
+                        <div class="fac-name" title="@f.Name">@f.Name</div>
+                        <span class="fac-cat-pill">@f.Category</span>
+                    </div>
+                    <div class="fac-status-pill @(f.IsActive ? "on" : "off")">
+                        @(f.IsActive ? "● সক্রিয়" : "○ নিষ্ক্রিয়")
+                    </div>
+                </div>
+                <div class="fac-body">
+                    @if (!string.IsNullOrEmpty(f.Description))
+                    {
+                        <div class="fac-desc">@f.Description</div>
+                    }
+                    <div class="fac-footer-row">
+                        @if (!string.IsNullOrEmpty(f.Count))
+                        {
+                            <span class="fac-count-chip">📊 @f.Count</span>
+                        }
+                        else
+                        {
+
+                            <span></span>
+                        }
+                        <span class="fac-order-chip">🔢 ক্রম #@f.SortOrder</span>
+                    </div>
+                </div>
+                <div class="fac-actions">
+                    <a href="/Admin/FacilityEdit/@f.Id" class="btn btn-edit btn-sm">✏️ সম্পাদনা</a>
+                    <form method="post" action="/Admin/FacilityDelete/@f.Id" style="flex:1;display:flex;"
+                          onsubmit="return confirm('এই সুবিধা মুছে ফেলবেন?')">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger btn-sm" style="flex:1;justify-content:center;">🗑️ মুছুন</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="no-results" id="noResults">
+        <span class="nr-icon">🔍</span>
+        <p>কোনো ফলাফল পাওয়া যায়নি।</p>
+    </div>
+}
+else
+{
+    <div class="empty-box">
+        <span class="ei">🏛️</span>
+        <h4>কোনো সুবিধা যোগ করা হয়নি</h4>
+        <p>গ্রামের মসজিদ, বিদ্যালয়, বাজার ইত্যাদি সুবিধা যোগ করুন।</p>
+        <a href="/Admin/FacilityCreate" class="btn btn-primary">➕ প্রথম সুবিধা যোগ করুন</a>
+    </div>
+}
+
+<script>
+    function filterCards() {
+        const s = (document.getElementById('searchInput').value || '').toLowerCase();
+        const cat = document.getElementById('catFilter').value;
+        const status = document.getElementById('statusFilter').value;
+        const cards = document.querySelectorAll('.facility-admin-card');
+        let v = 0;
+        cards.forEach(c => {
+            const nm = !s || (c.dataset.name || '').includes(s);
+            const cm = !cat || c.dataset.cat === cat;
+            const sm = !status || (status === 'active' ? c.dataset.active === 'true' : c.dataset.active === 'false');
+            const show = nm && cm && sm;
+            c.classList.toggle('card-hidden', !show);
+            if (show) v++;
+        });
+        document.getElementById('visCount').textContent = v + ' টি দেখাচ্ছে';
+        document.getElementById('noResults').style.display = v === 0 ? 'block' : 'none';
+    }
+</script>

@@ -7,9 +7,14 @@
     var committee = ViewBag.Committee as List<VillageInfoSystem.Models.CommitteeMember>;
     var gallery = ViewBag.Gallery as List<VillageInfoSystem.Models.GalleryItem>;
     var tickers = ViewBag.Tickers as List<VillageInfoSystem.Models.TickerNews>;
+    var sliders = ViewBag.Sliders as List<VillageInfoSystem.Models.SliderItem>;
+    int slideCount = sliders?.Count ?? 0;
 }
 
 <style>
+    /* ═══════════════════════════════════════════════
+       SLIDE STYLES
+    ═══════════════════════════════════════════════ */
     .slide-bg {
         position: absolute;
         inset: 0;
@@ -17,18 +22,866 @@
         background-position: center;
         background-repeat: no-repeat;
         z-index: 0;
+        transition: transform 8s ease;
+    }
+
+    .slide.active .slide-bg {
+        transform: scale(1.06);
+    }
+
+    .slide-overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background: linear-gradient(135deg, rgba(8,40,24,0.82) 0%, rgba(15,66,38,0.65) 50%, rgba(26,107,60,0.45) 100%);
     }
 
     .slide .blob {
-        z-index: 1;
+        z-index: 2;
     }
 
     .slide-content {
-        z-index: 2;
+        z-index: 3;
+        position: relative;
+    }
+
+    /* ═══════════════════════════════════════════════
+       SECTION ENHANCEMENTS
+    ═══════════════════════════════════════════════ */
+
+    /* News section */
+    #news {
+        background: #ffffff;
+        position: relative;
+    }
+
+        #news::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--green), var(--gold), var(--green-light));
+        }
+
+    .news-featured {
+        border-radius: 22px;
+        overflow: hidden;
+        border: 1px solid rgba(26,107,60,0.1);
+        box-shadow: 0 8px 32px rgba(26,107,60,0.08);
+        transition: all 0.35s;
+        background: white;
+    }
+
+        .news-featured:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 50px rgba(26,107,60,0.15);
+        }
+
+    .nf-img {
+        height: 230px;
+        background: linear-gradient(135deg, var(--green-dark), var(--green-light));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .nf-img::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent 35%, rgba(0,0,0,0.4));
+        }
+
+    .nf-img-icon {
+        font-size: 4.5rem;
+        z-index: 1;
+    }
+
+    /* News list items */
+    .ni {
+        background: #f9fbf9;
+        border-radius: 16px;
+        padding: 1rem 1.1rem;
+        border: 1px solid rgba(26,107,60,0.08);
+        display: flex;
+        gap: 0.9rem;
+        align-items: flex-start;
+        cursor: pointer;
+        transition: all 0.25s;
+    }
+
+        .ni:hover {
+            border-color: rgba(26,107,60,0.22);
+            transform: translateX(5px);
+            background: #f3fbf5;
+            box-shadow: 0 4px 16px rgba(26,107,60,0.07);
+        }
+
+    /* About section */
+    #about {
+        background: linear-gradient(160deg, #f3f8f5 0%, #eef5f0 100%);
+        position: relative;
+        overflow: hidden;
+    }
+
+        #about::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(26,107,60,0.05) 0%, transparent 70%);
+            bottom: -200px;
+            right: -100px;
+            pointer-events: none;
+        }
+
+    .about-img {
+        border-radius: 28px;
+        overflow: hidden;
+        box-shadow: 0 16px 60px rgba(15,66,38,0.18);
+        position: relative;
+    }
+
+    .about-img-inner {
+        background: linear-gradient(145deg, var(--green-dark), var(--green-light));
+        height: 420px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        color: white;
+        text-align: center;
+        padding: 2rem;
+        position: relative;
+    }
+
+        .about-img-inner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+    .about-img-icon {
+        font-size: 5.5rem;
+        position: relative;
+    }
+
+    .about-img-text {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        position: relative;
+    }
+
+    .about-img-badge {
+        position: absolute;
+        bottom: -16px;
+        right: 24px;
+        background: linear-gradient(135deg, var(--gold), var(--gold-light));
+        color: var(--green-dark);
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 800;
+        font-size: 0.88rem;
+        box-shadow: 0 6px 24px rgba(200,153,58,0.45);
+    }
+
+    .about-content h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: 2rem;
+        color: var(--green-dark);
+        margin-bottom: 1.1rem;
+        font-weight: 900;
+        line-height: 1.25;
+    }
+
+    .about-content p {
+        color: var(--text-light);
+        line-height: 1.9;
+        margin-bottom: 0.9rem;
+        font-size: 0.97rem;
+    }
+
+    .about-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1.4rem;
+    }
+
+    .tag {
+        background: white;
+        border: 1.5px solid rgba(26,107,60,0.18);
+        color: var(--green);
+        padding: 0.38rem 0.9rem;
+        border-radius: 50px;
+        font-size: 0.83rem;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+        .tag:hover {
+            background: var(--green);
+            color: white;
+            border-color: var(--green);
+        }
+
+    /* Population */
+    #population {
+        background: linear-gradient(135deg, var(--green-deeper, #082818) 0%, #0d3520 50%, var(--green-dark) 100%);
+        position: relative;
+        overflow: hidden;
+    }
+
+        #population::before {
+            content: '';
+            position: absolute;
+            width: 700px;
+            height: 700px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(45,155,90,0.12) 0%, transparent 65%);
+            top: -250px;
+            right: -150px;
+            pointer-events: none;
+        }
+
+    .info-card {
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 20px;
+        padding: 2rem 1.5rem;
+        text-align: center;
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .info-card:hover {
+            background: rgba(255,255,255,0.11);
+            transform: translateY(-6px);
+            border-color: rgba(200,153,58,0.3);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+        }
+
+            .info-card:hover::before {
+                opacity: 1;
+            }
+
+    .info-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .info-num {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.2rem;
+        font-weight: 900;
+        color: var(--gold-light);
+        display: block;
+        margin-bottom: 0.35rem;
+    }
+
+    .info-label {
+        color: rgba(255,255,255,0.65);
+        font-size: 0.88rem;
+    }
+
+    /* Facilities */
+    #facilities {
+        background: linear-gradient(160deg, #f8faf8 0%, #f0f6f2 100%);
+    }
+
+    .facility-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem 1.7rem;
+        box-shadow: 0 4px 20px rgba(26,107,60,0.06);
+        border: 1px solid rgba(26,107,60,0.08);
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .facility-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--green), var(--gold));
+            transform: scaleX(0);
+            transition: transform 0.3s;
+            transform-origin: left;
+        }
+
+        .facility-card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 16px 48px rgba(26,107,60,0.14);
+            border-color: rgba(26,107,60,0.15);
+        }
+
+            .facility-card:hover::after {
+                transform: scaleX(1);
+            }
+
+    .facility-icon {
+        width: 58px;
+        height: 58px;
+        background: linear-gradient(135deg, var(--green), var(--green-light));
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+        margin-bottom: 1.2rem;
+        box-shadow: 0 6px 18px rgba(26,107,60,0.22);
+    }
+
+    .facility-card h3 {
+        color: var(--green-dark);
+        font-size: 1.05rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .facility-card p {
+        color: var(--text-light);
+        font-size: 0.88rem;
+        line-height: 1.65;
+    }
+
+    .facility-count {
+        display: inline-block;
+        margin-top: 1rem;
+        background: rgba(26,107,60,0.08);
+        color: var(--green);
+        padding: 0.22rem 0.8rem;
+        border-radius: 50px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        border: 1px solid rgba(26,107,60,0.15);
+    }
+
+    /* Committee */
+    #committee {
+        background: white;
+        position: relative;
+    }
+
+    .person-card {
+        background: #f8fbf9;
+        border-radius: 22px;
+        padding: 1.8rem 1.4rem;
+        text-align: center;
+        border: 1px solid rgba(26,107,60,0.09);
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .person-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 0;
+            background: linear-gradient(135deg, var(--green-dark), var(--green-light));
+            transition: height 0.35s;
+            z-index: 0;
+        }
+
+        .person-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 48px rgba(26,107,60,0.14);
+            border-color: transparent;
+        }
+
+            .person-card:hover::before {
+                height: 100%;
+            }
+
+            .person-card:hover .person-name {
+                color: white;
+            }
+
+            .person-card:hover .person-phone {
+                color: rgba(255,255,255,0.7);
+            }
+
+            .person-card:hover .person-avatar {
+                border-color: rgba(255,255,255,0.3);
+                box-shadow: 0 6px 24px rgba(0,0,0,0.2);
+            }
+
+    .person-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin: 0 auto 1rem;
+        background: linear-gradient(135deg, var(--green), var(--green-light));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        border: 3px solid white;
+        box-shadow: 0 6px 20px rgba(26,107,60,0.22);
+        position: relative;
+        z-index: 1;
+        transition: all 0.3s;
+    }
+
+    .person-name {
+        font-weight: 700;
+        color: var(--green-dark);
+        font-size: 0.95rem;
+        margin-bottom: 0.35rem;
+        position: relative;
+        z-index: 1;
+        transition: color 0.3s;
+    }
+
+    .person-role {
+        color: var(--gold);
+        font-size: 0.78rem;
+        font-weight: 700;
+        background: rgba(200,153,58,0.12);
+        padding: 0.22rem 0.7rem;
+        border-radius: 50px;
+        display: inline-block;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .person-card:hover .person-role {
+        background: rgba(200,153,58,0.25);
+        color: var(--gold-light);
+    }
+
+    .person-phone {
+        color: var(--text-light);
+        font-size: 0.82rem;
+        position: relative;
+        z-index: 1;
+        transition: color 0.3s;
+    }
+
+    /* Gallery */
+    #gallery {
+        background: linear-gradient(135deg, #082818 0%, #0d3520 50%, var(--green-dark) 100%);
+        position: relative;
+        overflow: hidden;
+    }
+
+        #gallery::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(200,153,58,0.08) 0%, transparent 65%);
+            bottom: -200px;
+            left: -100px;
+            pointer-events: none;
+        }
+
+    .gallery-item {
+        border-radius: 18px;
+        overflow: hidden;
+        position: relative;
+        cursor: pointer;
+    }
+
+        .gallery-item.featured {
+            grid-column: span 2;
+        }
+
+    .gallery-inner {
+        width: 100%;
+        min-height: 180px;
+        aspect-ratio: 4/3;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        transition: transform 0.4s ease;
+        position: relative;
+    }
+
+    .gallery-item.featured .gallery-inner {
+        aspect-ratio: 16/9;
+    }
+
+    .gallery-item:hover .gallery-inner {
+        transform: scale(1.06);
+    }
+
+    .gallery-icon {
+        font-size: 2.5rem;
+    }
+
+    .gallery-label {
+        color: rgba(255,255,255,0.9);
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+
+    .gallery-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(8,40,24,0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s;
+        backdrop-filter: blur(2px);
+    }
+
+    .gallery-item:hover .gallery-overlay {
+        opacity: 1;
+    }
+
+    .gallery-overlay-icon {
+        font-size: 2.2rem;
+    }
+
+    /* Contact */
+    #contact {
+        background: linear-gradient(160deg, #f5f8f5 0%, #eef5f1 100%);
+        position: relative;
+    }
+
+    .contact-info h3 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.6rem;
+        color: var(--green-dark);
+        margin-bottom: 1.5rem;
+        font-weight: 900;
+    }
+
+    .contact-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding: 1rem 1.2rem;
+        background: white;
+        border-radius: 14px;
+        border: 1px solid rgba(26,107,60,0.08);
+        transition: all 0.25s;
+    }
+
+        .contact-item:hover {
+            border-color: rgba(26,107,60,0.2);
+            box-shadow: 0 6px 20px rgba(26,107,60,0.08);
+            transform: translateX(4px);
+        }
+
+    .contact-icon {
+        width: 46px;
+        height: 46px;
+        flex-shrink: 0;
+        background: linear-gradient(135deg, var(--green), var(--green-light));
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+        box-shadow: 0 4px 14px rgba(26,107,60,0.2);
+    }
+
+    .contact-text strong {
+        display: block;
+        color: var(--green-dark);
+        font-weight: 700;
+        margin-bottom: 0.2rem;
+        font-size: 0.88rem;
+    }
+
+    .contact-text span {
+        color: var(--text-light);
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .map-container {
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 16px 50px rgba(15,66,38,0.18);
+        border: 4px solid white;
+    }
+
+    .map-placeholder {
+        background: linear-gradient(145deg, var(--green-dark), var(--green-light));
+        height: 380px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        color: white;
+        text-align: center;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .map-placeholder::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            top: -100px;
+            right: -80px;
+        }
+
+    .map-placeholder-icon {
+        font-size: 4rem;
+    }
+
+    .map-placeholder h4 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.5rem;
+        font-weight: 900;
+    }
+
+    .map-placeholder p {
+        color: rgba(255,255,255,0.7);
+        font-size: 0.9rem;
+    }
+
+    .map-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        margin-top: 0.8rem;
+        background: linear-gradient(135deg, var(--gold), var(--gold-light));
+        color: var(--green-dark);
+        padding: 0.75rem 1.6rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 800;
+        font-size: 0.9rem;
+        transition: all 0.25s;
+        box-shadow: 0 6px 20px rgba(200,153,58,0.4);
+    }
+
+        .map-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(200,153,58,0.55);
+        }
+
+    /* Footer */
+    footer {
+        background: linear-gradient(180deg, #082818 0%, var(--green-dark) 100%);
+        color: rgba(255,255,255,0.8);
+        text-align: center;
+        padding: 3rem 2rem 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+        }
+
+    .footer-logo {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.7rem;
+        color: white;
+        font-weight: 900;
+        margin-bottom: 0.5rem;
+    }
+
+    .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin: 1.2rem 0;
+    }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.65);
+            text-decoration: none;
+            font-size: 0.86rem;
+            font-weight: 500;
+            padding: 0.35rem 0.8rem;
+            border-radius: 50px;
+            transition: all 0.2s;
+        }
+
+            .footer-links a:hover {
+                background: rgba(255,255,255,0.08);
+                color: var(--gold-light);
+            }
+
+    .footer-copy {
+        font-size: 0.82rem;
+        color: rgba(255,255,255,0.4);
+    }
+
+    .footer-dev {
+        margin-top: 0.6rem;
+        font-size: 0.76rem;
+        color: rgba(255,255,255,0.3);
+    }
+
+        .footer-dev span {
+            color: var(--gold-light);
+            font-weight: 700;
+        }
+
+    /* ═══════════════════════════════════════════════
+       SCROLL TO TOP
+    ═══════════════════════════════════════════════ */
+    #scrollTop {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, var(--green), var(--green-light));
+        color: white;
+        border: none;
+        border-radius: 50%;
+        font-size: 1.2rem;
+        cursor: pointer;
+        box-shadow: 0 6px 24px rgba(26,107,60,0.35);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.35s;
+        text-decoration: none;
+    }
+
+        #scrollTop.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #scrollTop:hover {
+            background: linear-gradient(135deg, var(--green-dark), var(--green));
+            transform: translateY(-3px);
+            box-shadow: 0 10px 32px rgba(26,107,60,0.45);
+        }
+
+    /* ═══════════════════════════════════════════════
+       RESPONSIVE OVERRIDES
+    ═══════════════════════════════════════════════ */
+    @@media (max-width: 960px) {
+        .news-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .about-grid {
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
+        }
+
+        .contact-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .gallery-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .gallery-item.featured {
+            grid-column: 1 / -1;
+        }
+    }
+
+    @@media (max-width: 650px) {
+        .nav-links, .nav-dev {
+            display: none;
+        }
+
+        .hamburger {
+            display: flex;
+        }
+
+        section {
+            padding: 65px 1.2rem;
+        }
+
+        .gallery-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .gallery-item.featured {
+            grid-column: 1;
+        }
+
+        .committee-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .about-img-inner {
+            height: 300px;
+        }
+
+        #scrollTop {
+            bottom: 1.2rem;
+            right: 1.2rem;
+            width: 42px;
+            height: 42px;
+        }
+    }
+
+    @@media (max-width: 400px) {
+        .committee-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .slide-title {
+            font-size: 1.8rem;
+        }
     }
 </style>
 
-<!-- BREAKING NEWS TICKER -->
+<!-- ═══ BREAKING NEWS TICKER ═══ -->
 <div class="ticker-bar">
     <div class="ticker-label">🔴 সর্বশেষ খবর</div>
     <div class="ticker-track">
@@ -39,23 +892,27 @@
                 {
                     <span class="ticker-item"><span class="ticker-dot">◆</span> @t.Text</span>
                 }
-                <!-- Duplicate for seamless loop -->
                 foreach (var t in tickers)
                 {
                     <span class="ticker-item"><span class="ticker-dot">◆</span> @t.Text</span>
                 }
             }
+            else
+            {
+                <span class="ticker-item"><span class="ticker-dot">◆</span> খোকসা মল্লিক পাড়া গ্রামের ওয়েবসাইটে আপনাকে স্বাগতম!</span>
+                <span class="ticker-item"><span class="ticker-dot">◆</span> খোকসা মল্লিক পাড়া গ্রামের ওয়েবসাইটে আপনাকে স্বাগতম!</span>
+            }
         </div>
     </div>
 </div>
 
-<!-- NAV -->
+<!-- ═══ NAVIGATION ═══ -->
 <nav>
     <div class="nav-inner">
         <a href="#home" class="nav-logo">
             <div class="nav-logo-icon">🌿</div>
             <div>
-                <div class="nav-logo-text">@(info?.VillageName ?? "খোকসা মল্লিক পাড়া গ্রাম")</div>
+                <div class="nav-logo-text">@(info?.VillageName ?? "খোকসা মল্লিক পাড়া")</div>
                 <span class="nav-logo-sub">@(info?.Division ?? "Khulna Division"), Bangladesh</span>
             </div>
         </a>
@@ -70,29 +927,25 @@
             <li><a href="#contact">যোগাযোগ</a></li>
         </ul>
         <div class="nav-dev">✦ Developed by Md Firoz Ali</div>
-        <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </div>
     </div>
 </nav>
 
-<!-- MOBILE MENU -->
+<!-- ═══ MOBILE MENU ═══ -->
 <div class="mobile-menu" id="mobileMenu">
     <a href="#home" onclick="toggleMenu()">🏠 হোম</a>
     <a href="#news" onclick="toggleMenu()">📰 সংবাদ</a>
     <a href="#about" onclick="toggleMenu()">📖 পরিচিতি</a>
     <a href="#population" onclick="toggleMenu()">📊 তথ্য</a>
-    <a href="#facilities" onclick="toggleMenu()">🕌 সুবিধা</a>
+    <a href="#facilities" onclick="toggleMenu()">🏛️ সুবিধা</a>
     <a href="#committee" onclick="toggleMenu()">👥 কমিটি</a>
     <a href="#gallery" onclick="toggleMenu()">🖼️ গ্যালারি</a>
     <a href="#contact" onclick="toggleMenu()">📍 যোগাযোগ</a>
 </div>
 
-
-
-@{
-    var sliders = ViewBag.Sliders as List<VillageInfoSystem.Models.SliderItem>;
-    int slideCount = sliders?.Count ?? 0;
-}
-
+<!-- ═══ HERO SLIDER ═══ -->
 <div id="home">
     @if (sliders != null && sliders.Any())
     {
@@ -102,8 +955,8 @@
             <div class="slide @(isFirst ? "active" : "")">
                 @if (!string.IsNullOrEmpty(slide.ImagePath))
                 {
-                    <div class="slide-bg"
-                         style="background-image:url('@slide.ImagePath');"></div>
+                    <div class="slide-bg" style="background-image:url('@slide.ImagePath');"></div>
+                    <div class="slide-overlay"></div>
                 }
                 <div class="blob b1"></div>
                 <div class="blob b2"></div>
@@ -127,9 +980,25 @@
             isFirst = false;
         }
     }
+    else
+    {
+        <!-- Default slide if no sliders configured -->
+        <div class="slide active">
+            <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+            <div class="slide-content">
+                <div class="slide-badge">🌿 স্বাগতম</div>
+                <h1 class="slide-title">খোকসা <span>মল্লিক পাড়া</span></h1>
+                <p class="slide-sub">সবুজে ঘেরা শান্তির গ্রাম — খুলনা বিভাগ, বাংলাদেশ</p>
+                <div class="slide-btns">
+                    <a href="#about" class="btn btn-primary">গ্রামের পরিচিতি</a>
+                    <a href="#news" class="btn btn-outline">সর্বশেষ সংবাদ</a>
+                </div>
+            </div>
+        </div>
+    }
 
-    <div class="s-arrow s-prev" onclick="changeSlide(-1)">&#8592;</div>
-    <div class="s-arrow s-next" onclick="changeSlide(1)">&#8594;</div>
+    <div class="s-arrow s-prev" onclick="changeSlide(-1)" aria-label="আগের স্লাইড">&#8592;</div>
+    <div class="s-arrow s-next" onclick="changeSlide(1)" aria-label="পরের স্লাইড">&#8594;</div>
     <div class="s-counter"><b id="curNum">1</b> / <span id="totalNum">@slideCount</span></div>
     <div class="s-dots" id="dotsContainer">
         @for (int i = 0; i < slideCount; i++)
@@ -139,10 +1008,10 @@
     </div>
     <div class="s-progress" id="sProgress"></div>
     <div class="s-dev">✦ Developed by <span>Md Firoz Ali</span></div>
-    <a href="#news" class="scroll-arrow">⬇</a>
+    <a href="#news" class="scroll-arrow" aria-label="নিচে স্ক্রোল করুন">⬇</a>
 </div>
 
-<!-- NEWS -->
+<!-- ═══ NEWS ═══ -->
 <section id="news">
     <div class="container">
         <div class="section-header reveal">
@@ -168,7 +1037,7 @@
                 </div>
             }
             <div class="news-list">
-                @if (newsList != null)
+                @if (newsList != null && newsList.Any())
                 {
                     foreach (var n in newsList)
                     {
@@ -182,12 +1051,19 @@
                         </div>
                     }
                 }
+                else if (featuredNews == null)
+                {
+                    <div style="text-align:center;padding:3rem;color:var(--text-light);">
+                        <div style="font-size:3rem;margin-bottom:1rem;">📭</div>
+                        <p>এখনো কোনো সংবাদ যোগ করা হয়নি।</p>
+                    </div>
+                }
             </div>
         </div>
     </div>
 </section>
 
-<!-- ABOUT -->
+<!-- ═══ ABOUT ═══ -->
 <section id="about">
     <div class="container">
         <div class="about-grid">
@@ -195,58 +1071,83 @@
                 <div class="about-img-inner">
                     <div class="about-img-icon">🏡</div>
                     <div class="about-img-text">@(info?.VillageName ?? "খোকসা মল্লিক পাড়া")</div>
-                    <p style="color:rgba(255,255,255,0.7);font-size:0.88rem;">সবুজে ঘেরা শান্তির আবাস</p>
+                    <p style="color:rgba(255,255,255,0.7);font-size:0.9rem;position:relative;">সবুজে ঘেরা শান্তির আবাস</p>
                 </div>
                 <div class="about-img-badge">🏆 আদর্শ গ্রাম</div>
             </div>
             <div class="about-content reveal">
                 <div class="section-tag">📖 আমাদের ইতিহাস</div>
-                <h2>@(info?.VillageName ?? "খোকসা মল্লিক পাড়া") গৌরবময় ইতিহাস</h2>
-                <p>@(info?.History ?? "খোকসা মল্লিক পাড়া গ্রাম খুলনা বিভাগের একটি সমৃদ্ধ ও ঐতিহ্যবাহী গ্রাম।")</p>
-                <p>গ্রামের মানুষ কৃষিকাজ, মৎস্যচাষ এবং ক্ষুদ্র ব্যবসার মাধ্যমে জীবিকা নির্বাহ করেন।</p>
+                <h2>@(info?.VillageName ?? "খোকসা মল্লিক পাড়া")-র গৌরবময় ইতিহাস</h2>
+                <p>@(info?.History ?? "খোকসা মল্লিক পাড়া গ্রাম খুলনা বিভাগের একটি সমৃদ্ধ ও ঐতিহ্যবাহী গ্রাম। প্রজন্মের পর প্রজন্ম ধরে এই গ্রামের মানুষ একতা ও সম্প্রীতির মধ্যে জীবন যাপন করে আসছেন।")</p>
+                <p>গ্রামের মানুষ কৃষিকাজ, মৎস্যচাষ এবং ক্ষুদ্র ব্যবসার মাধ্যমে জীবিকা নির্বাহ করেন। শিক্ষা ও সংস্কৃতিতেও এ গ্রাম অগ্রণী ভূমিকা পালন করে আসছে।</p>
                 <div class="about-tags">
                     <span class="tag">🌾 কৃষিপ্রধান</span>
                     <span class="tag">🐟 মৎস্যচাষ</span>
                     <span class="tag">📚 শিক্ষিত সমাজ</span>
                     <span class="tag">🕌 ধর্মীয় ঐতিহ্য</span>
                     <span class="tag">🌿 সবুজ পরিবেশ</span>
+                    <span class="tag">🤝 সামাজিক বন্ধন</span>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- POPULATION -->
+<!-- ═══ POPULATION / STATS ═══ -->
 <section id="population">
     <div class="container">
         <div class="section-header">
-            <div class="section-tag" style="background:rgba(200,153,58,0.2);color:var(--gold-light);border:1px solid rgba(200,153,58,0.3)">📊 পরিসংখ্যান</div>
-            <h2 class="section-title" style="color:white">গ্রামের মূল তথ্য</h2>
-            <p class="section-desc">খোকসা মল্লিক পাড়া গ্রামের জনসংখ্যা, আয়তন এবং অন্যান্য গুরুত্বপূর্ণ তথ্য</p>
+            <div class="section-tag" style="background:rgba(200,153,58,0.18);color:var(--gold-light);border:1px solid rgba(200,153,58,0.3)">📊 পরিসংখ্যান</div>
+            <h2 class="section-title">গ্রামের মূল তথ্য</h2>
+            <p class="section-desc">খোকসা মল্লিক পাড়া গ্রামের জনসংখ্যা, আয়তন এবং অন্যান্য গুরুত্বপূর্ণ তথ্যাবলি</p>
             <div class="divider"></div>
         </div>
-        <div class="info-grid">
-            <div class="info-card reveal"><div class="info-icon">👨‍👩‍👧‍👦</div><span class="info-num">@(info?.TotalPopulation ?? "৩,৫০০+")</span><span class="info-label">মোট জনসংখ্যা</span></div>
-            <div class="info-card reveal"><div class="info-icon">🏠</div><span class="info-num">@(info?.TotalFamilies ?? "৭৫০+")</span><span class="info-label">মোট পরিবার</span></div>
-            <div class="info-card reveal"><div class="info-icon">📏</div><span class="info-num">@(info?.Area ?? "৪.২ কিমি²")</span><span class="info-label">মোট আয়তন</span></div>
-            <div class="info-card reveal"><div class="info-icon">👨</div><span class="info-num">@(info?.MalePopulation ?? "১,৮৫০")</span><span class="info-label">পুরুষ</span></div>
-            <div class="info-card reveal"><div class="info-icon">👩</div><span class="info-num">@(info?.FemalePopulation ?? "১,৬৫০")</span><span class="info-label">মহিলা</span></div>
-            <div class="info-card reveal"><div class="info-icon">📖</div><span class="info-num">@(info?.LiteracyRate ?? "৭৮%")</span><span class="info-label">সাক্ষরতার হার</span></div>
+        <div class="info-grid reveal">
+            <div class="info-card">
+                <span class="info-icon">👨‍👩‍👧‍👦</span>
+                <span class="info-num">@(info?.TotalPopulation ?? "৩,৫০০+")</span>
+                <span class="info-label">মোট জনসংখ্যা</span>
+            </div>
+            <div class="info-card">
+                <span class="info-icon">🏠</span>
+                <span class="info-num">@(info?.TotalFamilies ?? "৭৫০+")</span>
+                <span class="info-label">মোট পরিবার</span>
+            </div>
+            <div class="info-card">
+                <span class="info-icon">📏</span>
+                <span class="info-num">@(info?.Area ?? "৪.২ কিমি²")</span>
+                <span class="info-label">মোট আয়তন</span>
+            </div>
+            <div class="info-card">
+                <span class="info-icon">👨</span>
+                <span class="info-num">@(info?.MalePopulation ?? "১,৮৫০")</span>
+                <span class="info-label">পুরুষ জনসংখ্যা</span>
+            </div>
+            <div class="info-card">
+                <span class="info-icon">👩</span>
+                <span class="info-num">@(info?.FemalePopulation ?? "১,৬৫০")</span>
+                <span class="info-label">মহিলা জনসংখ্যা</span>
+            </div>
+            <div class="info-card">
+                <span class="info-icon">📖</span>
+                <span class="info-num">@(info?.LiteracyRate ?? "৭৮%")</span>
+                <span class="info-label">সাক্ষরতার হার</span>
+            </div>
         </div>
     </div>
 </section>
 
-<!-- FACILITIES -->
+<!-- ═══ FACILITIES ═══ -->
 <section id="facilities">
     <div class="container">
-        <div class="section-header">
+        <div class="section-header reveal">
             <div class="section-tag">🏛️ প্রতিষ্ঠানসমূহ</div>
             <h2 class="section-title">গ্রামের সুবিধাসমূহ</h2>
             <p class="section-desc">আমাদের গ্রামে রয়েছে বিভিন্ন ধর্মীয়, শিক্ষা ও ব্যবসায়িক প্রতিষ্ঠান</p>
             <div class="divider"></div>
         </div>
         <div class="facility-grid">
-            @if (facilities != null)
+            @if (facilities != null && facilities.Any())
             {
                 foreach (var f in facilities)
                 {
@@ -258,21 +1159,28 @@
                     </div>
                 }
             }
+            else
+            {
+                <div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text-light);">
+                    <div style="font-size:3rem;margin-bottom:1rem;">🏛️</div>
+                    <p>এখনো কোনো সুবিধা যোগ করা হয়নি।</p>
+                </div>
+            }
         </div>
     </div>
 </section>
 
-<!-- COMMITTEE -->
+<!-- ═══ COMMITTEE ═══ -->
 <section id="committee">
     <div class="container">
-        <div class="section-header">
+        <div class="section-header reveal">
             <div class="section-tag">👥 গণ্যমান্য ব্যক্তিবর্গ</div>
             <h2 class="section-title">গ্রামের কমিটি ও গুরুত্বপূর্ণ ব্যক্তি</h2>
-            <p class="section-desc">আমাদের গ্রামের উন্নয়নে যারা নিরলস কাজ করে যাচ্ছেন</p>
+            <p class="section-desc">আমাদের গ্রামের উন্নয়নে যারা নিরলসভাবে কাজ করে যাচ্ছেন</p>
             <div class="divider"></div>
         </div>
         <div class="committee-grid">
-            @if (committee != null)
+            @if (committee != null && committee.Any())
             {
                 foreach (var m in committee)
                 {
@@ -284,85 +1192,150 @@
                     </div>
                 }
             }
+            else
+            {
+                <div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text-light);">
+                    <div style="font-size:3rem;margin-bottom:1rem;">👥</div>
+                    <p>এখনো কোনো কমিটি সদস্য যোগ করা হয়নি।</p>
+                </div>
+            }
         </div>
     </div>
 </section>
 
-<!-- GALLERY -->
+<!-- ═══ GALLERY ═══ -->
 <section id="gallery">
     <div class="container">
-        <div class="section-header">
-            <div class="section-tag" style="background:rgba(200,153,58,0.2);color:var(--gold-light);border:1px solid rgba(200,153,58,0.3)">🖼️ আমাদের গ্রাম</div>
-            <h2 class="section-title" style="color:white">ফটো গ্যালারি</h2>
+        <div class="section-header reveal">
+            <div class="section-tag" style="background:rgba(200,153,58,0.18);color:var(--gold-light);border:1px solid rgba(200,153,58,0.3)">🖼️ আমাদের গ্রাম</div>
+            <h2 class="section-title">ফটো গ্যালারি</h2>
             <p class="section-desc">খোকসা মল্লিক পাড়া গ্রামের সুন্দর মুহূর্তগুলো</p>
             <div class="divider"></div>
         </div>
-        <div class="gallery-grid">
-            @if (gallery != null)
+        <div class="gallery-grid reveal">
+            @if (gallery != null && gallery.Any())
             {
                 bool first = true;
                 foreach (var g in gallery)
                 {
                     <div class="gallery-item @(first || g.IsFeatured ? "featured" : "")">
-                        <div class="gallery-inner" style="background: @g.GradientColor;">
+                        <div class="gallery-inner" style="background: @(g.GradientColor ?? "linear-gradient(135deg,#1a6b3c,#2d9b5a)");">
                             @if (!string.IsNullOrEmpty(g.ImagePath))
                             {
-                                <img src="@g.ImagePath" alt="@g.Title" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" />
+                                <img src="@g.ImagePath" alt="@g.Title"
+                                     style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;" />
                             }
-                            <div class="gallery-icon">@g.Icon</div>
-                            <div class="gallery-label">@g.Title</div>
+                            <div class="gallery-icon" style="position:relative;z-index:1;">@g.Icon</div>
+                            <div class="gallery-label" style="position:relative;z-index:1;">@g.Title</div>
                         </div>
                         <div class="gallery-overlay"><div class="gallery-overlay-icon">🔍</div></div>
                     </div>
                     first = false;
                 }
             }
+            else
+            {
+                <div style="grid-column:1/-1;text-align:center;padding:3rem;color:rgba(255,255,255,0.5);">
+                    <div style="font-size:3rem;margin-bottom:1rem;">🖼️</div>
+                    <p>এখনো কোনো গ্যালারি আইটেম যোগ করা হয়নি।</p>
+                </div>
+            }
         </div>
     </div>
 </section>
 
-<!-- CONTACT -->
+<!-- ═══ CONTACT ═══ -->
 <section id="contact">
     <div class="container">
-        <div class="section-header">
+        <div class="section-header reveal">
             <div class="section-tag">📍 যোগাযোগ</div>
             <h2 class="section-title">আমাদের সাথে যোগাযোগ করুন</h2>
-            <p class="section-desc">যেকোনো প্রয়োজনে আমাদের সাথে যোগাযোগ করুন</p>
+            <p class="section-desc">যেকোনো প্রয়োজনে নিচের তথ্য ব্যবহার করে আমাদের সাথে যোগাযোগ করুন</p>
             <div class="divider"></div>
         </div>
         <div class="contact-grid">
             <div class="contact-info reveal">
                 <h3>যোগাযোগের তথ্য</h3>
-                <div class="contact-item"><div class="contact-icon">📍</div><div class="contact-text"><strong>ঠিকানা</strong><span>@(info?.Address ?? "খোকসা মল্লিক পাড়া গ্রাম, খুলনা বিভাগ, বাংলাদেশ")</span></div></div>
-                <div class="contact-item"><div class="contact-icon">📞</div><div class="contact-text"><strong>ফোন নম্বর</strong><span>@(info?.Phone ?? "—")</span></div></div>
-                <div class="contact-item"><div class="contact-icon">✉️</div><div class="contact-text"><strong>ইমেইল</strong><span>@(info?.Email ?? "—")</span></div></div>
-                <div class="contact-item"><div class="contact-icon">⏰</div><div class="contact-text"><strong>যোগাযোগের সময়</strong><span>@(info?.OfficeHours ?? "সকাল ৯টা - বিকাল ৫টা")</span></div></div>
-                <div class="contact-item"><div class="contact-icon">📱</div><div class="contact-text"><strong>ফেসবুক পেজ</strong><span>@(info?.Facebook ?? "—")</span></div></div>
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <div class="contact-text">
+                        <strong>ঠিকানা</strong>
+                        <span>@(info?.Address ?? "খোকসা মল্লিক পাড়া গ্রাম, খুলনা বিভাগ, বাংলাদেশ")</span>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📞</div>
+                    <div class="contact-text">
+                        <strong>ফোন নম্বর</strong>
+                        <span>@(info?.Phone ?? "—")</span>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">✉️</div>
+                    <div class="contact-text">
+                        <strong>ইমেইল</strong>
+                        <span>@(info?.Email ?? "—")</span>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">⏰</div>
+                    <div class="contact-text">
+                        <strong>যোগাযোগের সময়</strong>
+                        <span>@(info?.OfficeHours ?? "সকাল ৯টা — বিকাল ৫টা")</span>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📱</div>
+                    <div class="contact-text">
+                        <strong>ফেসবুক পেজ</strong>
+                        <span>@(info?.Facebook ?? "—")</span>
+                    </div>
+                </div>
             </div>
             <div class="map-container reveal">
                 <div class="map-placeholder">
                     <div class="map-placeholder-icon">🗺️</div>
-                    <h4>@(info?.VillageName ?? "খোকসা মল্লিক পাড়া গ্রামের") অবস্থান</h4>
+                    <h4>@(info?.VillageName ?? "খোকসা মল্লিক পাড়া")-র অবস্থান</h4>
                     <p>@(info?.Division ?? "খুলনা বিভাগ"), বাংলাদেশ</p>
-                    <a href="@(info?.MapsLink ?? "https://maps.google.com")" target="_blank" class="map-btn">📍 Google Maps-এ দেখুন</a>
+                    <a href="@(info?.MapsLink ?? "https://maps.google.com")" target="_blank" rel="noopener" class="map-btn">
+                        📍 Google Maps-এ দেখুন
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- FOOTER -->
+<!-- ═══ FOOTER ═══ -->
 <footer>
     <div class="footer-logo">🌿 @(info?.VillageName ?? "খোকসা মল্লিক পাড়া")</div>
-    <p style="font-size:0.88rem;margin-bottom:0.45rem;">@(info?.Division ?? "খুলনা বিভাগ"), বাংলাদেশ | আমাদের গর্বিত গ্রাম</p>
+    <p style="font-size:0.88rem;margin-bottom:0.3rem;color:rgba(255,255,255,0.55);">
+        @(info?.Division ?? "খুলনা বিভাগ"), বাংলাদেশ &nbsp;|&nbsp; আমাদের গর্বিত গ্রাম
+    </p>
     <div class="footer-links">
-        <a href="#home">হোম</a><a href="#news">সংবাদ</a><a href="#about">পরিচিতি</a>
-        <a href="#facilities">সুবিধা</a><a href="#committee">কমিটি</a>
-        <a href="#gallery">গ্যালারি</a><a href="#contact">যোগাযোগ</a>
+        <a href="#home">হোম</a>
+        <a href="#news">সংবাদ</a>
+        <a href="#about">পরিচিতি</a>
+        <a href="#facilities">সুবিধা</a>
+        <a href="#committee">কমিটি</a>
+        <a href="#gallery">গ্যালারি</a>
+        <a href="#contact">যোগাযোগ</a>
     </div>
     <div class="footer-copy">© ২০২৬ @(info?.VillageName ?? "খোকসা মল্লিক পাড়া") | সর্বস্বত্ব সংরক্ষিত</div>
-    <div class="footer-dev">✦ Developed by <span>Md Firoz Ali</span> with ❤️ | <a href="/Admin/Login" style="color:rgba(200,153,58,0.6);font-size:0.72rem;">Admin</a></div>
+    <div class="footer-dev">
+        ✦ Developed with ❤️ by <span>Md Firoz Ali</span> &nbsp;|&nbsp;
+        <a href="/Admin/Login" style="color:rgba(200,153,58,0.5);font-size:0.7rem;text-decoration:none;">অ্যাডমিন</a>
+    </div>
 </footer>
 
+<!-- ═══ SCROLL TO TOP ═══ -->
+<a href="#home" id="scrollTop" aria-label="উপরে যান">↑</a>
 
-
+<script>
+    /* ── Scroll to top button ── */
+    window.addEventListener('scroll', () => {
+        const btn = document.getElementById('scrollTop');
+        if (window.scrollY > 400) btn.classList.add('visible');
+        else btn.classList.remove('visible');
+    });
+</script>

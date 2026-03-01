@@ -3,31 +3,625 @@
     ViewData["Title"] = "নতুন সুবিধা যোগ";
     Layout = "_AdminLayout";
 }
-<div class="breadcrumb"><a href="/Admin/FacilityList">সুবিধাসমূহ</a> › নতুন</div>
-<div class="card" style="max-width:650px">
-    <div class="card-title" style="margin-bottom:1.2rem">🏛️ নতুন সুবিধা যোগ করুন</div>
-    <form asp-action="FacilityCreate" method="post">
-        @Html.AntiForgeryToken()
-        <div class="form-grid">
-            <div class="form-group"><label asp-for="Name"></label><input asp-for="Name" class="form-control" /><span asp-validation-for="Name" style="color:red;font-size:0.82rem"></span></div>
-            <div class="form-group"><label asp-for="Icon"></label><input asp-for="Icon" class="form-control" placeholder="🕌" /></div>
-        </div>
-        <div class="form-group"><label asp-for="Description"></label><textarea asp-for="Description" class="form-control"></textarea></div>
-        <div class="form-grid">
-            <div class="form-group"><label asp-for="Count"></label><input asp-for="Count" class="form-control" placeholder="৩টি মসজিদ" /></div>
-            <div class="form-group">
-                <label asp-for="Category"></label>
-                <select asp-for="Category" class="form-control">
-                    <option>সাধারণ</option><option>ধর্মীয়</option><option>শিক্ষা</option><option>স্বাস্থ্য</option><option>ব্যবসা</option>
-                </select>
-            </div>
-        </div>
-        <div class="form-grid">
-            <div class="form-group"><label asp-for="SortOrder"></label><input asp-for="SortOrder" type="number" class="form-control" /></div>
-            <div class="form-group" style="display:flex;align-items:center;padding-top:1.8rem">
-                <div class="form-check"><input asp-for="IsActive" type="checkbox" /><label asp-for="IsActive">সক্রিয়</label></div>
-            </div>
-        </div>
-        <div style="display:flex;gap:1rem"><button type="submit" class="btn btn-primary">💾 সংরক্ষণ</button><a href="/Admin/FacilityList" class="btn btn-outline">বাতিল</a></div>
-    </form>
+
+<style>
+    .form-page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.6rem;
+    }
+
+    .fph-left h2 {
+        font-family: 'Playfair Display',serif;
+        font-size: 1.4rem;
+        color: var(--green-dark);
+        font-weight: 900;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .fph-left p {
+        font-size: 0.84rem;
+        color: var(--text-muted);
+        margin-top: 2px;
+    }
+
+    .form-layout {
+        display: grid;
+        grid-template-columns: 1fr 295px;
+        gap: 1.4rem;
+        align-items: start;
+    }
+
+    .form-section {
+        background: white;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        margin-bottom: 1.2rem;
+    }
+
+        .form-section:last-child {
+            margin-bottom: 0;
+        }
+
+    .fs-header {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 1rem 1.4rem;
+        border-bottom: 1px solid var(--border);
+        background: #fafcfa;
+    }
+
+    .fs-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 7px;
+        background: var(--green-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+        flex-shrink: 0;
+    }
+
+    .fs-header h3 {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--green-dark);
+    }
+
+    .fs-header p {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-top: 1px;
+    }
+
+    .fs-body {
+        padding: 1.3rem 1.4rem;
+    }
+
+    .field-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.1rem;
+    }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+    .form-label {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-weight: 600;
+        color: var(--green-dark);
+        margin-bottom: 0.42rem;
+        font-size: 0.84rem;
+    }
+
+    .req {
+        color: #e74c3c;
+        font-size: 0.75rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.68rem 0.95rem;
+        border: 1.5px solid var(--border);
+        border-radius: 9px;
+        font-family: 'Hind Siliguri',sans-serif;
+        font-size: 0.9rem;
+        color: var(--text);
+        background: white;
+        transition: all 0.2s;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(26,107,60,0.09);
+        }
+
+        .form-control::placeholder {
+            color: #b5c8ba;
+        }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 95px;
+    }
+
+    select.form-control {
+        cursor: pointer;
+    }
+
+    .field-hint {
+        font-size: 0.74rem;
+        color: var(--text-muted);
+        margin-top: 0.28rem;
+    }
+
+    .validation-msg {
+        font-size: 0.75rem;
+        color: #c0392b;
+        margin-top: 0.25rem;
+        display: block;
+    }
+
+    /* Category pills */
+    .cat-pills {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-top: 0.65rem;
+    }
+
+    .cat-pill {
+        padding: 0.3rem 0.75rem;
+        border-radius: 50px;
+        border: 1.5px solid var(--border);
+        background: white;
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        color: var(--text-muted);
+    }
+
+        .cat-pill:hover {
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        .cat-pill.sel {
+            background: var(--green);
+            color: white;
+            border-color: var(--green);
+        }
+
+        .cat-pill.sel-religious {
+            background: #c8993a;
+            color: white;
+            border-color: #c8993a;
+        }
+
+        .cat-pill.sel-education {
+            background: #2d70b8;
+            color: white;
+            border-color: #2d70b8;
+        }
+
+        .cat-pill.sel-health {
+            background: #b84040;
+            color: white;
+            border-color: #b84040;
+        }
+
+        .cat-pill.sel-business {
+            background: #8840b0;
+            color: white;
+            border-color: #8840b0;
+        }
+
+    /* Icon picker */
+    .icon-picker {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-top: 0.6rem;
+    }
+
+    .icon-opt {
+        width: 38px;
+        height: 38px;
+        border-radius: 9px;
+        border: 1.5px solid var(--border);
+        background: white;
+        cursor: pointer;
+        font-size: 1.15rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+
+        .icon-opt:hover {
+            border-color: var(--green);
+            background: var(--green-muted);
+            transform: scale(1.1);
+        }
+
+        .icon-opt.selected {
+            border-color: var(--green);
+            background: var(--green-muted);
+            box-shadow: 0 0 0 2px rgba(26,107,60,0.15);
+        }
+
+    /* Toggle */
+    .toggle-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.85rem 1rem;
+        background: #f8fbf8;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+        .toggle-item:hover {
+            border-color: var(--green);
+            background: #f0f8f3;
+        }
+
+        .toggle-item.checked {
+            border-color: var(--green);
+            background: rgba(26,107,60,0.06);
+        }
+
+    .toggle-sw {
+        position: relative;
+        width: 42px;
+        height: 23px;
+        flex-shrink: 0;
+    }
+
+        .toggle-sw input {
+            display: none;
+        }
+
+    .ts-track {
+        position: absolute;
+        inset: 0;
+        background: #dde8dd;
+        border-radius: 50px;
+        transition: background 0.25s;
+    }
+
+    .ts-thumb {
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 17px;
+        height: 17px;
+        background: white;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        transition: transform 0.25s;
+    }
+
+    .toggle-sw input:checked ~ .ts-track {
+        background: var(--green);
+    }
+
+    .toggle-sw input:checked ~ .ts-thumb {
+        transform: translateX(19px);
+    }
+
+    .ti-info strong {
+        display: block;
+        font-size: 0.84rem;
+        color: var(--green-dark);
+        font-weight: 700;
+    }
+
+    .ti-info span {
+        font-size: 0.72rem;
+        color: var(--text-muted);
+    }
+
+    /* Sidebar */
+    .sidebar-card {
+        background: white;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        margin-bottom: 1.2rem;
+    }
+
+        .sidebar-card:last-child {
+            margin-bottom: 0;
+        }
+
+    .sc-hd {
+        padding: 0.9rem 1.2rem;
+        border-bottom: 1px solid var(--border);
+        background: #fafcfa;
+        font-size: 0.86rem;
+        font-weight: 700;
+        color: var(--green-dark);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .sc-bd {
+        padding: 1.1rem 1.2rem;
+    }
+
+    /* Facility preview */
+    .facility-preview {
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+    }
+
+    .fp-header {
+        height: 90px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        transition: background 0.3s;
+        background: linear-gradient(135deg,#1a6b3c,#2d9b5a);
+    }
+
+    .fp-body {
+        padding: 0.9rem 1rem;
+    }
+
+    .fp-name {
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: var(--green-dark);
+        margin-bottom: 0.3rem;
+    }
+
+    .fp-cat {
+        display: inline-block;
+        padding: 0.15rem 0.6rem;
+        border-radius: 50px;
+        font-size: 0.68rem;
+        font-weight: 700;
+        background: rgba(26,107,60,0.1);
+        color: #1a6b3c;
+        border: 1px solid rgba(26,107,60,0.18);
+    }
+
+    .fp-count {
+        display: inline-block;
+        margin-left: 0.4rem;
+        font-size: 0.72rem;
+        color: var(--text-muted);
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 0.7rem;
+        padding: 1.1rem 1.2rem;
+        border-top: 1px solid var(--border);
+        background: #fafcfa;
+    }
+
+        .form-actions .btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+    @@media (max-width:860px) {
+        .form-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width:500px) {
+        .field-grid-2 {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="form-page-header">
+    <div class="fph-left">
+        <h2>🏛️ নতুন সুবিধা যোগ করুন</h2>
+        <p>গ্রামের সুবিধা বিভাগে নতুন প্রতিষ্ঠান বা সেবা যোগ করুন</p>
+    </div>
+    <a href="/Admin/FacilityList" class="btn btn-outline btn-sm">← সুবিধা তালিকা</a>
 </div>
+
+<form asp-action="FacilityCreate" method="post" id="facilityForm">
+    @Html.AntiForgeryToken()
+    <div class="form-layout">
+
+        <!-- LEFT -->
+        <div>
+            <!-- Name & Icon -->
+            <div class="form-section">
+                <div class="fs-header">
+                    <div class="fs-icon">🏷️</div>
+                    <div><h3>মূল তথ্য</h3><p>সুবিধার নাম ও আইকন নির্ধারণ করুন</p></div>
+                </div>
+                <div class="fs-body">
+                    <div class="field-grid-2">
+                        <div class="form-group">
+                            <label class="form-label">নাম <span class="req">*</span></label>
+                            <input asp-for="Name" class="form-control" id="nameInput"
+                                   placeholder="যেমন: আল-আমিন মসজিদ"
+                                   oninput="updatePreview()" />
+                            <span asp-validation-for="Name" class="validation-msg"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">আইকন ইমোজি</label>
+                            <input asp-for="Icon" class="form-control" id="iconInput"
+                                   placeholder="🕌" oninput="updatePreview()" maxlength="8" />
+                            <div class="icon-picker">
+                                @foreach (var ic in new[] { "🕌", "🏫", "🏥", "🏪", "⛪", "🌾", "🏛️", "🏗️", "💧", "🌿", "🎓", "🏆" })
+                                {
+                                    <div class="icon-opt" onclick="selectIcon('@ic')">@ic</div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">বিবরণ</label>
+                        <textarea asp-for="Description" class="form-control"
+                                  placeholder="সুবিধাটি সম্পর্কে সংক্ষিপ্ত বিবরণ লিখুন..." rows="3"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category & Count -->
+            <div class="form-section">
+                <div class="fs-header">
+                    <div class="fs-icon">📊</div>
+                    <div><h3>বিভাগ ও পরিসংখ্যান</h3><p>বিভাগ ও সংখ্যা নির্ধারণ করুন</p></div>
+                </div>
+                <div class="fs-body">
+                    <div class="field-grid-2">
+                        <div class="form-group">
+                            <label class="form-label">বিভাগ</label>
+                            <select asp-for="Category" class="form-control" id="catSelect"
+                                    onchange="syncCatPills(); updatePreview();">
+                                <option>সাধারণ</option>
+                                <option>ধর্মীয়</option>
+                                <option>শিক্ষা</option>
+                                <option>স্বাস্থ্য</option>
+                                <option>ব্যবসা</option>
+                            </select>
+                            <div class="cat-pills" id="catPills">
+                                <div class="cat-pill" onclick="selectCat('সাধারণ')">সাধারণ</div>
+                                <div class="cat-pill" onclick="selectCat('ধর্মীয়')">ধর্মীয়</div>
+                                <div class="cat-pill" onclick="selectCat('শিক্ষা')">শিক্ষা</div>
+                                <div class="cat-pill" onclick="selectCat('স্বাস্থ্য')">স্বাস্থ্য</div>
+                                <div class="cat-pill" onclick="selectCat('ব্যবসা')">ব্যবসা</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">সংখ্যা / পরিমাণ</label>
+                            <input asp-for="Count" class="form-control" id="countInput"
+                                   placeholder="যেমন: ৩টি মসজিদ"
+                                   oninput="updatePreview()" />
+                            <div class="field-hint">ℹ️ যেমন: ৩টি, ১টি, ৫০+ ইত্যাদি</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order & Status -->
+            <div class="form-section">
+                <div class="fs-header">
+                    <div class="fs-icon">⚙️</div>
+                    <div><h3>ক্রম ও অবস্থা</h3></div>
+                </div>
+                <div class="fs-body">
+                    <div class="form-group">
+                        <label class="form-label">ক্রম নম্বর (SortOrder)</label>
+                        <input asp-for="SortOrder" type="number" class="form-control" value="0" min="0" />
+                        <div class="field-hint">ℹ️ ছোট সংখ্যা আগে দেখাবে</div>
+                    </div>
+                    <label class="toggle-item checked" id="activeToggle" for="IsActive">
+                        <div class="toggle-sw">
+                            <input asp-for="IsActive" type="checkbox" id="IsActive" checked
+                                   onchange="syncToggle()" />
+                            <div class="ts-track"></div>
+                            <div class="ts-thumb" style="transform:translateX(19px)"></div>
+                        </div>
+                        <div class="ti-info">
+                            <strong>✅ সক্রিয় রাখুন</strong>
+                            <span>বন্ধ করলে ওয়েবসাইটে দেখাবে না</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- SIDEBAR -->
+        <div>
+            <div class="sidebar-card">
+                <div class="sc-hd">👁️ প্রিভিউ</div>
+                <div class="sc-bd">
+                    <div class="facility-preview">
+                        <div class="fp-header" id="fpHeader">🏛️</div>
+                        <div class="fp-body">
+                            <div class="fp-name" id="fpName">নাম এখানে দেখাবে</div>
+                            <span class="fp-cat" id="fpCat">সাধারণ</span>
+                            <span class="fp-count" id="fpCount"></span>
+                        </div>
+                    </div>
+                    <div class="field-hint" style="margin-top:0.6rem;">ℹ️ লাইভ প্রিভিউ</div>
+                </div>
+            </div>
+
+            <div class="sidebar-card">
+                <div class="sc-hd">💡 নির্দেশিকা</div>
+                <div class="sc-bd" style="display:flex;flex-direction:column;gap:0.65rem;">
+                    <div class="field-hint">🏷️ সঠিক বিভাগ দিলে ফিল্টারে সহজে খুঁজে পাওয়া যায়</div>
+                    <div class="field-hint">📊 সংখ্যা দিলে দর্শকরা পরিসংখ্যান বুঝতে পারেন</div>
+                    <div class="field-hint">🔢 SortOrder ছোট রাখলে আগে দেখাবে</div>
+                    <div class="field-hint">🎯 প্রতিটি বিভাগের জন্য আলাদা রঙ স্বয়ংক্রিয়ভাবে দেখাবে</div>
+                </div>
+            </div>
+
+            <div class="sidebar-card">
+                <div class="form-actions">
+                    <a href="/Admin/FacilityList" class="btn btn-outline">বাতিল</a>
+                    <button type="submit" class="btn btn-primary">💾 সংরক্ষণ করুন</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    const CAT_GRADIENTS = {
+        'সাধারণ': 'linear-gradient(135deg,#1a6b3c,#2d9b5a)',
+        'ধর্মীয়': 'linear-gradient(135deg,#8b5a10,#c8993a)',
+        'শিক্ষা':  'linear-gradient(135deg,#1a4878,#3a8ad4)',
+        'স্বাস্থ্য': 'linear-gradient(135deg,#7a2020,#b84040)',
+        'ব্যবসা':  'linear-gradient(135deg,#5a1a7a,#8840b0)',
+    };
+    const CAT_PILL_CLASSES = {
+        'সাধারণ':'sel','ধর্মীয়':'sel-religious','শিক্ষা':'sel-education','স্বাস্থ্য':'sel-health','ব্যবসা':'sel-business'
+    };
+
+    function updatePreview() {
+        const name = document.getElementById('nameInput')?.value || 'নাম এখানে দেখাবে';
+        const icon = document.getElementById('iconInput')?.value || '🏛️';
+        const cat  = document.getElementById('catSelect')?.value || 'সাধারণ';
+        const count = document.getElementById('countInput')?.value || '';
+        document.getElementById('fpHeader').textContent = icon || '🏛️';
+        document.getElementById('fpHeader').style.background = CAT_GRADIENTS[cat] || CAT_GRADIENTS['সাধারণ'];
+        document.getElementById('fpName').textContent = name.substring(0,40);
+        document.getElementById('fpCat').textContent = cat;
+        document.getElementById('fpCount').textContent = count ? '· ' + count : '';
+    }
+    function selectIcon(ic) {
+        document.getElementById('iconInput').value = ic;
+        document.querySelectorAll('.icon-opt').forEach(el => el.classList.toggle('selected', el.textContent === ic));
+        updatePreview();
+    }
+    function selectCat(cat) {
+        document.getElementById('catSelect').value = cat;
+        syncCatPills();
+        updatePreview();
+    }
+    function syncCatPills() {
+        const cat = document.getElementById('catSelect').value;
+        const allClasses = Object.values(CAT_PILL_CLASSES);
+        document.querySelectorAll('.cat-pill').forEach(el => {
+            allClasses.forEach(c => el.classList.remove(c));
+            if (el.textContent === cat) {
+                el.classList.add(CAT_PILL_CLASSES[cat] || 'sel');
+            }
+        });
+    }
+    function syncToggle() {
+        const checked = document.getElementById('IsActive').checked;
+        document.getElementById('activeToggle').classList.toggle('checked', checked);
+    }
+    window.addEventListener('DOMContentLoaded', () => { syncCatPills(); updatePreview(); });
+</script>

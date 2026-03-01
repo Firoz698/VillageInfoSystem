@@ -3,18 +3,562 @@
     ViewData["Title"] = "নতুন ব্রেকিং নিউজ";
     Layout = "_AdminLayout";
 }
-<div class="breadcrumb"><a href="/Admin/TickerList">ব্রেকিং নিউজ</a> › নতুন</div>
-<div class="card" style="max-width:600px">
-    <div class="card-title" style="margin-bottom:1.2rem">📺 নতুন টিকার যোগ</div>
-    <form asp-action="TickerCreate" method="post">
-        @Html.AntiForgeryToken()
-        <div class="form-group"><label asp-for="Text"></label><textarea asp-for="Text" class="form-control" placeholder="স্ক্রলিং নিউজ টেক্সট লিখুন..."></textarea><span asp-validation-for="Text" style="color:red;font-size:0.82rem"></span></div>
-        <div class="form-grid">
-            <div class="form-group"><label asp-for="SortOrder"></label><input asp-for="SortOrder" type="number" class="form-control" /></div>
-            <div class="form-group" style="display:flex;align-items:center;padding-top:1.8rem">
-                <div class="form-check"><input asp-for="IsActive" type="checkbox" /><label asp-for="IsActive">সক্রিয়</label></div>
+
+<style>
+    :root {
+        --primary: #1a3a5c;
+        --primary-light: #2563a8;
+        --red: #c0392b;
+        --surface: #ffffff;
+        --surface-alt: #f5f7fa;
+        --border: #dde3ec;
+        --border-focus: #2563a8;
+        --text-main: #1a2636;
+        --text-muted: #5a6b80;
+        --shadow-sm: 0 2px 8px rgba(26,58,92,0.07);
+        --radius: 12px;
+        --input-radius: 8px;
+    }
+
+    .page-wrapper {
+        max-width: 680px;
+        animation: fadeUp 0.4s ease both;
+    }
+
+    @@keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(14px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-bottom: 1.5rem;
+    }
+
+        .breadcrumb a {
+            color: var(--primary-light);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+            .breadcrumb a:hover {
+                text-decoration: underline;
+            }
+
+    /* ── Live preview ── */
+    .preview-bar {
+        background: linear-gradient(90deg, var(--red) 0%, #a52820 100%);
+        border-radius: var(--radius);
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+        box-shadow: 0 4px 18px rgba(192,57,43,0.2);
+        display: flex;
+        align-items: stretch;
+        min-height: 44px;
+        transition: opacity 0.3s;
+    }
+
+        .preview-bar.empty {
+            opacity: 0.5;
+        }
+
+    .preview-label {
+        background: rgba(0,0,0,0.25);
+        color: #fff;
+        font-size: 0.69rem;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 0 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .live-dot {
+        width: 7px;
+        height: 7px;
+        background: #ff6b6b;
+        border-radius: 50%;
+        animation: pulse 1.2s ease-in-out infinite;
+    }
+
+    @@keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        50% {
+            opacity: 0.5;
+            transform: scale(0.75);
+        }
+    }
+
+    .preview-scroll-wrap {
+        flex: 1;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        position: relative;
+    }
+
+        .preview-scroll-wrap::before,
+        .preview-scroll-wrap::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 32px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .preview-scroll-wrap::before {
+            left: 0;
+            background: linear-gradient(to right, rgba(160,40,32,0.6), transparent);
+        }
+
+        .preview-scroll-wrap::after {
+            right: 0;
+            background: linear-gradient(to left, rgba(160,40,32,0.6), transparent);
+        }
+
+    .preview-text {
+        color: #fff;
+        font-size: 0.82rem;
+        font-weight: 500;
+        white-space: nowrap;
+        padding: 0 1rem;
+        animation: scrollPreview 14s linear infinite;
+    }
+
+    @@keyframes scrollPreview {
+        0% {
+            transform: translateX(100%);
+        }
+
+        100% {
+            transform: translateX(-100%);
+        }
+    }
+
+    /* ── Card ── */
+    .form-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+    }
+
+    .form-card-header {
+        padding: 1.2rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface-alt);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .header-icon {
+        width: 38px;
+        height: 38px;
+        background: linear-gradient(135deg, #fde8e8, #f8caca);
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+
+    .form-card-header h2 {
+        font-family: 'Noto Serif Bengali', Georgia, serif;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin: 0;
+    }
+
+    .form-card-header p {
+        font-size: 0.77rem;
+        color: var(--text-muted);
+        margin: 0.12rem 0 0;
+    }
+
+    /* ── Form body ── */
+    .form-body {
+        padding: 1.5rem;
+    }
+
+    .section-label {
+        font-size: 0.69rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-muted);
+        margin: 0 0 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px dashed var(--border);
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        margin-bottom: 1.1rem;
+    }
+
+        .form-group label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+    .required-star {
+        color: #b53a2e;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.6rem 0.85rem;
+        border: 1.5px solid var(--border);
+        border-radius: var(--input-radius);
+        font-size: 0.875rem;
+        color: var(--text-main);
+        background: var(--surface);
+        transition: border-color 0.2s, box-shadow 0.2s;
+        outline: none;
+        box-sizing: border-box;
+        font-family: inherit;
+    }
+
+        .form-control:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(37,99,168,0.12);
+        }
+
+        .form-control::placeholder {
+            color: #b0bcc8;
+        }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 120px;
+        line-height: 1.65;
+    }
+
+    .char-counter {
+        font-size: 0.73rem;
+        color: var(--text-muted);
+        text-align: right;
+        margin-top: 0.15rem;
+    }
+
+        .char-counter.warn {
+            color: #e07b30;
+        }
+
+        .char-counter.over {
+            color: #b53a2e;
+            font-weight: 600;
+        }
+
+    .field-error {
+        font-size: 0.76rem;
+        color: #b53a2e;
+        margin-top: 0.1rem;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .form-hint {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-top: 0.15rem;
+    }
+
+    /* ── Toggle ── */
+    .toggle-group {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: var(--surface-alt);
+        border: 1.5px solid var(--border);
+        border-radius: var(--input-radius);
+        padding: 0.65rem 0.9rem;
+        cursor: pointer;
+        transition: border-color 0.2s;
+    }
+
+        .toggle-group:hover {
+            border-color: var(--border-focus);
+        }
+
+    .toggle-switch {
+        position: relative;
+        width: 38px;
+        height: 22px;
+        flex-shrink: 0;
+    }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+    .toggle-track {
+        position: absolute;
+        inset: 0;
+        background: #cdd5df;
+        border-radius: 999px;
+        transition: background 0.2s;
+        cursor: pointer;
+    }
+
+        .toggle-track::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border-radius: 50%;
+            transition: transform 0.2s;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+        }
+
+    .toggle-switch input:checked + .toggle-track {
+        background: #1a7a4a;
+    }
+
+        .toggle-switch input:checked + .toggle-track::after {
+            transform: translateX(16px);
+        }
+
+    .toggle-label {
+        font-size: 0.85rem;
+        color: var(--text-main);
+        font-weight: 500;
+        user-select: none;
+    }
+
+    .toggle-sub {
+        font-size: 0.74rem;
+        color: var(--text-muted);
+    }
+
+    /* ── Actions ── */
+    .form-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        padding: 1.2rem 1.5rem;
+        border-top: 1px solid var(--border);
+        background: var(--surface-alt);
+    }
+
+    .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--primary);
+        color: #fff;
+        border: none;
+        padding: 0.65rem 1.4rem;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(26,58,92,0.18);
+        transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+
+        .btn-primary:hover {
+            background: var(--primary-light);
+            transform: translateY(-1px);
+            box-shadow: 0 5px 18px rgba(26,58,92,0.22);
+        }
+
+    .btn-outline {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: transparent;
+        color: var(--text-muted);
+        border: 1.5px solid var(--border);
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: color 0.2s, border-color 0.2s, background 0.2s;
+    }
+
+        .btn-outline:hover {
+            color: var(--text-main);
+            border-color: #b0bcc8;
+            background: #eef1f5;
+        }
+
+    @@media (max-width: 540px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-body {
+            padding: 1.25rem;
+        }
+
+        .form-card-header {
+            padding: 1rem 1.25rem;
+        }
+
+        .form-actions {
+            padding: 1rem 1.25rem;
+            flex-direction: column-reverse;
+            align-items: stretch;
+        }
+
+        .btn-primary, .btn-outline {
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="page-wrapper">
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="/Admin/TickerList">ব্রেকিং নিউজ</a>
+        <span>›</span>
+        <span>নতুন টিকার</span>
+    </div>
+
+    <!-- Live preview -->
+    <div class="preview-bar empty" id="previewBar">
+        <div class="preview-label">
+            <span class="live-dot"></span>
+            প্রিভিউ
+        </div>
+        <div class="preview-scroll-wrap">
+            <div class="preview-text" id="previewText">এখানে আপনার সংবাদ টেক্সট দেখাবে…</div>
+        </div>
+    </div>
+
+    <div class="form-card">
+        <!-- Header -->
+        <div class="form-card-header">
+            <div class="header-icon">📺</div>
+            <div>
+                <h2>নতুন ব্রেকিং নিউজ টিকার</h2>
+                <p>নিচের ফর্মটি পূরণ করে স্ক্রলিং নিউজ যোগ করুন</p>
             </div>
         </div>
-        <div style="display:flex;gap:1rem"><button type="submit" class="btn btn-primary">💾 সংরক্ষণ</button><a href="/Admin/TickerList" class="btn btn-outline">বাতিল</a></div>
-    </form>
+
+        <form asp-action="TickerCreate" method="post">
+            @Html.AntiForgeryToken()
+            <div class="form-body">
+                <div class="section-label">সংবাদ বিষয়বস্তু</div>
+
+                <div class="form-group">
+                    <label asp-for="Text">সংবাদ টেক্সট <span class="required-star">*</span></label>
+                    <textarea asp-for="Text"
+                              class="form-control"
+                              placeholder="স্ক্রলিং টিকারে যে সংবাদটি দেখাতে চান তা লিখুন…"
+                              id="newsText"
+                              oninput="updatePreview(this)"
+                              maxlength="300"></textarea>
+                    <div class="char-counter" id="charCount">০ / ৩০০</div>
+                    <span asp-validation-for="Text" class="field-error"></span>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group" style="margin-bottom:0">
+                        <label asp-for="SortOrder">প্রদর্শন ক্রম</label>
+                        <input asp-for="SortOrder" type="number" class="form-control" placeholder="1" min="0" />
+                        <span class="form-hint">ছোট সংখ্যা আগে দেখাবে</span>
+                    </div>
+                    <div class="form-group" style="justify-content:flex-end;margin-bottom:0">
+                        <label style="visibility:hidden;font-size:0.8rem">অবস্থা</label>
+                        <label class="toggle-group" for="IsActive">
+                            <div class="toggle-switch">
+                                <input asp-for="IsActive" type="checkbox" id="IsActive" checked />
+                                <span class="toggle-track"></span>
+                            </div>
+                            <div>
+                                <div class="toggle-label">সক্রিয় করুন</div>
+                                <div class="toggle-sub">এখনই টিকারে দেখাবে</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="/Admin/TickerList" class="btn-outline">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
+                    বাতিল
+                </a>
+                <button type="submit" class="btn-primary">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" /><polyline points="17 21 17 13 7 13 7 21" /><polyline points="7 3 7 8 15 8" /></svg>
+                    টিকার সংরক্ষণ
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
+
+<script>
+    const toBanglaNum = n => n.toString().replace(/\d/g, d => '০১২৩৪৫৬৭৮৯'[d]);
+
+    function updatePreview(textarea) {
+        const val = textarea.value.trim();
+        const len = textarea.value.length;
+        const preview = document.getElementById('previewText');
+        const bar = document.getElementById('previewBar');
+        const counter = document.getElementById('charCount');
+
+        // Update preview
+        if (val) {
+            preview.textContent = val;
+            bar.classList.remove('empty');
+        } else {
+            preview.textContent = 'এখানে আপনার সংবাদ টেক্সট দেখাবে…';
+            bar.classList.add('empty');
+        }
+
+        // Update counter
+        counter.textContent = `${toBanglaNum(len)} / ৩০০`;
+        counter.className = 'char-counter';
+        if (len > 250) counter.classList.add('warn');
+        if (len >= 300) counter.classList.add('over');
+    }
+
+    // Init if model has value (validation error return)
+    const ta = document.getElementById('newsText');
+    if (ta && ta.value) updatePreview(ta);
+</script>

@@ -4,60 +4,630 @@
     var recentNews = ViewBag.RecentNews as List<VillageInfoSystem.Models.News>;
 }
 
-<div class="stats-grid">
-    <div class="stat-card">
-        <div class="stat-num">@ViewBag.NewsCount</div>
-        <div class="stat-label">📰 মোট সংবাদ</div>
+<style>
+    /* ── DASHBOARD SPECIFIC ── */
+    .welcome-banner {
+        background: linear-gradient(135deg, var(--green-dark) 0%, #1a6b3c 55%, #2d9b5a 100%);
+        border-radius: var(--radius);
+        padding: 1.8rem 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+        margin-bottom: 1.6rem;
+        position: relative;
+        overflow: hidden;
+        flex-wrap: wrap;
+    }
+
+        .welcome-banner::before {
+            content: '';
+            position: absolute;
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            top: -120px;
+            right: -80px;
+            pointer-events: none;
+        }
+
+        .welcome-banner::after {
+            content: '';
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: rgba(200,153,58,0.1);
+            bottom: -70px;
+            left: 30%;
+            pointer-events: none;
+        }
+
+    .wb-text {
+        position: relative;
+        z-index: 1;
+    }
+
+        .wb-text h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.45rem;
+            color: white;
+            font-weight: 900;
+            margin-bottom: 0.3rem;
+        }
+
+        .wb-text p {
+            font-size: 0.87rem;
+            color: rgba(255,255,255,0.65);
+        }
+
+    .wb-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        position: relative;
+        z-index: 1;
+        flex-wrap: wrap;
+    }
+
+    .wb-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.45rem 1rem;
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 50px;
+        font-size: 0.8rem;
+        color: rgba(255,255,255,0.85);
+        white-space: nowrap;
+    }
+
+        .wb-badge.gold {
+            background: rgba(200,153,58,0.2);
+            border-color: rgba(200,153,58,0.35);
+            color: #e8b84b;
+            font-weight: 700;
+        }
+
+    /* ── STAT CARDS ── */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.1rem;
+        margin-bottom: 1.6rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: var(--radius);
+        padding: 1.35rem 1.4rem;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        align-items: center;
+        gap: 1.1rem;
+        transition: all 0.28s;
+        cursor: default;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            transform: scaleX(0);
+            transition: transform 0.3s;
+            transform-origin: left;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+            .stat-card:hover::after {
+                transform: scaleX(1);
+            }
+
+    .sc-1::after {
+        background: linear-gradient(90deg, #1a6b3c, #2d9b5a);
+    }
+
+    .sc-2::after {
+        background: linear-gradient(90deg, #c8993a, #e8b84b);
+    }
+
+    .sc-3::after {
+        background: linear-gradient(90deg, #1a5a9a, #3a8ad4);
+    }
+
+    .sc-4::after {
+        background: linear-gradient(90deg, #7e3cb4, #a060d8);
+    }
+
+    .stat-icon-wrap {
+        width: 52px;
+        height: 52px;
+        border-radius: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.55rem;
+        flex-shrink: 0;
+    }
+
+    .sc-1 .stat-icon-wrap {
+        background: rgba(26,107,60,0.1);
+    }
+
+    .sc-2 .stat-icon-wrap {
+        background: rgba(200,153,58,0.12);
+    }
+
+    .sc-3 .stat-icon-wrap {
+        background: rgba(26,90,154,0.1);
+    }
+
+    .sc-4 .stat-icon-wrap {
+        background: rgba(126,60,180,0.1);
+    }
+
+    .stat-content {
+        min-width: 0;
+    }
+
+    .stat-num {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.9rem;
+        font-weight: 900;
+        color: var(--green-dark);
+        line-height: 1;
+        display: block;
+    }
+
+    .stat-label {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        margin-top: 4px;
+    }
+
+    /* ── MAIN GRID ── */
+    .dash-grid {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 1.4rem;
+        align-items: start;
+    }
+
+    /* ── TABLE CARD ── */
+    .news-table-card {
+        background: white;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+    }
+
+    .ntc-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.2rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .ntc-title {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-weight: 700;
+        color: var(--green-dark);
+        font-size: 0.97rem;
+    }
+
+    .ntc-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: var(--green-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+    }
+
+    .ntc-body {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.865rem;
+        white-space: nowrap;
+    }
+
+    thead th {
+        background: #f5f8f5;
+        color: var(--green-dark);
+        padding: 0.75rem 1.2rem;
+        text-align: left;
+        font-weight: 700;
+        font-size: 0.76rem;
+        letter-spacing: 0.04em;
+        border-bottom: 2px solid var(--border);
+    }
+
+    tbody td {
+        padding: 0.8rem 1.2rem;
+        border-bottom: 1px solid #f2f6f2;
+        color: #2d3d30;
+        vertical-align: middle;
+    }
+
+    tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    tbody tr:hover td {
+        background: #f8fbf8;
+    }
+
+    .news-title-cell {
+        max-width: 240px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-weight: 500;
+    }
+
+    /* ── QUICK ACTIONS CARD ── */
+    .quick-card {
+        background: white;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+    }
+
+    .qc-header {
+        padding: 1.2rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-weight: 700;
+        color: var(--green-dark);
+        font-size: 0.97rem;
+    }
+
+    .qc-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: rgba(200,153,58,0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+    }
+
+    .qc-body {
+        padding: 1.1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+    }
+
+    .qa-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.72rem 1rem;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 0.86rem;
+        font-weight: 600;
+        transition: all 0.22s;
+        font-family: 'Hind Siliguri', sans-serif;
+        border: none;
+        cursor: pointer;
+    }
+
+    .qa-btn-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 7px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+
+    .qa-btn:hover {
+        transform: translateX(3px);
+    }
+
+    .qa-green {
+        background: rgba(26,107,60,0.07);
+        color: var(--green-dark);
+        border: 1px solid rgba(26,107,60,0.12);
+    }
+
+        .qa-green:hover {
+            background: rgba(26,107,60,0.13);
+            border-color: rgba(26,107,60,0.2);
+        }
+
+        .qa-green .qa-btn-icon {
+            background: rgba(26,107,60,0.12);
+        }
+
+    .qa-gold {
+        background: rgba(200,153,58,0.08);
+        color: #8a6518;
+        border: 1px solid rgba(200,153,58,0.18);
+    }
+
+        .qa-gold:hover {
+            background: rgba(200,153,58,0.15);
+        }
+
+        .qa-gold .qa-btn-icon {
+            background: rgba(200,153,58,0.15);
+        }
+
+    .qa-blue {
+        background: rgba(26,90,154,0.07);
+        color: #1a5a9a;
+        border: 1px solid rgba(26,90,154,0.12);
+    }
+
+        .qa-blue:hover {
+            background: rgba(26,90,154,0.13);
+        }
+
+        .qa-blue .qa-btn-icon {
+            background: rgba(26,90,154,0.12);
+        }
+
+    .qa-primary {
+        background: linear-gradient(135deg, var(--green-dark), #2d9b5a);
+        color: white;
+        border: none;
+        box-shadow: 0 4px 16px rgba(26,107,60,0.28);
+    }
+
+        .qa-primary:hover {
+            box-shadow: 0 7px 24px rgba(26,107,60,0.38);
+            transform: translateX(0) translateY(-1px);
+        }
+
+        .qa-primary .qa-btn-icon {
+            background: rgba(255,255,255,0.15);
+        }
+
+    .qa-outline {
+        background: white;
+        color: var(--green-dark);
+        border: 1.5px solid var(--border);
+    }
+
+        .qa-outline:hover {
+            border-color: var(--green);
+            background: var(--green-muted);
+        }
+
+        .qa-outline .qa-btn-icon {
+            background: var(--green-muted);
+        }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1.5rem;
+        color: var(--text-muted);
+    }
+
+        .empty-state .es-icon {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 0.7rem;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            font-size: 0.88rem;
+        }
+
+    /* ── RESPONSIVE ── */
+    @@media (max-width: 1100px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .dash-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 600px) {
+        .stats-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .welcome-banner {
+            padding: 1.3rem 1.2rem;
+        }
+
+        .wb-text h2 {
+            font-size: 1.15rem;
+        }
+
+        .wb-meta {
+            display: none;
+        }
+    }
+
+    @@media (max-width: 400px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- ── WELCOME BANNER ── -->
+<div class="welcome-banner">
+    <div class="wb-text">
+        <h2>স্বাগতম, @User.Identity?.Name! 👋</h2>
+        <p>খোকসা মল্লিক পাড়া গ্রামের অ্যাডমিন প্যানেলে আপনাকে স্বাগতম।</p>
     </div>
-    <div class="stat-card">
-        <div class="stat-num">@ViewBag.FacilityCount</div>
-        <div class="stat-label">🏛️ সুবিধাসমূহ</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-num">@ViewBag.CommitteeCount</div>
-        <div class="stat-label">👥 কমিটি সদস্য</div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-num">@ViewBag.GalleryCount</div>
-        <div class="stat-label">🖼️ গ্যালারি আইটেম</div>
+    <div class="wb-meta">
+        <div class="wb-badge gold">🌿 খোকসা মল্লিক পাড়া</div>
+        <div class="wb-badge">📅 @DateTime.Now.ToString("dd MMMM, yyyy")</div>
     </div>
 </div>
 
-<div style="display:grid;grid-template-columns:2fr 1fr;gap:1.5rem;">
-    <div class="card">
-        <div class="card-header">
-            <div class="card-title">📰 সাম্প্রতিক সংবাদ</div>
-            <a href="/Admin/NewsList" class="btn btn-primary" style="font-size:0.8rem;padding:0.4rem 0.9rem;">সব দেখুন</a>
+<!-- ── STAT CARDS ── -->
+<div class="stats-grid">
+    <div class="stat-card sc-1">
+        <div class="stat-icon-wrap">📰</div>
+        <div class="stat-content">
+            <span class="stat-num">@ViewBag.NewsCount</span>
+            <div class="stat-label">মোট সংবাদ</div>
         </div>
-        <table>
-            <thead><tr><th>শিরোনাম</th><th>বিভাগ</th><th>তারিখ</th><th>অবস্থা</th></tr></thead>
-            <tbody>
-                @if (recentNews != null)
-                {
-                    foreach (var n in recentNews)
-                    {
+    </div>
+    <div class="stat-card sc-2">
+        <div class="stat-icon-wrap">🏛️</div>
+        <div class="stat-content">
+            <span class="stat-num">@ViewBag.FacilityCount</span>
+            <div class="stat-label">সুবিধাসমূহ</div>
+        </div>
+    </div>
+    <div class="stat-card sc-3">
+        <div class="stat-icon-wrap">👥</div>
+        <div class="stat-content">
+            <span class="stat-num">@ViewBag.CommitteeCount</span>
+            <div class="stat-label">কমিটি সদস্য</div>
+        </div>
+    </div>
+    <div class="stat-card sc-4">
+        <div class="stat-icon-wrap">🖼️</div>
+        <div class="stat-content">
+            <span class="stat-num">@ViewBag.GalleryCount</span>
+            <div class="stat-label">গ্যালারি আইটেম</div>
+        </div>
+    </div>
+</div>
+
+<!-- ── MAIN GRID ── -->
+<div class="dash-grid">
+
+    <!-- Recent News Table -->
+    <div class="news-table-card">
+        <div class="ntc-header">
+            <div class="ntc-title">
+                <div class="ntc-icon">📰</div>
+                সাম্প্রতিক সংবাদ
+            </div>
+            <a href="/Admin/NewsList" class="btn btn-primary btn-sm">সব দেখুন →</a>
+        </div>
+        <div class="ntc-body">
+            @if (recentNews != null && recentNews.Any())
+            {
+                <table>
+                    <thead>
                         <tr>
-                            <td>@n.Icon @n.Title</td>
-                            <td><span class="badge badge-gold">@n.Category</span></td>
-                            <td>@n.PublishedAt.ToString("dd/MM/yyyy")</td>
-                            <td><span class="badge @(n.IsActive ? "badge-success" : "badge-danger")">@(n.IsActive ? "সক্রিয়" : "নিষ্ক্রিয়")</span></td>
+                            <th>শিরোনাম</th>
+                            <th>বিভাগ</th>
+                            <th>তারিখ</th>
+                            <th>অবস্থা</th>
+                            <th></th>
                         </tr>
-                    }
-                }
-            </tbody>
-        </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var n in recentNews)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="news-title-cell" title="@n.Title">
+                                        @n.Icon @n.Title
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-gold">@n.Category</span></td>
+                                <td style="color:var(--text-muted);font-size:0.8rem;">@n.PublishedAt.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    <span class="badge @(n.IsActive ? "badge-success" : "badge-danger")">
+                                        @(n.IsActive ? "✓ সক্রিয়" : "✗ নিষ্ক্রিয়")
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="/Admin/NewsEdit/@n.Id" class="btn btn-edit btn-sm">সম্পাদনা</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <span class="es-icon">📭</span>
+                    <p>এখনো কোনো সংবাদ যোগ করা হয়নি।</p>
+                </div>
+            }
+        </div>
     </div>
 
-    <div class="card">
-        <div class="card-title" style="margin-bottom:1rem;">⚡ দ্রুত লিংক</div>
-        <div style="display:flex;flex-direction:column;gap:0.6rem;">
-            <a href="/Admin/NewsCreate" class="btn btn-primary">➕ নতুন সংবাদ</a>
-            <a href="/Admin/FacilityCreate" class="btn btn-outline">➕ নতুন সুবিধা</a>
-            <a href="/Admin/CommitteeCreate" class="btn btn-outline">➕ নতুন সদস্য</a>
-            <a href="/Admin/GalleryCreate" class="btn btn-outline">➕ গ্যালারি যোগ</a>
-            <a href="/Admin/TickerCreate" class="btn btn-outline">➕ ব্রেকিং নিউজ</a>
-            <a href="/Admin/VillageInfoEdit" class="btn btn-gold">⚙️ গ্রামের তথ্য সম্পাদনা</a>
-            <a href="/" target="_blank" class="btn btn-edit">🌐 ওয়েবসাইট দেখুন</a>
+    <!-- Quick Actions -->
+    <div class="quick-card">
+        <div class="qc-header">
+            <div class="qc-icon">⚡</div>
+            দ্রুত অ্যাকশন
+        </div>
+        <div class="qc-body">
+            <a href="/Admin/NewsCreate" class="qa-btn qa-primary">
+                <span class="qa-btn-icon">📰</span>
+                নতুন সংবাদ যোগ করুন
+            </a>
+            <a href="/Admin/TickerCreate" class="qa-btn qa-green">
+                <span class="qa-btn-icon">📺</span>
+                ব্রেকিং নিউজ যোগ করুন
+            </a>
+            <a href="/Admin/FacilityCreate" class="qa-btn qa-green">
+                <span class="qa-btn-icon">🏛️</span>
+                নতুন সুবিধা যোগ করুন
+            </a>
+            <a href="/Admin/CommitteeCreate" class="qa-btn qa-green">
+                <span class="qa-btn-icon">👥</span>
+                নতুন কমিটি সদস্য
+            </a>
+            <a href="/Admin/GalleryCreate" class="qa-btn qa-blue">
+                <span class="qa-btn-icon">🖼️</span>
+                গ্যালারি আইটেম যোগ
+            </a>
+            <a href="/Admin/SliderCreate" class="qa-btn qa-blue">
+                <span class="qa-btn-icon">🎞️</span>
+                স্লাইডার যোগ করুন
+            </a>
+            <a href="/Admin/VillageInfoEdit" class="qa-btn qa-gold">
+                <span class="qa-btn-icon">⚙️</span>
+                গ্রামের তথ্য সম্পাদনা
+            </a>
+            <a href="/" target="_blank" class="qa-btn qa-outline">
+                <span class="qa-btn-icon">🌐</span>
+                ওয়েবসাইট দেখুন
+            </a>
         </div>
     </div>
+
 </div>

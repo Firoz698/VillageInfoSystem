@@ -3,31 +3,630 @@
     ViewData["Title"] = "কমিটি সদস্য";
     Layout = "_AdminLayout";
 }
-<div class="card">
-    <div class="card-header">
-        <div class="card-title">👥 কমিটি সদস্যগণ</div>
-        <a href="/Admin/CommitteeCreate" class="btn btn-primary">➕ নতুন সদস্য</a>
-    </div>
-    <table>
-        <thead><tr><th>আভাটার</th><th>নাম</th><th>পদবী</th><th>ফোন</th><th>অবস্থা</th><th>কার্যক্রম</th></tr></thead>
-        <tbody>
-            @foreach (var m in Model)
-            {
-                <tr>
-                    <td style="font-size:1.4rem">@m.Avatar</td>
-                    <td>@m.Name</td>
-                    <td><span class="badge badge-gold">@m.Role</span></td>
-                    <td>@m.Phone</td>
-                    <td><span class="badge @(m.IsActive ? "badge-success" : "badge-danger")">@(m.IsActive ? "সক্রিয়" : "নিষ্ক্রিয়")</span></td>
-                    <td style="white-space:nowrap">
-                        <a href="/Admin/CommitteeEdit/@m.Id" class="btn btn-edit" style="padding:0.3rem 0.65rem;font-size:0.78rem;">✏️</a>
-                        <form method="post" action="/Admin/CommitteeDelete/@m.Id" style="display:inline;" onsubmit="return confirm('মুছে ফেলবেন?')">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-danger" style="padding:0.3rem 0.65rem;font-size:0.78rem;">🗑️</button>
-                        </form>
-                    </td>
-                </tr>
+
+<style>
+    :root {
+        --primary: #1a3a5c;
+        --primary-light: #2563a8;
+        --accent: #c8a94e;
+        --accent-light: #f0d98a;
+        --success: #1a7a4a;
+        --danger: #b53a2e;
+        --surface: #ffffff;
+        --surface-alt: #f5f7fa;
+        --border: #dde3ec;
+        --text-main: #1a2636;
+        --text-muted: #5a6b80;
+        --shadow-sm: 0 2px 8px rgba(26,58,92,0.07);
+        --shadow-md: 0 6px 24px rgba(26,58,92,0.12);
+        --radius: 12px;
+    }
+
+    .page-wrapper {
+        padding: 0;
+        animation: fadeUp 0.45s ease both;
+    }
+
+    @@keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(16px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* ── Header ── */
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.75rem;
+    }
+
+    .page-header-left h1 {
+        font-family: 'Noto Serif Bengali', 'SolaimanLipi', Georgia, serif;
+        font-size: 1.55rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin: 0 0 0.2rem;
+        letter-spacing: -0.01em;
+    }
+
+    .page-header-left p {
+        font-size: 0.83rem;
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    .btn-add {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--primary);
+        color: #fff;
+        text-decoration: none;
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+        box-shadow: 0 2px 8px rgba(26,58,92,0.18);
+        white-space: nowrap;
+    }
+
+        .btn-add:hover {
+            background: var(--primary-light);
+            transform: translateY(-1px);
+            box-shadow: 0 5px 18px rgba(26,58,92,0.22);
+        }
+
+        .btn-add svg {
+            flex-shrink: 0;
+        }
+
+    /* ── Stats bar ── */
+    .stats-bar {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.75rem;
+    }
+
+    .stat-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1rem 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        box-shadow: var(--shadow-sm);
+        transition: box-shadow 0.2s;
+    }
+
+        .stat-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-card .stat-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .stat-card.accent .stat-value {
+            color: var(--accent);
+        }
+
+        .stat-card.success .stat-value {
+            color: var(--success);
+        }
+
+        .stat-card.danger .stat-value {
+            color: var(--danger);
+        }
+
+    /* ── Table card ── */
+    .table-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .table-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface-alt);
+    }
+
+    .search-box {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+        .search-box svg {
+            position: absolute;
+            left: 0.75rem;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .search-box input {
+            padding: 0.45rem 0.9rem 0.45rem 2.2rem;
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            font-size: 0.84rem;
+            color: var(--text-main);
+            background: var(--surface);
+            width: 220px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+
+            .search-box input:focus {
+                border-color: var(--primary-light);
+                box-shadow: 0 0 0 3px rgba(37,99,168,0.12);
             }
-        </tbody>
-    </table>
+
+    .table-count {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+    }
+
+    /* ── Responsive table ── */
+    .table-scroll {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    table.data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.875rem;
+        color: var(--text-main);
+    }
+
+        table.data-table thead th {
+            background: var(--surface-alt);
+            padding: 0.75rem 1rem;
+            font-size: 0.73rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        table.data-table tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s;
+        }
+
+            table.data-table tbody tr:last-child {
+                border-bottom: none;
+            }
+
+            table.data-table tbody tr:hover {
+                background: #f0f5fb;
+            }
+
+        table.data-table td {
+            padding: 0.85rem 1rem;
+            vertical-align: middle;
+        }
+
+    /* ── Avatar cell ── */
+    .avatar-cell {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #e8f0fc, #d0e0f8);
+        font-size: 1.3rem;
+        border: 2px solid #c0d3ef;
+        flex-shrink: 0;
+    }
+
+    /* ── Member info ── */
+    .member-name {
+        font-weight: 600;
+        color: var(--text-main);
+        display: block;
+    }
+
+    /* ── Badges ── */
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.28rem 0.7rem;
+        border-radius: 999px;
+        font-size: 0.76rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+    }
+
+    .badge-role {
+        background: #eff4ff;
+        color: #2b5aad;
+        border: 1px solid #c5d7f8;
+    }
+
+    .badge-success {
+        background: #ecfdf3;
+        color: #1a7a4a;
+        border: 1px solid #a7e6c3;
+    }
+
+        .badge-success::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: #1a7a4a;
+            border-radius: 50%;
+        }
+
+    .badge-danger {
+        background: #fff1f0;
+        color: #b53a2e;
+        border: 1px solid #f8bcb7;
+    }
+
+        .badge-danger::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: #b53a2e;
+            border-radius: 50%;
+        }
+
+    /* ── Action buttons ── */
+    .action-group {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .btn-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 7px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background 0.15s, border-color 0.15s, transform 0.12s;
+        font-size: 0.9rem;
+        background: none;
+        padding: 0;
+    }
+
+        .btn-icon:hover {
+            transform: translateY(-1px);
+        }
+
+    .btn-edit {
+        background: #eff4ff;
+        border-color: #c5d7f8;
+        color: #2b5aad;
+    }
+
+        .btn-edit:hover {
+            background: #dce8fc;
+            border-color: #a0bef5;
+        }
+
+    .btn-delete {
+        background: #fff1f0;
+        border-color: #f8bcb7;
+        color: #b53a2e;
+    }
+
+        .btn-delete:hover {
+            background: #ffe3e0;
+            border-color: #f5a09a;
+        }
+
+    /* ── Empty state ── */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--text-muted);
+    }
+
+        .empty-state .empty-icon {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            margin: 0 0 1.5rem;
+            font-size: 0.9rem;
+        }
+
+    /* ── Mobile cards ── */
+    .mobile-cards {
+        display: none;
+    }
+
+    .member-card {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        gap: 0.9rem;
+        align-items: flex-start;
+        transition: background 0.15s;
+    }
+
+        .member-card:last-child {
+            border-bottom: none;
+        }
+
+        .member-card:hover {
+            background: #f0f5fb;
+        }
+
+    .member-card-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .member-card-name {
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: var(--text-main);
+        margin-bottom: 0.2rem;
+    }
+
+    .member-card-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        align-items: center;
+        margin-top: 0.5rem;
+    }
+
+    .member-card-phone {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    /* ── Responsive breakpoints ── */
+    @@media (max-width: 768px) {
+        .desktop-table {
+            display: none;
+        }
+
+        .mobile-cards {
+            display: block;
+        }
+
+        .stats-bar {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .page-header-left h1 {
+            font-size: 1.3rem;
+        }
+
+        .search-box input {
+            width: 160px;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .stats-bar {
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .search-box input {
+            width: 140px;
+        }
+
+        .btn-add span {
+            display: none;
+        }
+    }
+</style>
+
+<div class="page-wrapper">
+    <!-- Header -->
+    <div class="page-header">
+        <div class="page-header-left">
+            <h1>কমিটি সদস্যগণ</h1>
+            <p>গ্রামের নির্বাচিত কমিটির সকল সদস্যদের তালিকা</p>
+        </div>
+        <a href="/Admin/CommitteeCreate" class="btn-add">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+            <span>নতুন সদস্য যোগ</span>
+        </a>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-bar">
+        <div class="stat-card">
+            <span class="stat-label">মোট সদস্য</span>
+            <span class="stat-value">@Model.Count</span>
+        </div>
+        <div class="stat-card success">
+            <span class="stat-label">সক্রিয়</span>
+            <span class="stat-value">@Model.Count(m => m.IsActive)</span>
+        </div>
+        <div class="stat-card danger">
+            <span class="stat-label">নিষ্ক্রিয়</span>
+            <span class="stat-value">@Model.Count(m => !m.IsActive)</span>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-card">
+        <div class="table-toolbar">
+            <div class="search-box">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+                <input type="text" placeholder="নাম বা পদবী খুঁজুন…" id="searchInput" oninput="filterTable()" />
+            </div>
+            <span class="table-count" id="countLabel">@Model.Count জন সদস্য</span>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="empty-state">
+                <span class="empty-icon">👥</span>
+                <p>এখনও কোনো সদস্য যোগ করা হয়নি।</p>
+                <a href="/Admin/CommitteeCreate" class="btn-add">প্রথম সদস্য যোগ করুন</a>
+            </div>
+        }
+        else
+        {
+            <!-- Desktop Table -->
+            <div class="table-scroll desktop-table">
+                <table class="data-table" id="memberTable">
+                    <thead>
+                        <tr>
+                            <th>সদস্য</th>
+                            <th>পদবী</th>
+                            <th>ফোন নম্বর</th>
+                            <th>অবস্থা</th>
+                            <th style="text-align:right">কার্যক্রম</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        @foreach (var m in Model)
+                        {
+                            <tr data-name="@m.Name.ToLower()" data-role="@m.Role?.ToLower()">
+                                <td>
+                                    <div style="display:flex;align-items:center;gap:0.75rem">
+                                        <div class="avatar-cell">@m.Avatar</div>
+                                        <span class="member-name">@m.Name</span>
+                                    </div>
+                                </td>
+                                <td><span class="badge badge-role">@m.Role</span></td>
+                                <td style="color:var(--text-muted);font-size:0.83rem">@m.Phone</td>
+                                <td>
+                                    <span class="badge @(m.IsActive ? "badge-success" : "badge-danger")">
+                                        @(m.IsActive ? "সক্রিয়" : "নিষ্ক্রিয়")
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="action-group" style="justify-content:flex-end">
+                                        <a href="/Admin/CommitteeEdit/@m.Id" class="btn-icon btn-edit" title="সম্পাদনা">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
+                                        </a>
+                                        <form method="post" action="/Admin/CommitteeDelete/@m.Id" style="display:inline" onsubmit="return confirmDelete('@m.Name')">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn-icon btn-delete" title="মুছে ফেলুন">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" /><path d="M10 11v6" /><path d="M14 11v6" /><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" /></svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mobile Cards -->
+            <div class="mobile-cards" id="mobileCards">
+                @foreach (var m in Model)
+                {
+                    <div class="member-card" data-name="@m.Name.ToLower()" data-role="@m.Role?.ToLower()">
+                        <div class="avatar-cell">@m.Avatar</div>
+                        <div class="member-card-info">
+                            <div class="member-card-name">@m.Name</div>
+                            <div class="member-card-meta">
+                                <span class="badge badge-role">@m.Role</span>
+                                <span class="badge @(m.IsActive ? "badge-success" : "badge-danger")">
+                                    @(m.IsActive ? "সক্রিয়" : "নিষ্ক্রিয়")
+                                </span>
+                            </div>
+                            @if (!string.IsNullOrEmpty(m.Phone))
+                            {
+                                <div class="member-card-phone" style="margin-top:0.4rem">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5 19.79 19.79 0 0 1 1.61 4.9 2 2 0 0 1 3.59 2.72h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.4a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
+                                    @m.Phone
+                                </div>
+                            }
+                        </div>
+                        <div class="action-group">
+                            <a href="/Admin/CommitteeEdit/@m.Id" class="btn-icon btn-edit" title="সম্পাদনা">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
+                            </a>
+                            <form method="post" action="/Admin/CommitteeDelete/@m.Id" style="display:inline" onsubmit="return confirmDelete('@m.Name')">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn-icon btn-delete" title="মুছে ফেলুন">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" /><path d="M10 11v6" /><path d="M14 11v6" /><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" /></svg>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
 </div>
+
+<script>
+    function confirmDelete(name) {
+        return confirm(`"${name}" কে তালিকা থেকে মুছে ফেলবেন? এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।`);
+    }
+
+    function filterTable() {
+        const q = document.getElementById('searchInput').value.toLowerCase();
+        const rows = document.querySelectorAll('#tableBody tr');
+        const cards = document.querySelectorAll('#mobileCards .member-card');
+        let visible = 0;
+
+        rows.forEach(r => {
+            const match = r.dataset.name.includes(q) || (r.dataset.role || '').includes(q);
+            r.style.display = match ? '' : 'none';
+            if (match) visible++;
+        });
+
+        cards.forEach(c => {
+            const match = c.dataset.name.includes(q) || (c.dataset.role || '').includes(q);
+            c.style.display = match ? '' : 'none';
+        });
+
+        document.getElementById('countLabel').textContent = `${visible} জন সদস্য`;
+    }
+</script>
