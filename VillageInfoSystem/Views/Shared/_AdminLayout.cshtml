@@ -425,9 +425,9 @@
             <a href="/Admin/VillageInfoEdit" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.Contains("VillageInfo") == true ? "active" : "")">
                 <span class="icon">⚙️</span> গ্রামের তথ্য
             </a>
-            <a href="/Admin/SliderList" class="card text-center p-3 border-0 shadow-sm text-decoration-none">
-                <div style="font-size:2rem;">🖼️</div>
-                <div class="fw-bold text-success">স্লাইডার</div>
+
+            <a href="/Admin/SliderList" class="@(ViewContext.RouteData.Values["action"]?.ToString()?.Contains("SliderList") == true ? "active" : "")">
+                <span class="icon">🖼️</span> স্লাইডার
             </a>
         </nav>
         <div class="sidebar-footer">
