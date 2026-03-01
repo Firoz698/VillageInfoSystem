@@ -1,6 +1,6 @@
 /* HERO SLIDER */
 let cur = 0;
-const TOTAL = 5;
+const TOTAL = parseInt(document.getElementById('totalNum')?.textContent) || 0;
 const DURATION = 5000;
 let autoTimer, progTimer, progW = 0;
 
