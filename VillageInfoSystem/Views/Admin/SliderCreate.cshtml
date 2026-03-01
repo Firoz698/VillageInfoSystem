@@ -1,0 +1,105 @@
+﻿@model VillageInfoSystem.Models.SliderItem
+@{
+    ViewData["Title"] = "নতুন স্লাইড যোগ করুন";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold text-success mb-0">➕ নতুন স্লাইড যোগ করুন</h4>
+    <a href="/Admin/SliderList" class="btn btn-outline-secondary">← ফিরে যান</a>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+        <form method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Badge টেক্সট <span class="text-danger">*</span></label>
+                    <input asp-for="Badge" class="form-control" placeholder="🌿 খুলনা বিভাগ, বাংলাদেশ" />
+                    <span asp-validation-for="Badge" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">ক্রম নম্বর (SortOrder)</label>
+                    <input asp-for="SortOrder" type="number" class="form-control" value="0" />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Title <span class="text-danger">*</span></label>
+                    <input asp-for="Title" class="form-control" placeholder="স্বাগতম" />
+                    <span asp-validation-for="Title" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Title Highlight <span class="text-danger">*</span></label>
+                    <input asp-for="TitleHighlight" class="form-control" placeholder="খোকসা মল্লিক পাড়া" />
+                    <span asp-validation-for="TitleHighlight" class="text-danger small"></span>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label fw-semibold">সাব টেক্সট</label>
+                    <textarea asp-for="SubText" class="form-control" rows="2"
+                              placeholder="স্লাইডের বিবরণ লিখুন..."></textarea>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">বাটন ১ টেক্সট</label>
+                    <input asp-for="Btn1Text" class="form-control" placeholder="গ্রাম সম্পর্কে জানুন" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">বাটন ১ লিংক</label>
+                    <input asp-for="Btn1Link" class="form-control" placeholder="#about" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">বাটন ২ টেক্সট</label>
+                    <input asp-for="Btn2Text" class="form-control" placeholder="যোগাযোগ করুন" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">বাটন ২ লিংক</label>
+                    <input asp-for="Btn2Link" class="form-control" placeholder="#contact" />
+                </div>
+
+                <div class="col-md-8">
+                    <label class="form-label fw-semibold">ব্যাকগ্রাউন্ড ইমেজ</label>
+                    <input type="file" name="imageFile" class="form-control"
+                           accept="image/*" onchange="previewImage(this)" />
+                    <small class="text-muted">JPG, PNG, WEBP — সর্বোচ্চ 5MB</small>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">সক্রিয়</label>
+                    <div class="form-check form-switch mt-2">
+                        <input asp-for="IsActive" class="form-check-input" type="checkbox" checked />
+                        <label class="form-check-label">সক্রিয় রাখুন</label>
+                    </div>
+                </div>
+
+                <!-- Image Preview -->
+                <div class="col-12" id="previewBox" style="display:none;">
+                    <label class="form-label fw-semibold">প্রিভিউ</label>
+                    <img id="imgPreview"
+                         style="width:100%;max-height:220px;object-fit:cover;border-radius:12px;border:2px solid #dee2e6;" />
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-success px-4">💾 সংরক্ষণ করুন</button>
+                <a href="/Admin/SliderList" class="btn btn-outline-secondary px-4">বাতিল</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function previewImage(input) {
+        const box = document.getElementById('previewBox');
+        const img = document.getElementById('imgPreview');
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = e => { img.src = e.target.result; box.style.display = 'block'; };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>

@@ -10,6 +10,7 @@ namespace VillageInfoSystem.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         public DbSet<News> News => Set<News>();
+        public DbSet<SliderItem> SliderItems => Set<SliderItem>();
         public DbSet<Facility> Facilities => Set<Facility>();
         public DbSet<CommitteeMember> CommitteeMembers => Set<CommitteeMember>();
         public DbSet<VillageInfo> VillageInfos => Set<VillageInfo>();
@@ -24,9 +25,9 @@ namespace VillageInfoSystem.Data
             modelBuilder.Entity<VillageInfo>().HasData(new VillageInfo
             {
                 Id = 1,
-                VillageName = "উজালপুর গ্রাম",
+                VillageName = "খোকসা মল্লিক পাড়া গ্রাম",
                 Division = "খুলনা বিভাগ",
-                History = "উজালপুর গ্রাম খুলনা বিভাগের একটি সমৃদ্ধ ও ঐতিহ্যবাহী গ্রাম। আনুমানিক ১৮৫০ সালে এই গ্রামের পত্তন হয়। শতাব্দীর পর শতাব্দী ধরে এই গ্রাম তার নিজস্ব সংস্কৃতি ও ঐতিহ্য বজায় রেখে আসছে।",
+                History = "খোকসা মল্লিক পাড়া গ্রাম খুলনা বিভাগের একটি সমৃদ্ধ ও ঐতিহ্যবাহী গ্রাম। আনুমানিক ১৮৫০ সালে এই গ্রামের পত্তন হয়। শতাব্দীর পর শতাব্দী ধরে এই গ্রাম তার নিজস্ব সংস্কৃতি ও ঐতিহ্য বজায় রেখে আসছে।",
                 TotalPopulation = "৩,৫০০+",
                 TotalFamilies = "৭৫০+",
                 Area = "৪.২ কিমি²",
@@ -34,7 +35,7 @@ namespace VillageInfoSystem.Data
                 FemalePopulation = "১,৬৫০",
                 LiteracyRate = "৭৮%",
                 FoundedYear = "১৮৫০",
-                Address = "উজালপুর গ্রাম, খুলনা বিভাগ, বাংলাদেশ",
+                Address = "খোকসা মল্লিক পাড়া গ্রাম, খুলনা বিভাগ, বাংলাদেশ",
                 Phone = "০১৭১২-৩৪৫৬৭৮",
                 Email = "ujalpur.village@gmail.com",
                 Facebook = "fb.com/UjalpurVillage",
@@ -44,7 +45,7 @@ namespace VillageInfoSystem.Data
 
             // Seed News
             modelBuilder.Entity<News>().HasData(
-                new News { Id = 1, Title = "উজালপুর গ্রামে নতুন প্রাথমিক বিদ্যালয় ভবন নির্মাণ কাজ শুরু", Description = "দীর্ঘদিনের দাবির প্রেক্ষিতে অবশেষে উজালপুর সরকারি প্রাথমিক বিদ্যালয়ের নতুন দোতলা ভবন নির্মাণ কাজ শুরু হয়েছে। এই ভবনে ১২টি শ্রেণিকক্ষ এবং একটি কম্পিউটার ল্যাব থাকবে।", Category = "শিক্ষা", Icon = "🏫", IsFeatured = true, PublishedAt = new DateTime(2026, 2, 28) },
+                new News { Id = 1, Title = "খোকসা মল্লিক পাড়া গ্রামে নতুন প্রাথমিক বিদ্যালয় ভবন নির্মাণ কাজ শুরু", Description = "দীর্ঘদিনের দাবির প্রেক্ষিতে অবশেষে খোকসা মল্লিক পাড়া সরকারি প্রাথমিক বিদ্যালয়ের নতুন দোতলা ভবন নির্মাণ কাজ শুরু হয়েছে। এই ভবনে ১২টি শ্রেণিকক্ষ এবং একটি কম্পিউটার ল্যাব থাকবে।", Category = "শিক্ষা", Icon = "🏫", IsFeatured = true, PublishedAt = new DateTime(2026, 2, 28) },
                 new News { Id = 2, Title = "গ্রামের সড়ক উন্নয়নে ৫০ লক্ষ টাকা বরাদ্দ অনুমোদন", Category = "উন্নয়ন", Icon = "🛣️", PublishedAt = new DateTime(2026, 2, 25) },
                 new News { Id = 3, Title = "মেধাবী শিক্ষার্থীদের বৃত্তি প্রদান অনুষ্ঠান আগামীকাল", Category = "শিক্ষা", Icon = "🎓", PublishedAt = new DateTime(2026, 2, 22) },
                 new News { Id = 4, Title = "কৃষকদের জন্য বিনামূল্যে সার ও বীজ বিতরণ কার্যক্রম", Category = "কৃষি", Icon = "🌾", PublishedAt = new DateTime(2026, 2, 18) },
@@ -83,7 +84,7 @@ namespace VillageInfoSystem.Data
 
             // Seed Ticker News
             modelBuilder.Entity<TickerNews>().HasData(
-                new TickerNews { Id = 1, Text = "উজালপুর গ্রামে নতুন প্রাথমিক বিদ্যালয় ভবন নির্মাণ কাজ শুরু হয়েছে", SortOrder = 1 },
+                new TickerNews { Id = 1, Text = "খোকসা মল্লিক পাড়া গ্রামে নতুন প্রাথমিক বিদ্যালয় ভবন নির্মাণ কাজ শুরু হয়েছে", SortOrder = 1 },
                 new TickerNews { Id = 2, Text = "গ্রামের সড়ক উন্নয়নে ৫০ লক্ষ টাকা বরাদ্দ অনুমোদন পেয়েছে", SortOrder = 2 },
                 new TickerNews { Id = 3, Text = "ঈদুল ফিতর উপলক্ষে জামে মসজিদে বিশেষ আলোচনা সভা আয়োজিত হবে", SortOrder = 3 },
                 new TickerNews { Id = 4, Text = "মেধাবী শিক্ষার্থীদের বৃত্তি প্রদান অনুষ্ঠান আগামী সপ্তাহে অনুষ্ঠিত হবে", SortOrder = 4 },

@@ -9,6 +9,25 @@
     var tickers = ViewBag.Tickers as List<VillageInfoSystem.Models.TickerNews>;
 }
 
+<style>
+    .slide-bg {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        z-index: 0;
+    }
+
+    .slide .blob {
+        z-index: 1;
+    }
+
+    .slide-content {
+        z-index: 2;
+    }
+</style>
+
 <!-- BREAKING NEWS TICKER -->
 <div class="ticker-bar">
     <div class="ticker-label">🔴 সর্বশেষ খবর</div>
@@ -36,7 +55,7 @@
         <a href="#home" class="nav-logo">
             <div class="nav-logo-icon">🌿</div>
             <div>
-                <div class="nav-logo-text">@(info?.VillageName ?? "উজালপুর গ্রাম")</div>
+                <div class="nav-logo-text">@(info?.VillageName ?? "খোকসা মল্লিক পাড়া গ্রাম")</div>
                 <span class="nav-logo-sub">@(info?.Division ?? "Khulna Division"), Bangladesh</span>
             </div>
         </a>
@@ -67,63 +86,56 @@
     <a href="#contact" onclick="toggleMenu()">📍 যোগাযোগ</a>
 </div>
 
-<!-- HERO SLIDER -->
+
+
+@{
+    var sliders = ViewBag.Sliders as List<VillageInfoSystem.Models.SliderItem>;
+    int slideCount = sliders?.Count ?? 0;
+}
+
 <div id="home">
-    <div class="slide s1 active">
-        <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
-        <div class="slide-content">
-            <div class="slide-badge">🌿 খুলনা বিভাগ, বাংলাদেশ</div>
-            <h1 class="slide-title">স্বাগতম<br><span>@(info?.VillageName ?? "খোকসা মল্লিক পাড়া")</span></h1>
-            <p class="slide-sub">সবুজে ঘেরা এই শান্তির গ্রামে আপনাকে স্বাগতম। ইতিহাস, ঐতিহ্য ও মানুষের সাথে পরিচিত হন।</p>
-            <div class="slide-btns"><a href="#about" class="btn btn-primary">গ্রাম সম্পর্কে জানুন</a><a href="#contact" class="btn btn-outline">যোগাযোগ করুন</a></div>
-        </div>
-    </div>
-    <div class="slide s2">
-        <div class="blob b1"></div><div class="blob b2"></div>
-        <div class="slide-content">
-            <div class="slide-badge">🌾 কৃষি ও প্রকৃতি</div>
-            <h1 class="slide-title">সোনালি ফসলের<br><span>মাঠ ও মাটি</span></h1>
-            <p class="slide-sub">খোকসা মল্লিক পাড়া কৃষকরা প্রতি মৌসুমে সোনালি ধান ফলান। পরিশ্রমী মানুষের ঘামে সিক্ত এই মাটির গল্প।</p>
-            <div class="slide-btns"><a href="#facilities" class="btn btn-primary">সুবিধা দেখুন</a><a href="#gallery" class="btn btn-outline">গ্যালারি দেখুন</a></div>
-        </div>
-    </div>
-    <div class="slide s3">
-        <div class="blob b1"></div><div class="blob b2"></div>
-        <div class="slide-content">
-            <div class="slide-badge">🕌 ধর্ম ও সংস্কৃতি</div>
-            <h1 class="slide-title">ঐতিহাসিক<br><span>জামে মসজিদ</span></h1>
-            <p class="slide-sub">শতাব্দীপ্রাচীন জামে মসজিদ আমাদের ধর্মীয় চেতনার প্রতীক।</p>
-            <div class="slide-btns"><a href="#facilities" class="btn btn-primary">প্রতিষ্ঠান দেখুন</a><a href="#about" class="btn btn-outline">ইতিহাস জানুন</a></div>
-        </div>
-    </div>
-    <div class="slide s4">
-        <div class="blob b1"></div><div class="blob b2"></div>
-        <div class="slide-content">
-            <div class="slide-badge">📚 শিক্ষা ও উন্নয়ন</div>
-            <h1 class="slide-title">জ্ঞানের আলোয়<br><span>আলোকিত গ্রাম</span></h1>
-            <p class="slide-sub">উজালপুর গ্রামের @(info?.LiteracyRate ?? "৭৮%") মানুষ সাক্ষর।</p>
-            <div class="slide-btns"><a href="#population" class="btn btn-primary">পরিসংখ্যান দেখুন</a><a href="#committee" class="btn btn-outline">কমিটি দেখুন</a></div>
-        </div>
-    </div>
-    <div class="slide s5">
-        <div class="blob b1"></div><div class="blob b2"></div>
-        <div class="slide-content">
-            <div class="slide-badge">🤝 সম্প্রীতি ও ঐক্য</div>
-            <h1 class="slide-title">একতাবদ্ধ<br><span>আমাদের গ্রাম</span></h1>
-            <p class="slide-sub">সুখে-দুঃখে একসাথে উজালপুরের মানুষ। পারস্পরিক সহযোগিতাই আমাদের সবচেয়ে বড় শক্তি।</p>
-            <div class="slide-btns"><a href="#committee" class="btn btn-primary">গণ্যমান্য ব্যক্তি</a><a href="#news" class="btn btn-outline">সর্বশেষ খবর</a></div>
-        </div>
-    </div>
+    @if (sliders != null && sliders.Any())
+    {
+        bool isFirst = true;
+        foreach (var slide in sliders)
+        {
+            <div class="slide @(isFirst ? "active" : "")">
+                @if (!string.IsNullOrEmpty(slide.ImagePath))
+                {
+                    <div class="slide-bg"
+                         style="background-image:url('@slide.ImagePath');"></div>
+                }
+                <div class="blob b1"></div>
+                <div class="blob b2"></div>
+                <div class="blob b3"></div>
+                <div class="slide-content">
+                    <div class="slide-badge">@slide.Badge</div>
+                    <h1 class="slide-title">@slide.Title<br><span>@slide.TitleHighlight</span></h1>
+                    <p class="slide-sub">@slide.SubText</p>
+                    <div class="slide-btns">
+                        @if (!string.IsNullOrEmpty(slide.Btn1Text))
+                        {
+                            <a href="@slide.Btn1Link" class="btn btn-primary">@slide.Btn1Text</a>
+                        }
+                        @if (!string.IsNullOrEmpty(slide.Btn2Text))
+                        {
+                            <a href="@slide.Btn2Link" class="btn btn-outline">@slide.Btn2Text</a>
+                        }
+                    </div>
+                </div>
+            </div>
+            isFirst = false;
+        }
+    }
 
     <div class="s-arrow s-prev" onclick="changeSlide(-1)">&#8592;</div>
     <div class="s-arrow s-next" onclick="changeSlide(1)">&#8594;</div>
-    <div class="s-counter"><b id="curNum">1</b> / 5</div>
+    <div class="s-counter"><b id="curNum">1</b> / <span id="totalNum">@slideCount</span></div>
     <div class="s-dots" id="dotsContainer">
-        <div class="dot active" onclick="goTo(0)"></div>
-        <div class="dot" onclick="goTo(1)"></div>
-        <div class="dot" onclick="goTo(2)"></div>
-        <div class="dot" onclick="goTo(3)"></div>
-        <div class="dot" onclick="goTo(4)"></div>
+        @for (int i = 0; i < slideCount; i++)
+        {
+            <div class="dot @(i == 0 ? "active" : "")" onclick="goTo(@i)"></div>
+        }
     </div>
     <div class="s-progress" id="sProgress"></div>
     <div class="s-dev">✦ Developed by <span>Md Firoz Ali</span></div>
@@ -136,7 +148,7 @@
         <div class="section-header reveal">
             <div class="section-tag">📰 গ্রামের সংবাদ</div>
             <h2 class="section-title">সর্বশেষ খবর ও ঘটনাবলি</h2>
-            <p class="section-desc">উজালপুর গ্রামের সাম্প্রতিক খবর, উন্নয়ন ও বিভিন্ন অনুষ্ঠানের বিবরণ</p>
+            <p class="section-desc">খোকসা মল্লিক পাড়া গ্রামের সাম্প্রতিক খবর, উন্নয়ন ও বিভিন্ন অনুষ্ঠানের বিবরণ</p>
             <div class="divider"></div>
         </div>
         <div class="news-grid">
@@ -210,7 +222,7 @@
         <div class="section-header">
             <div class="section-tag" style="background:rgba(200,153,58,0.2);color:var(--gold-light);border:1px solid rgba(200,153,58,0.3)">📊 পরিসংখ্যান</div>
             <h2 class="section-title" style="color:white">গ্রামের মূল তথ্য</h2>
-            <p class="section-desc">উজালপুর গ্রামের জনসংখ্যা, আয়তন এবং অন্যান্য গুরুত্বপূর্ণ তথ্য</p>
+            <p class="section-desc">খোকসা মল্লিক পাড়া গ্রামের জনসংখ্যা, আয়তন এবং অন্যান্য গুরুত্বপূর্ণ তথ্য</p>
             <div class="divider"></div>
         </div>
         <div class="info-grid">
@@ -282,7 +294,7 @@
         <div class="section-header">
             <div class="section-tag" style="background:rgba(200,153,58,0.2);color:var(--gold-light);border:1px solid rgba(200,153,58,0.3)">🖼️ আমাদের গ্রাম</div>
             <h2 class="section-title" style="color:white">ফটো গ্যালারি</h2>
-            <p class="section-desc">উজালপুর গ্রামের সুন্দর মুহূর্তগুলো</p>
+            <p class="section-desc">খোকসা মল্লিক পাড়া গ্রামের সুন্দর মুহূর্তগুলো</p>
             <div class="divider"></div>
         </div>
         <div class="gallery-grid">
@@ -321,7 +333,7 @@
         <div class="contact-grid">
             <div class="contact-info reveal">
                 <h3>যোগাযোগের তথ্য</h3>
-                <div class="contact-item"><div class="contact-icon">📍</div><div class="contact-text"><strong>ঠিকানা</strong><span>@(info?.Address ?? "উজালপুর গ্রাম, খুলনা বিভাগ, বাংলাদেশ")</span></div></div>
+                <div class="contact-item"><div class="contact-icon">📍</div><div class="contact-text"><strong>ঠিকানা</strong><span>@(info?.Address ?? "খোকসা মল্লিক পাড়া গ্রাম, খুলনা বিভাগ, বাংলাদেশ")</span></div></div>
                 <div class="contact-item"><div class="contact-icon">📞</div><div class="contact-text"><strong>ফোন নম্বর</strong><span>@(info?.Phone ?? "—")</span></div></div>
                 <div class="contact-item"><div class="contact-icon">✉️</div><div class="contact-text"><strong>ইমেইল</strong><span>@(info?.Email ?? "—")</span></div></div>
                 <div class="contact-item"><div class="contact-icon">⏰</div><div class="contact-text"><strong>যোগাযোগের সময়</strong><span>@(info?.OfficeHours ?? "সকাল ৯টা - বিকাল ৫টা")</span></div></div>
@@ -330,7 +342,7 @@
             <div class="map-container reveal">
                 <div class="map-placeholder">
                     <div class="map-placeholder-icon">🗺️</div>
-                    <h4>@(info?.VillageName ?? "উজালপুর গ্রামের") অবস্থান</h4>
+                    <h4>@(info?.VillageName ?? "খোকসা মল্লিক পাড়া গ্রামের") অবস্থান</h4>
                     <p>@(info?.Division ?? "খুলনা বিভাগ"), বাংলাদেশ</p>
                     <a href="@(info?.MapsLink ?? "https://maps.google.com")" target="_blank" class="map-btn">📍 Google Maps-এ দেখুন</a>
                 </div>
@@ -341,13 +353,20 @@
 
 <!-- FOOTER -->
 <footer>
-    <div class="footer-logo">🌿 @(info?.VillageName ?? "উজালপুর গ্রাম")</div>
+    <div class="footer-logo">🌿 @(info?.VillageName ?? "খোকসা মল্লিক পাড়া")</div>
     <p style="font-size:0.88rem;margin-bottom:0.45rem;">@(info?.Division ?? "খুলনা বিভাগ"), বাংলাদেশ | আমাদের গর্বিত গ্রাম</p>
     <div class="footer-links">
         <a href="#home">হোম</a><a href="#news">সংবাদ</a><a href="#about">পরিচিতি</a>
         <a href="#facilities">সুবিধা</a><a href="#committee">কমিটি</a>
         <a href="#gallery">গ্যালারি</a><a href="#contact">যোগাযোগ</a>
     </div>
-    <div class="footer-copy">© ২০২৬ @(info?.VillageName ?? "উজালপুর গ্রাম") | সর্বস্বত্ব সংরক্ষিত</div>
+    <div class="footer-copy">© ২০২৬ @(info?.VillageName ?? "খোকসা মল্লিক পাড়া") | সর্বস্বত্ব সংরক্ষিত</div>
     <div class="footer-dev">✦ Developed by <span>Md Firoz Ali</span> with ❤️ | <a href="/Admin/Login" style="color:rgba(200,153,58,0.6);font-size:0.72rem;">Admin</a></div>
 </footer>
+
+
+@section Scripts {
+    <script>
+        const TOTAL = parseInt(document.getElementById('totalNum')?.textContent) || 0;
+    </script>
+}

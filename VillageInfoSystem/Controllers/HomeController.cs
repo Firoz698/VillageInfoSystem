@@ -18,31 +18,13 @@ namespace VillageInfoSystem.Controllers
         public async Task<IActionResult> Index()
         {
             var info = await _db.VillageInfos.FirstOrDefaultAsync();
-            var featuredNews = await _db.News
-                .Where(n => n.IsActive && n.IsFeatured)
-                .OrderByDescending(n => n.PublishedAt)
-                .FirstOrDefaultAsync();
-            var newsList = await _db.News
-                .Where(n => n.IsActive && !n.IsFeatured)
-                .OrderByDescending(n => n.PublishedAt)
-                .Take(5)
-                .ToListAsync();
-            var facilities = await _db.Facilities
-                .Where(f => f.IsActive)
-                .OrderBy(f => f.SortOrder)
-                .ToListAsync();
-            var committee = await _db.CommitteeMembers
-                .Where(c => c.IsActive)
-                .OrderBy(c => c.SortOrder)
-                .ToListAsync();
-            var gallery = await _db.GalleryItems
-                .Where(g => g.IsActive)
-                .OrderBy(g => g.SortOrder)
-                .ToListAsync();
-            var tickers = await _db.TickerNews
-                .Where(t => t.IsActive)
-                .OrderBy(t => t.SortOrder)
-                .ToListAsync();
+            var featuredNews = await _db.News.Where(n => n.IsActive && n.IsFeatured).OrderByDescending(n => n.PublishedAt).FirstOrDefaultAsync();
+            var newsList = await _db.News.Where(n => n.IsActive && !n.IsFeatured).OrderByDescending(n => n.PublishedAt).Take(5).ToListAsync();
+            var facilities = await _db.Facilities.Where(f => f.IsActive).OrderBy(f => f.SortOrder).ToListAsync();
+            var committee = await _db.CommitteeMembers.Where(c => c.IsActive).OrderBy(c => c.SortOrder).ToListAsync();
+            var gallery = await _db.GalleryItems.Where(g => g.IsActive).OrderBy(g => g.SortOrder).ToListAsync();
+            var tickers = await _db.TickerNews.Where(t => t.IsActive).OrderBy(t => t.SortOrder).ToListAsync();
+            var sliders = await _db.SliderItems.Where(s => s.IsActive).OrderBy(s => s.SortOrder).ToListAsync();
 
             ViewBag.Info = info;
             ViewBag.FeaturedNews = featuredNews;
@@ -51,7 +33,7 @@ namespace VillageInfoSystem.Controllers
             ViewBag.Committee = committee;
             ViewBag.Gallery = gallery;
             ViewBag.Tickers = tickers;
-
+            ViewBag.Sliders = sliders;
             return View();
         }
 

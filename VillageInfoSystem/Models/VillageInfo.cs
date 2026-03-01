@@ -7,7 +7,7 @@ public class VillageInfo
     public int Id { get; set; }
 
     [Display(Name = "গ্রামের নাম")]
-    public string VillageName { get; set; } = "উজালপুর গ্রাম";
+    public string VillageName { get; set; } = "খোকসা মল্লিক পাড়া গ্রাম";
 
     [Display(Name = "বিভাগ")]
     public string Division { get; set; } = "খুলনা বিভাগ";
