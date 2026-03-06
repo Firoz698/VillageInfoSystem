@@ -1,0 +1,100 @@
+﻿@model VillageInfoSystem.Models.Institution
+@{
+    ViewData["Title"] = "নতুন প্রতিষ্ঠান যোগ করুন";
+    Layout = "_AdminLayout";
+}
+
+<style>
+    .adm-form {
+        max-width: 900px;
+    }
+
+    .adm-card {
+        background: white;
+        border-radius: var(--radius);
+        padding: 2rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border);
+        margin-bottom: 1.4rem;
+    }
+
+    .adm-card-title {
+        font-weight: 800;
+        color: var(--green-dark);
+        font-size: 1rem;
+        margin-bottom: 1.4rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+</style>
+
+<div class="page-header">
+    <div class="page-header-left">
+        <h2>🏛️ নতুন প্রতিষ্ঠান যোগ করুন</h2>
+        <p>গ্রামের নতুন প্রতিষ্ঠান বা সংগঠনের তথ্য যোগ করুন</p>
+    </div>
+    <a href="/Admin/InstitutionList" class="btn btn-outline">← তালিকায় ফিরুন</a>
+</div>
+
+<div class="adm-form">
+    <div class="adm-card">
+        <div class="adm-card-title">📋 প্রতিষ্ঠানের তথ্য</div>
+        <form method="post" action="/Admin/InstitutionCreate" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">প্রতিষ্ঠানের নাম *</label>
+                    <input name="Name" class="form-control" required placeholder="যেমন: খোকসা জামে মসজিদ" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">বিভাগ / ধরন</label>
+                    <input name="Category" class="form-control" placeholder="যেমন: মসজিদ, স্কুল, ক্লাব" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">আইকন (emoji)</label>
+                    <input name="Icon" class="form-control" value="🏛️" placeholder="🏛️" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">প্রতিষ্ঠাকাল</label>
+                    <input name="FoundedYear" class="form-control" placeholder="যেমন: ১৯৮৫" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">প্রতিষ্ঠাতার নাম</label>
+                    <input name="FounderName" class="form-control" placeholder="প্রতিষ্ঠাতার নাম লিখুন" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">ক্রম (SortOrder)</label>
+                    <input type="number" name="SortOrder" class="form-control" value="0" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">সংক্ষিপ্ত বিবরণ</label>
+                <textarea name="Description" class="form-control" rows="3" placeholder="সংক্ষিপ্ত বিবরণ লিখুন..."></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">বিস্তারিত বিবরণ</label>
+                <textarea name="Details" class="form-control" rows="5" placeholder="বিস্তারিত তথ্য লিখুন..."></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">ছবি আপলোড (ঐচ্ছিক)</label>
+                <input type="file" name="imageFile" class="form-control" accept="image/*" />
+                <div class="form-hint">JPG, PNG ফরম্যাট সমর্থিত। সর্বোচ্চ ২ MB।</div>
+            </div>
+            <div class="form-group">
+                <label class="form-check">
+                    <input type="checkbox" name="IsActive" value="true" checked />
+                    <span class="form-check-label">সক্রিয় রাখুন</span>
+                </label>
+                <input type="hidden" name="IsActive" value="false" />
+            </div>
+
+            <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+                <button type="submit" class="btn btn-primary btn-lg">💾 সংরক্ষণ করুন</button>
+                <a href="/Admin/InstitutionList" class="btn btn-outline btn-lg">বাতিল</a>
+            </div>
+        </form>
+    </div>
+</div>

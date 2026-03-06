@@ -9,8 +9,6 @@
         --primary: #1a3a5c;
         --primary-light: #2563a8;
         --red: #c0392b;
-        --red-soft: #fff1f0;
-        --red-border: #f8bcb7;
         --success: #1a7a4a;
         --danger: #b53a2e;
         --surface: #ffffff;
@@ -21,6 +19,10 @@
         --shadow-sm: 0 2px 8px rgba(26,58,92,0.07);
         --shadow-md: 0 6px 24px rgba(26,58,92,0.12);
         --radius: 12px;
+    }
+
+    * {
+        box-sizing: border-box;
     }
 
     .page-wrapper {
@@ -39,36 +41,36 @@
         }
     }
 
-    /* ── Live ticker preview bar ── */
+    /* ── Ticker Preview ── */
     .ticker-preview {
         background: linear-gradient(90deg, var(--red) 0%, #a52820 100%);
         border-radius: var(--radius);
-        margin-bottom: 1.75rem;
+        margin-bottom: 1.5rem;
         overflow: hidden;
         box-shadow: 0 4px 18px rgba(192,57,43,0.22);
         display: flex;
         align-items: stretch;
-        min-height: 46px;
+        min-height: 44px;
     }
 
     .ticker-label {
         background: rgba(0,0,0,0.25);
         color: #fff;
-        font-size: 0.72rem;
+        font-size: 0.68rem;
         font-weight: 800;
         letter-spacing: 0.1em;
         text-transform: uppercase;
-        padding: 0 1.1rem;
+        padding: 0 0.9rem;
         display: flex;
         align-items: center;
-        gap: 0.45rem;
+        gap: 0.4rem;
         white-space: nowrap;
         flex-shrink: 0;
     }
 
         .ticker-label .dot {
-            width: 7px;
-            height: 7px;
+            width: 6px;
+            height: 6px;
             background: #ff6b6b;
             border-radius: 50%;
             animation: pulse 1.2s ease-in-out infinite;
@@ -100,7 +102,7 @@
             position: absolute;
             top: 0;
             bottom: 0;
-            width: 40px;
+            width: 30px;
             z-index: 1;
             pointer-events: none;
         }
@@ -118,14 +120,13 @@
     .ticker-scroll {
         display: flex;
         align-items: center;
-        gap: 3rem;
+        gap: 2.5rem;
         white-space: nowrap;
         animation: scrollTicker 22s linear infinite;
-        padding: 0 1rem;
+        padding: 0 0.8rem;
         color: #fff;
-        font-size: 0.84rem;
+        font-size: 0.82rem;
         font-weight: 500;
-        letter-spacing: 0.01em;
     }
 
         .ticker-scroll:hover {
@@ -146,26 +147,26 @@
         opacity: 0.4;
     }
 
-    /* ── Page header ── */
+    /* ── Page Header ── */
     .page-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
         flex-wrap: wrap;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
     }
 
     .page-header-left h1 {
         font-family: 'Noto Serif Bengali', Georgia, serif;
-        font-size: 1.5rem;
+        font-size: clamp(1.1rem, 3vw, 1.5rem);
         font-weight: 700;
         color: var(--primary);
-        margin: 0 0 0.2rem;
+        margin: 0 0 0.15rem;
     }
 
     .page-header-left p {
-        font-size: 0.82rem;
+        font-size: 0.8rem;
         color: var(--text-muted);
         margin: 0;
     }
@@ -173,17 +174,18 @@
     .btn-add {
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.45rem;
         background: var(--primary);
         color: #fff;
         text-decoration: none;
-        padding: 0.6rem 1.2rem;
+        padding: 0.55rem 1rem;
         border-radius: 8px;
-        font-size: 0.88rem;
+        font-size: 0.85rem;
         font-weight: 600;
         box-shadow: 0 2px 8px rgba(26,58,92,0.18);
         transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
         white-space: nowrap;
+        flex-shrink: 0;
     }
 
         .btn-add:hover {
@@ -192,19 +194,19 @@
             box-shadow: 0 5px 18px rgba(26,58,92,0.22);
         }
 
-    /* ── Stats ── */
+    /* ── Stats Bar ── */
     .stats-bar {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 1rem;
-        margin-bottom: 1.5rem;
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
     }
 
     .stat-card {
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: var(--radius);
-        padding: 1rem 1.25rem;
+        padding: 0.9rem 1rem;
         box-shadow: var(--shadow-sm);
         transition: box-shadow 0.2s;
     }
@@ -214,16 +216,16 @@
         }
 
     .stat-label {
-        font-size: 0.72rem;
+        font-size: 0.68rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.07em;
         color: var(--text-muted);
-        margin-bottom: 0.3rem;
+        margin-bottom: 0.25rem;
     }
 
     .stat-value {
-        font-size: 1.6rem;
+        font-size: clamp(1.3rem, 4vw, 1.6rem);
         font-weight: 700;
         color: var(--primary);
         line-height: 1;
@@ -237,7 +239,7 @@
         color: var(--danger);
     }
 
-    /* ── Table card ── */
+    /* ── Table Card ── */
     .table-card {
         background: var(--surface);
         border: 1px solid var(--border);
@@ -251,8 +253,8 @@
         align-items: center;
         justify-content: space-between;
         flex-wrap: wrap;
-        gap: 0.75rem;
-        padding: 1rem 1.25rem;
+        gap: 0.6rem;
+        padding: 0.85rem 1rem;
         border-bottom: 1px solid var(--border);
         background: var(--surface-alt);
     }
@@ -265,18 +267,19 @@
 
         .search-box svg {
             position: absolute;
-            left: 0.75rem;
+            left: 0.7rem;
             color: var(--text-muted);
             pointer-events: none;
+            flex-shrink: 0;
         }
 
         .search-box input {
-            padding: 0.45rem 0.9rem 0.45rem 2.2rem;
+            padding: 0.42rem 0.85rem 0.42rem 2.1rem;
             border: 1px solid var(--border);
             border-radius: 7px;
-            font-size: 0.84rem;
+            font-size: 0.82rem;
             background: var(--surface);
-            width: 220px;
+            width: clamp(140px, 30vw, 220px);
             outline: none;
             color: var(--text-main);
             transition: border-color 0.2s, box-shadow 0.2s;
@@ -288,10 +291,12 @@
             }
 
     .table-count {
-        font-size: 0.82rem;
+        font-size: 0.8rem;
         color: var(--text-muted);
+        white-space: nowrap;
     }
 
+    /* ── Desktop Table ── */
     .table-scroll {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
@@ -300,14 +305,15 @@
     table.data-table {
         width: 100%;
         border-collapse: collapse;
-        font-size: 0.875rem;
+        font-size: 0.85rem;
         color: var(--text-main);
+        min-width: 560px;
     }
 
         table.data-table thead th {
             background: var(--surface-alt);
-            padding: 0.75rem 1rem;
-            font-size: 0.72rem;
+            padding: 0.7rem 0.9rem;
+            font-size: 0.68rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.06em;
@@ -335,7 +341,7 @@
             }
 
         table.data-table td {
-            padding: 0.9rem 1rem;
+            padding: 0.8rem 0.9rem;
             vertical-align: middle;
         }
 
@@ -343,24 +349,22 @@
                 text-align: center;
             }
 
-    /* ── Order badge ── */
     .order-chip {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 28px;
-        height: 28px;
-        border-radius: 7px;
+        width: 26px;
+        height: 26px;
+        border-radius: 6px;
         background: #eff4ff;
         border: 1px solid #c5d7f8;
         color: #2b5aad;
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         font-weight: 700;
     }
 
-    /* ── News text cell ── */
     .news-text-cell {
-        max-width: 420px;
+        max-width: 340px;
     }
 
     .news-text {
@@ -368,62 +372,126 @@
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
-        line-height: 1.55;
+        line-height: 1.5;
         color: var(--text-main);
     }
 
-    /* ── Badges ── */
-    .badge {
+    /* ── Toggle Switch ── */
+    .toggle-wrap {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.28rem;
+    }
+
+    .toggle-switch {
+        position: relative;
+        width: 40px;
+        height: 22px;
+        display: inline-block;
+        flex-shrink: 0;
+    }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        inset: 0;
+        background: #d1d5db;
+        border-radius: 999px;
+        transition: background 0.25s;
+    }
+
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            left: 3px;
+            top: 3px;
+            background: #fff;
+            border-radius: 50%;
+            transition: transform 0.25s;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+        }
+
+    .toggle-switch input:checked + .toggle-slider {
+        background: #1a7a4a;
+    }
+
+        .toggle-switch input:checked + .toggle-slider::before {
+            transform: translateX(18px);
+        }
+
+    .toggle-switch.loading .toggle-slider {
+        opacity: 0.6;
+        cursor: wait;
+    }
+
+    .toggle-label {
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+    }
+
+        .toggle-label.active {
+            color: #1a7a4a;
+        }
+
+        .toggle-label.inactive {
+            color: #b53a2e;
+        }
+
+    /* ── Action Buttons ── */
+    .action-group {
+        display: inline-flex;
+        gap: 0.35rem;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-edit {
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 0.3rem;
-        padding: 0.28rem 0.7rem;
-        border-radius: 999px;
+        background: #eff4ff;
+        border: 1px solid #c5d7f8;
+        color: #2b5aad;
+        border-radius: 7px;
+        padding: 0.34rem 0.7rem;
         font-size: 0.75rem;
         font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background 0.15s, border-color 0.15s, transform 0.12s;
         white-space: nowrap;
     }
 
-        .badge::before {
-            content: '';
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
+        .btn-edit:hover {
+            background: #dbeaff;
+            border-color: #93baf7;
+            color: #1a4a9a;
+            transform: translateY(-1px);
         }
 
-    .badge-success {
-        background: #ecfdf3;
-        color: #1a7a4a;
-        border: 1px solid #a7e6c3;
-    }
-
-        .badge-success::before {
-            background: #1a7a4a;
-        }
-
-    .badge-danger {
-        background: #fff1f0;
-        color: #b53a2e;
-        border: 1px solid #f8bcb7;
-    }
-
-        .badge-danger::before {
-            background: #b53a2e;
-        }
-
-    /* ── Delete button ── */
     .btn-delete {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 0.35rem;
+        gap: 0.3rem;
         background: #fff1f0;
         border: 1px solid #f8bcb7;
         color: #b53a2e;
         border-radius: 7px;
-        padding: 0.38rem 0.8rem;
-        font-size: 0.78rem;
+        padding: 0.34rem 0.7rem;
+        font-size: 0.75rem;
         font-weight: 600;
         cursor: pointer;
         transition: background 0.15s, border-color 0.15s, transform 0.12s;
@@ -436,16 +504,83 @@
             transform: translateY(-1px);
         }
 
-    /* ── Mobile cards ── */
+    /* ── Toast ── */
+    .toast-container {
+        position: fixed;
+        bottom: 1.2rem;
+        right: 1rem;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        pointer-events: none;
+        max-width: calc(100vw - 2rem);
+    }
+
+    .toast {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.65rem 1rem;
+        border-radius: 9px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.14);
+        pointer-events: auto;
+        animation: toastIn 0.3s ease both;
+        white-space: nowrap;
+    }
+
+        .toast.success {
+            background: #ecfdf3;
+            color: #1a7a4a;
+            border: 1px solid #a7e6c3;
+        }
+
+        .toast.error {
+            background: #fff1f0;
+            color: #b53a2e;
+            border: 1px solid #f8bcb7;
+        }
+
+        .toast.hide {
+            animation: toastOut 0.3s ease both;
+        }
+
+    @@keyframes toastIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes toastOut {
+        from {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        to {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+    }
+
+    /* ── Mobile Cards ── */
     .mobile-list {
         display: none;
     }
 
     .news-card {
-        padding: 1rem 1.25rem;
+        padding: 0.9rem 1rem;
         border-bottom: 1px solid var(--border);
         display: flex;
-        gap: 0.9rem;
+        gap: 0.75rem;
         align-items: flex-start;
         transition: background 0.15s;
     }
@@ -464,10 +599,10 @@
     }
 
     .news-card-text {
-        font-size: 0.88rem;
-        line-height: 1.55;
+        font-size: 0.86rem;
+        line-height: 1.5;
         color: var(--text-main);
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.55rem;
         display: -webkit-box;
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
@@ -481,26 +616,52 @@
         flex-wrap: wrap;
     }
 
-    /* ── Empty ── */
+    .news-card-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        margin-left: auto;
+        flex-wrap: wrap;
+    }
+
+    /* ── Empty State ── */
     .empty-state {
         text-align: center;
-        padding: 4rem 2rem;
+        padding: 3.5rem 1.5rem;
         color: var(--text-muted);
     }
 
         .empty-state .empty-icon {
-            font-size: 2.8rem;
+            font-size: 2.5rem;
             display: block;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.7rem;
             opacity: 0.5;
         }
 
         .empty-state p {
-            margin: 0 0 1.5rem;
-            font-size: 0.9rem;
+            margin: 0 0 1.25rem;
+            font-size: 0.88rem;
         }
 
-    @@media (max-width: 768px) {
+    /* ── Responsive Breakpoints ── */
+
+    /* Tablet */
+    @@media (max-width: 900px) {
+        .news-text-cell {
+            max-width: 260px;
+        }
+
+        .btn-edit span, .btn-delete span {
+            display: none;
+        }
+
+        .btn-edit, .btn-delete {
+            padding: 0.38rem 0.5rem;
+        }
+    }
+
+    /* Mobile */
+    @@media (max-width: 680px) {
         .desktop-table {
             display: none;
         }
@@ -511,31 +672,42 @@
 
         .stats-bar {
             grid-template-columns: repeat(3, 1fr);
-            gap: 0.65rem;
+            gap: 0.5rem;
         }
 
         .stat-card {
-            padding: 0.75rem 1rem;
+            padding: 0.7rem 0.75rem;
         }
 
         .stat-value {
-            font-size: 1.35rem;
+            font-size: 1.25rem;
         }
 
-        .search-box input {
-            width: 160px;
+        .stat-label {
+            font-size: 0.62rem;
         }
 
-        .btn-add span {
-            display: none;
+        .ticker-label {
+            font-size: 0.62rem;
+            padding: 0 0.7rem;
         }
 
         .ticker-scroll {
-            font-size: 0.78rem;
+            font-size: 0.76rem;
+            gap: 1.8rem;
+        }
+
+        .page-header {
+            gap: 0.5rem;
+        }
+
+        .btn-add .btn-add-text {
+            display: none;
         }
     }
 
-    @@media (max-width: 480px) {
+    /* Small Mobile */
+    @@media (max-width: 420px) {
         .stats-bar {
             grid-template-columns: 1fr 1fr;
         }
@@ -543,30 +715,69 @@
             .stats-bar .stat-card:last-child {
                 grid-column: 1 / -1;
             }
+
+        .table-toolbar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .search-box input {
+            width: 100%;
+        }
+
+        .search-box {
+            width: 100%;
+        }
+
+        .table-count {
+            text-align: right;
+        }
+
+        .news-card {
+            padding: 0.8rem 0.85rem;
+            gap: 0.6rem;
+        }
+
+        .news-card-meta {
+            gap: 0.4rem;
+        }
+
+        .news-card-actions {
+            gap: 0.3rem;
+        }
+
+        .btn-edit, .btn-delete {
+            padding: 0.32rem 0.55rem;
+            font-size: 0.73rem;
+        }
     }
 </style>
+
+<div class="toast-container" id="toastContainer"></div>
 
 <div class="page-wrapper">
 
     <!-- Live Ticker Preview -->
-    @if (Model.Any(t => t.IsActive))
-    {
-        <div class="ticker-preview">
-            <div class="ticker-label">
-                <span class="dot"></span>
-                লাইভ
-            </div>
-            <div class="ticker-scroll-wrapper">
-                <div class="ticker-scroll">
-                    @foreach (var t in Model.Where(t => t.IsActive).OrderBy(t => t.SortOrder))
-                    {
-                        <span>@t.Text</span>
-                        <span class="ticker-sep">◆</span>
-                    }
+    <div id="tickerPreviewWrapper">
+        @if (Model.Any(t => t.IsActive))
+        {
+            <div class="ticker-preview">
+                <div class="ticker-label">
+                    <span class="dot"></span>
+                    লাইভ
+                </div>
+                <div class="ticker-scroll-wrapper">
+                    <div class="ticker-scroll">
+                        @foreach (var t in Model.Where(t => t.IsActive).OrderBy(t => t.SortOrder))
+                        {
+                            <span>@t.Text</span>
+                            <span class="ticker-sep">◆</span>
+                        }
+                    </div>
                 </div>
             </div>
-        </div>
-    }
+        }
+    </div>
 
     <!-- Header -->
     <div class="page-header">
@@ -575,8 +786,11 @@
             <p>স্ক্রলিং সংবাদ টিকার পরিচালনা করুন</p>
         </div>
         <a href="/Admin/TickerCreate" class="btn-add">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-            <span>নতুন টিকার যোগ</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            <span class="btn-add-text">নতুন টিকার যোগ</span>
         </a>
     </div>
 
@@ -588,19 +802,22 @@
         </div>
         <div class="stat-card success">
             <div class="stat-label">সক্রিয়</div>
-            <div class="stat-value">@Model.Count(t => t.IsActive)</div>
+            <div class="stat-value" id="activeCount">@Model.Count(t => t.IsActive)</div>
         </div>
         <div class="stat-card danger">
             <div class="stat-label">নিষ্ক্রিয়</div>
-            <div class="stat-value">@Model.Count(t => !t.IsActive)</div>
+            <div class="stat-value" id="inactiveCount">@Model.Count(t => !t.IsActive)</div>
         </div>
     </div>
 
-    <!-- Table -->
+    <!-- Table Card -->
     <div class="table-card">
         <div class="table-toolbar">
             <div class="search-box">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
                 <input type="text" placeholder="সংবাদ খুঁজুন…" id="searchInput" oninput="filterRows()" />
             </div>
             <span class="table-count" id="countLabel">@Model.Count টি সংবাদ</span>
@@ -616,36 +833,57 @@
         }
         else
         {
-            <!-- Desktop -->
+            <!-- Desktop Table -->
             <div class="table-scroll desktop-table">
                 <table class="data-table" id="tickerTable">
                     <thead>
                         <tr>
-                            <th class="center" style="width:60px">ক্রম</th>
+                            <th class="center" style="width:54px">ক্রম</th>
                             <th>সংবাদ টেক্সট</th>
                             <th class="center" style="width:110px">অবস্থা</th>
-                            <th class="center" style="width:100px">কার্যক্রম</th>
+                            <th class="center" style="width:155px">কার্যক্রম</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody">
                         @foreach (var t in Model.OrderBy(t => t.SortOrder))
                         {
-                            <tr data-text="@t.Text.ToLower()">
+                            <tr data-text="@t.Text.ToLower()" data-id="@t.Id">
                                 <td class="center"><span class="order-chip">@t.SortOrder</span></td>
                                 <td class="news-text-cell"><div class="news-text">@t.Text</div></td>
                                 <td class="center">
-                                    <span class="badge @(t.IsActive ? "badge-success" : "badge-danger")">
-                                        @(t.IsActive ? "সক্রিয়" : "নিষ্ক্রিয়")
-                                    </span>
+                                    <div class="toggle-wrap">
+                                        <label class="toggle-switch" id="toggle-label-@t.Id">
+                                            <input type="checkbox"
+                                                   id="toggle-@t.Id"
+                                                   @(t.IsActive ? "checked" : "")
+                                                   onchange="toggleStatus(@t.Id, this)" />
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                        <span class="toggle-label @(t.IsActive ? "active" : "inactive")" id="toggle-text-@t.Id">
+                                            @(t.IsActive ? "সক্রিয়" : "নিষ্ক্রিয়")
+                                        </span>
+                                    </div>
                                 </td>
                                 <td class="center">
-                                    <form method="post" action="/Admin/TickerDelete/@t.Id" style="display:inline" onsubmit="return confirmDelete()">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn-delete">
-                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" /></svg>
-                                            মুছুন
-                                        </button>
-                                    </form>
+                                    <div class="action-group">
+                                        <a href="/Admin/TickerEdit/@t.Id" class="btn-edit">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                            </svg>
+                                            <span>সম্পাদনা</span>
+                                        </a>
+                                        <form method="post" action="/Admin/TickerDelete/@t.Id" style="display:inline" onsubmit="return confirmDelete()">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn-delete">
+                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="3 6 5 6 21 6" />
+                                                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                                                </svg>
+                                                <span>মুছুন</span>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         }
@@ -653,25 +891,48 @@
                 </table>
             </div>
 
-            <!-- Mobile -->
+            <!-- Mobile Cards -->
             <div class="mobile-list" id="mobileList">
                 @foreach (var t in Model.OrderBy(t => t.SortOrder))
                 {
-                    <div class="news-card" data-text="@t.Text.ToLower()">
-                        <div class="order-chip" style="margin-top:2px;flex-shrink:0">@t.SortOrder</div>
+                    <div class="news-card" data-text="@t.Text.ToLower()" data-id="@t.Id">
+                        <div class="order-chip" style="margin-top:3px;flex-shrink:0">@t.SortOrder</div>
                         <div class="news-card-body">
                             <div class="news-card-text">@t.Text</div>
                             <div class="news-card-meta">
-                                <span class="badge @(t.IsActive ? "badge-success" : "badge-danger")">
-                                    @(t.IsActive ? "সক্রিয়" : "নিষ্ক্রিয়")
-                                </span>
-                                <form method="post" action="/Admin/TickerDelete/@t.Id" style="display:inline;margin-left:auto" onsubmit="return confirmDelete()">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn-delete">
-                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" /></svg>
-                                        মুছুন
-                                    </button>
-                                </form>
+                                <!-- Toggle -->
+                                <div style="display:inline-flex;align-items:center;gap:0.45rem;">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox"
+                                               id="toggle-mob-@t.Id"
+                                               @(t.IsActive ? "checked" : "")
+                                               onchange="toggleStatus(@t.Id, this)" />
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <span class="toggle-label @(t.IsActive ? "active" : "inactive")" id="toggle-mob-text-@t.Id">
+                                        @(t.IsActive ? "সক্রিয়" : "নিষ্ক্রিয়")
+                                    </span>
+                                </div>
+                                <!-- Actions -->
+                                <div class="news-card-actions">
+                                    <a href="/Admin/TickerEdit/@t.Id" class="btn-edit">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                        </svg>
+                                        সম্পাদনা
+                                    </a>
+                                    <form method="post" action="/Admin/TickerDelete/@t.Id" style="display:inline" onsubmit="return confirmDelete()">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn-delete">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                                <polyline points="3 6 5 6 21 6" />
+                                                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                                            </svg>
+                                            মুছুন
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -682,6 +943,102 @@
 </div>
 
 <script>
+    const tickerTexts = {
+        @foreach (var t in Model)
+        {
+                @:@t.Id: { text: "@Html.Raw(t.Text.Replace("\"", "\\\""))", active: @t.IsActive.ToString().ToLower() },
+        }
+    };
+
+    function showToast(msg, type = 'success') {
+        const c = document.getElementById('toastContainer');
+        const el = document.createElement('div');
+        el.className = `toast ${type}`;
+        el.innerHTML = type === 'success'
+            ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>${msg}`
+            : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>${msg}`;
+        c.appendChild(el);
+        setTimeout(() => {
+            el.classList.add('hide');
+            el.addEventListener('animationend', () => el.remove());
+        }, 3000);
+    }
+
+    async function toggleStatus(id, checkbox) {
+        const isActive = checkbox.checked;
+        const label = document.getElementById(`toggle-label-${id}`);
+        const textEl = document.getElementById(`toggle-text-${id}`);
+        const mobTextEl = document.getElementById(`toggle-mob-text-${id}`);
+        const mobCheckbox = document.getElementById(`toggle-mob-${id}`);
+
+        if (label) label.classList.add('loading');
+        checkbox.disabled = true;
+        if (mobCheckbox) mobCheckbox.disabled = true;
+
+        try {
+            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '';
+            const res = await fetch(`/Admin/TickerToggle/${id}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token },
+                body: JSON.stringify({ isActive })
+            });
+
+            if (!res.ok) throw new Error('Server error');
+
+            tickerTexts[id].active = isActive;
+            if (mobCheckbox) mobCheckbox.checked = isActive;
+
+            [textEl, mobTextEl].forEach(el => {
+                if (!el) return;
+                el.textContent = isActive ? 'সক্রিয়' : 'নিষ্ক্রিয়';
+                el.className = `toggle-label ${isActive ? 'active' : 'inactive'}`;
+            });
+
+            updateStats();
+            updateTickerPreview();
+            showToast(isActive ? '✓ সক্রিয় করা হয়েছে' : '✓ নিষ্ক্রিয় করা হয়েছে', 'success');
+
+        } catch (e) {
+            checkbox.checked = !isActive;
+            if (mobCheckbox) mobCheckbox.checked = !isActive;
+            tickerTexts[id].active = !isActive;
+            showToast('ত্রুটি! আবার চেষ্টা করুন।', 'error');
+        } finally {
+            if (label) label.classList.remove('loading');
+            checkbox.disabled = false;
+            if (mobCheckbox) mobCheckbox.disabled = false;
+        }
+    }
+
+    function updateStats() {
+        const active = Object.values(tickerTexts).filter(t => t.active).length;
+        const inactive = Object.values(tickerTexts).filter(t => !t.active).length;
+        const aEl = document.getElementById('activeCount');
+        const iEl = document.getElementById('inactiveCount');
+        if (aEl) aEl.textContent = active;
+        if (iEl) iEl.textContent = inactive;
+    }
+
+    function updateTickerPreview() {
+        const wrapper = document.getElementById('tickerPreviewWrapper');
+        const activeEntries = Object.entries(tickerTexts).filter(([, v]) => v.active);
+
+        if (activeEntries.length === 0) { wrapper.innerHTML = ''; return; }
+
+        let items = '';
+        activeEntries.forEach(([, v]) => {
+            items += `<span>${v.text}</span><span class="ticker-sep">◆</span>`;
+        });
+
+        wrapper.innerHTML = `
+            <div class="ticker-preview" style="margin-bottom:1.5rem">
+                <div class="ticker-label"><span class="dot"></span>লাইভ</div>
+                <div class="ticker-scroll-wrapper">
+                    <div class="ticker-scroll">${items}</div>
+                </div>
+            </div>`;
+    }
+
     function confirmDelete() {
         return confirm('এই সংবাদটি স্থায়ীভাবে মুছে ফেলবেন?');
     }
@@ -697,8 +1054,14 @@
             if (match) count++;
         });
         cards.forEach(c => {
-            c.style.display = c.dataset.text.includes(q) ? '' : 'none';
+            const match = c.dataset.text.includes(q);
+            c.style.display = match ? '' : 'none';
+            if (match) count++;
         });
-        document.getElementById('countLabel').textContent = `${count} টি সংবাদ`;
+        // avoid double counting
+        const visibleRows = [...document.querySelectorAll('#tableBody tr')].filter(r => r.style.display !== 'none').length;
+        const visibleCards = [...document.querySelectorAll('#mobileList .news-card')].filter(c => c.style.display !== 'none').length;
+        const total = window.innerWidth <= 680 ? visibleCards : visibleRows;
+        document.getElementById('countLabel').textContent = `${total} টি সংবাদ`;
     }
 </script>

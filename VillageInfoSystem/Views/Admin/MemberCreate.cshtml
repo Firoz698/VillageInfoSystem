@@ -1,0 +1,60 @@
+﻿@model VillageInfoSystem.Models.InstitutionMember
+@{
+    ViewData["Title"] = "নতুন সদস্য যোগ করুন";
+    Layout = "_AdminLayout";
+}
+
+<div class="page-header">
+    <div class="page-header-left">
+        <h2>👤 নতুন সদস্য যোগ করুন</h2>
+        <p>প্রতিষ্ঠানের নতুন সদস্যের তথ্য যোগ করুন</p>
+    </div>
+    <a href="/Admin/InstitutionEdit/@Model.InstitutionId" class="btn btn-outline">← প্রতিষ্ঠানে ফিরুন</a>
+</div>
+
+<div style="max-width:700px;">
+    <div class="card">
+        <form method="post" action="/Admin/MemberCreate" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="InstitutionId" value="@Model.InstitutionId" />
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">নাম *</label>
+                    <input name="Name" class="form-control" required placeholder="সদস্যের নাম" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">পদবি / ভূমিকা</label>
+                    <input name="Role" class="form-control" placeholder="সভাপতি, সম্পাদক, ইমাম..." />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">পেশা</label>
+                    <input name="Profession" class="form-control" placeholder="শিক্ষক, ব্যবসায়ী, কৃষক..." />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">ফোন নম্বর</label>
+                    <input name="Phone" class="form-control" placeholder="০১XXXXXXXXX" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Avatar (emoji)</label>
+                    <input name="Avatar" class="form-control" value="👤" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">ক্রম (SortOrder)</label>
+                    <input type="number" name="SortOrder" class="form-control" value="0" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">ছবি আপলোড (ঐচ্ছিক)</label>
+                <input type="file" name="imageFile" class="form-control" accept="image/*" />
+                <div class="form-hint">ছবি না দিলে Avatar emoji ব্যবহার হবে।</div>
+            </div>
+
+            <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+                <button type="submit" class="btn btn-primary btn-lg">💾 সদস্য সংরক্ষণ</button>
+                <a href="/Admin/InstitutionEdit/@Model.InstitutionId" class="btn btn-outline btn-lg">বাতিল</a>
+            </div>
+        </form>
+    </div>
+</div>

@@ -69,7 +69,6 @@
                 transform: translateX(-100%);
             }
 
-            /* Sidebar top accent line */
             .sidebar::before {
                 content: '';
                 position: absolute;
@@ -80,7 +79,6 @@
                 background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
             }
 
-        /* SIDEBAR HEADER */
         .sidebar-header {
             padding: 1.5rem 1.4rem 1.2rem;
             border-bottom: 1px solid rgba(255,255,255,0.07);
@@ -102,10 +100,6 @@
             box-shadow: 0 4px 14px rgba(200,153,58,0.35);
         }
 
-        .sb-logo-text {
-            line-height: 1.2;
-        }
-
         .sb-logo-main {
             font-family: 'Playfair Display', serif;
             font-size: 0.95rem;
@@ -120,7 +114,6 @@
             opacity: 0.75;
         }
 
-        /* ADMIN PROFILE CHIP */
         .sb-profile {
             margin: 1rem 1.1rem;
             padding: 0.75rem 1rem;
@@ -166,7 +159,6 @@
             box-shadow: 0 0 0 2px rgba(76,218,127,0.3);
         }
 
-        /* NAV */
         .sidebar-nav {
             flex: 1;
             padding: 0.5rem 0 1rem;
@@ -200,7 +192,6 @@
             text-decoration: none;
             font-size: 0.875rem;
             font-weight: 500;
-            border-radius: 0;
             transition: all 0.2s;
             position: relative;
             margin: 1px 0.7rem;
@@ -250,7 +241,18 @@
             background: rgba(255,255,255,0.1);
         }
 
-        /* SIDEBAR FOOTER */
+        /* ✅ Sub-menu badge (count indicator) */
+        .nav-badge {
+            margin-left: auto;
+            background: rgba(200,153,58,0.25);
+            color: var(--gold-light);
+            font-size: 0.62rem;
+            font-weight: 700;
+            padding: 0.12rem 0.5rem;
+            border-radius: 50px;
+            border: 1px solid rgba(200,153,58,0.2);
+        }
+
         .sidebar-footer {
             padding: 1rem 1.1rem;
             border-top: 1px solid rgba(255,255,255,0.07);
@@ -344,7 +346,6 @@
                 height: 2px;
                 background: var(--text);
                 border-radius: 2px;
-                transition: all 0.2s;
             }
 
         .topbar-breadcrumb {
@@ -416,16 +417,13 @@
         }
 
         @@keyframes blink {
-            0%,100%
+            0%, 100% {
+                opacity: 1;
+            }
 
-        {
-            opacity: 1;
-        }
-
-        50% {
-            opacity: 0.4;
-        }
-
+            50% {
+                opacity: 0.4;
+            }
         }
 
         /* ══════════════════════════════════════
@@ -454,18 +452,15 @@
         }
 
         @@keyframes slideDown {
-            from
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
 
-        {
-            opacity: 0;
-            transform: translateY(-8px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .alert-success {
@@ -479,7 +474,7 @@
             background: #fdf0ef;
             color: #c0392b;
             border: 1px solid #f8c0c0;
-            border-left: 4px solid var(--danger, #e74c3c);
+            border-left: 4px solid #e74c3c;
         }
 
         /* ══════════════════════════════════════
@@ -528,7 +523,7 @@
                 ══════════════════════════════════════ */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
             gap: 1.1rem;
             margin-bottom: 1.6rem;
         }
@@ -543,7 +538,6 @@
             align-items: center;
             gap: 1rem;
             transition: all 0.25s;
-            cursor: default;
         }
 
             .stat-card:hover {
@@ -579,12 +573,8 @@
                 background: rgba(126,60,180,0.1);
             }
 
-        .stat-content {
-            min-width: 0;
-        }
-
         .stat-num {
-            font-family: 'Playfair Display', serif;
+            font-family: 'Playfair Display',serif;
             font-size: 1.7rem;
             font-weight: 900;
             color: var(--green-dark);
@@ -624,7 +614,6 @@
             font-size: 0.8rem;
             letter-spacing: 0.03em;
             border-bottom: 2px solid var(--border);
-            white-space: nowrap;
         }
 
         tbody td {
@@ -653,7 +642,7 @@
             border-radius: var(--radius-sm);
             border: none;
             cursor: pointer;
-            font-family: 'Hind Siliguri', sans-serif;
+            font-family: 'Hind Siliguri',sans-serif;
             font-size: 0.845rem;
             font-weight: 600;
             transition: all 0.2s;
@@ -667,13 +656,13 @@
             }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--green), var(--green-light));
+            background: linear-gradient(135deg,var(--green),var(--green-light));
             color: white;
             box-shadow: 0 3px 12px rgba(26,107,60,0.28);
         }
 
             .btn-primary:hover {
-                background: linear-gradient(135deg, var(--green-dark), var(--green));
+                background: linear-gradient(135deg,var(--green-dark),var(--green));
                 box-shadow: 0 5px 18px rgba(26,107,60,0.38);
                 color: white;
             }
@@ -700,7 +689,7 @@
             }
 
         .btn-gold {
-            background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            background: linear-gradient(135deg,var(--gold),var(--gold-light));
             color: var(--green-dark);
             font-weight: 700;
         }
@@ -752,7 +741,7 @@
             padding: 0.68rem 0.95rem;
             border: 1.5px solid var(--border);
             border-radius: var(--radius-sm);
-            font-family: 'Hind Siliguri', sans-serif;
+            font-family: 'Hind Siliguri',sans-serif;
             font-size: 0.9rem;
             color: var(--text);
             background: white;
@@ -848,7 +837,7 @@
         }
 
         /* ══════════════════════════════════════
-                   PAGE HEADER UTIL
+                   PAGE HEADER
                 ══════════════════════════════════════ */
         .page-header {
             display: flex;
@@ -860,7 +849,7 @@
         }
 
         .page-header-left h2 {
-            font-family: 'Playfair Display', serif;
+            font-family: 'Playfair Display',serif;
             font-size: 1.5rem;
             color: var(--green-dark);
             font-weight: 900;
@@ -908,7 +897,7 @@
         /* ══════════════════════════════════════
                    RESPONSIVE
                 ══════════════════════════════════════ */
-        @@media (max-width: 1024px) {
+        @@media (max-width:1024px) {
             .sidebar {
                 transform: translateX(-100%);
                 z-index: 600;
@@ -931,7 +920,7 @@
             }
         }
 
-        @@media (max-width: 640px) {
+        @@media (max-width:640px) {
             .form-grid, .form-grid-3 {
                 grid-template-columns: 1fr;
             }
@@ -957,7 +946,7 @@
             }
         }
 
-        @@media (max-width: 400px) {
+        @@media (max-width:400px) {
             .stats-grid {
                 grid-template-columns: 1fr;
             }
@@ -1067,6 +1056,8 @@
         </div>
 
         <nav class="sidebar-nav">
+
+            <!-- ── প্রধান ── -->
             <div class="nav-section-label">প্রধান</div>
             <a href="/Admin/Dashboard"
                class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Dashboard" ? "active" : "")">
@@ -1076,6 +1067,7 @@
                 <span class="nav-icon">🏠</span> ওয়েবসাইট দেখুন
             </a>
 
+            <!-- ── কন্টেন্ট ── -->
             <div class="nav-section-label">কন্টেন্ট</div>
             <a href="/Admin/NewsList"
                class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString()?.Contains("News") == true ? "active" : "")">
@@ -1094,6 +1086,7 @@
                 <span class="nav-icon">🎞️</span> স্লাইডার
             </a>
 
+            <!-- ── তথ্য ── -->
             <div class="nav-section-label">তথ্য</div>
             <a href="/Admin/FacilityList"
                class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString()?.Contains("Facility") == true ? "active" : "")">
@@ -1104,11 +1097,28 @@
                 <span class="nav-icon">👥</span> কমিটি সদস্য
             </a>
 
+            <!-- ✅ নতুন: প্রতিষ্ঠান ── -->
+            <div class="nav-section-label">প্রতিষ্ঠান</div>
+            <a href="/Admin/InstitutionList"
+               class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString()?.Contains("Institution") == true ? "active" : "")">
+                <span class="nav-icon">🏢</span> প্রতিষ্ঠান তালিকা
+            </a>
+            <a href="/Admin/InstitutionCreate"
+               class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "InstitutionCreate" ? "active" : "")">
+                <span class="nav-icon">➕</span> নতুন প্রতিষ্ঠান
+            </a>
+            <a href="/Admin/MemberCreate"
+               class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "MemberCreate" ? "active" : "")">
+                <span class="nav-icon">👤</span> নতুন সদস্য
+            </a>
+
+            <!-- ── সেটিংস ── -->
             <div class="nav-section-label">সেটিংস</div>
             <a href="/Admin/VillageInfoEdit"
                class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString()?.Contains("VillageInfo") == true ? "active" : "")">
                 <span class="nav-icon">⚙️</span> গ্রামের তথ্য
             </a>
+
         </nav>
 
         <div class="sidebar-footer">
@@ -1127,13 +1137,11 @@
             <button class="topbar-toggle" onclick="toggleSidebar()" title="মেনু">
                 <span></span><span></span><span></span>
             </button>
-
             <div class="topbar-breadcrumb">
                 <span>অ্যাডমিন</span>
                 <span class="sep">›</span>
                 <span class="current">@ViewData["Title"]</span>
             </div>
-
             <div class="topbar-right">
                 <a href="/" target="_blank" class="topbar-website">
                     <span>🌐</span>
@@ -1161,16 +1169,15 @@
 
         <!-- FOOTER -->
         <footer class="page-footer">
-            © @DateTime.Now.Year খোকসা মল্লিক পাড়া গ্রাম &mdash; Developed by <span>Md. Shakil</span>
+            © @DateTime.Now.Year খোকসা মল্লিক পাড়া গ্রাম &mdash; Developed by <span>Md Firoz Ali</span>
         </footer>
     </div>
 
     <script>
-        /* ── Sidebar toggle ── */
-        const sidebar = document.getElementById('sidebar');
+        const sidebar     = document.getElementById('sidebar');
         const mainWrapper = document.getElementById('mainWrapper');
-        const overlay = document.getElementById('sidebarOverlay');
-        const isMobile = () => window.innerWidth <= 1024;
+        const overlay     = document.getElementById('sidebarOverlay');
+        const isMobile    = () => window.innerWidth <= 1024;
 
         function toggleSidebar() {
             if (isMobile()) {
@@ -1187,7 +1194,6 @@
             overlay.classList.remove('active');
         }
 
-        /* Close sidebar on resize to mobile */
         window.addEventListener('resize', () => {
             if (!isMobile()) {
                 sidebar.classList.remove('mobile-open');
@@ -1195,7 +1201,7 @@
             }
         });
 
-        /* ── Auto-dismiss alerts ── */
+        /* Auto-dismiss alerts after 4.5s */
         document.querySelectorAll('.alert').forEach(el => {
             setTimeout(() => {
                 el.style.transition = 'opacity 0.5s';

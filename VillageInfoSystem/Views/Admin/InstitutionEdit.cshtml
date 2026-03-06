@@ -1,0 +1,242 @@
+﻿@model VillageInfoSystem.Models.Institution
+@{
+    ViewData["Title"] = "প্রতিষ্ঠান সম্পাদনা — " + Model.Name;
+    Layout = "_AdminLayout";
+}
+
+<style>
+    .adm-form {
+        max-width: 900px;
+    }
+
+    .adm-card {
+        background: white;
+        border-radius: var(--radius);
+        padding: 2rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border);
+        margin-bottom: 1.4rem;
+    }
+
+    .adm-card-title {
+        font-weight: 800;
+        color: var(--green-dark);
+        font-size: 1rem;
+        margin-bottom: 1.4rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .member-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+        gap: 1rem;
+    }
+
+    .member-card {
+        background: #f8fbf9;
+        border-radius: 14px;
+        padding: 1.2rem;
+        text-align: center;
+        border: 1px solid rgba(26,107,60,0.09);
+        transition: all 0.25s;
+    }
+
+        .member-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(26,107,60,0.18);
+        }
+
+    .member-avatar {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+        .member-avatar img {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--green);
+        }
+
+    .member-name {
+        font-weight: 700;
+        color: var(--green-dark);
+        font-size: 0.88rem;
+        margin-bottom: 0.22rem;
+    }
+
+    .member-role {
+        display: inline-block;
+        background: rgba(200,153,58,0.12);
+        color: var(--gold);
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 0.15rem 0.6rem;
+        border-radius: 50px;
+        margin-bottom: 0.3rem;
+    }
+
+    .member-info {
+        color: var(--text-muted);
+        font-size: 0.76rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .member-actions {
+        display: flex;
+        gap: 0.4rem;
+        justify-content: center;
+        margin-top: 0.8rem;
+    }
+
+    .empty-members {
+        text-align: center;
+        padding: 2.5rem;
+        color: var(--text-muted);
+        border: 2px dashed var(--border);
+        border-radius: var(--radius);
+    }
+</style>
+
+<div class="page-header">
+    <div class="page-header-left">
+        <h2>✏️ প্রতিষ্ঠান সম্পাদনা</h2>
+        <p>@Model.Name — তথ্য আপডেট করুন</p>
+    </div>
+    <a href="/Admin/InstitutionList" class="btn btn-outline">← তালিকায় ফিরুন</a>
+</div>
+
+<div class="adm-form">
+
+    <!-- Institution Form -->
+    <div class="adm-card">
+        <div class="adm-card-title">📋 প্রতিষ্ঠানের তথ্য</div>
+        <form method="post" action="/Admin/InstitutionEdit" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="Id" value="@Model.Id" />
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">প্রতিষ্ঠানের নাম *</label>
+                    <input name="Name" class="form-control" value="@Model.Name" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">বিভাগ / ধরন</label>
+                    <input name="Category" class="form-control" value="@Model.Category" placeholder="মসজিদ, স্কুল, ক্লাব" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">আইকন (emoji)</label>
+                    <input name="Icon" class="form-control" value="@Model.Icon" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">প্রতিষ্ঠাকাল</label>
+                    <input name="FoundedYear" class="form-control" value="@Model.FoundedYear" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">প্রতিষ্ঠাতার নাম</label>
+                    <input name="FounderName" class="form-control" value="@Model.FounderName" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">ক্রম (SortOrder)</label>
+                    <input type="number" name="SortOrder" class="form-control" value="@Model.SortOrder" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">সংক্ষিপ্ত বিবরণ</label>
+                <textarea name="Description" class="form-control" rows="3">@Model.Description</textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">বিস্তারিত বিবরণ</label>
+                <textarea name="Details" class="form-control" rows="5">@Model.Details</textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">ছবি পরিবর্তন (ঐচ্ছিক)</label>
+                @if (!string.IsNullOrEmpty(Model.ImagePath))
+                {
+                    <img src="@Model.ImagePath" alt="current" class="img-preview" />
+                    <input type="hidden" name="ImagePath" value="@Model.ImagePath" />
+                }
+                <input type="file" name="imageFile" class="form-control" accept="image/*" style="margin-top:0.5rem;" />
+                <div class="form-hint">নতুন ছবি না দিলে আগেরটা থাকবে।</div>
+            </div>
+            <div class="form-group">
+                <label class="form-check">
+                    <input type="checkbox" name="IsActive" value="true" @(Model.IsActive ? "checked" : "") />
+                    <span class="form-check-label">সক্রিয় রাখুন</span>
+                </label>
+                <input type="hidden" name="IsActive" value="false" />
+            </div>
+
+            <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+                <button type="submit" class="btn btn-primary btn-lg">💾 আপডেট করুন</button>
+                <a href="/Admin/InstitutionList" class="btn btn-outline btn-lg">বাতিল</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Members Section -->
+    <div class="adm-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.3rem;flex-wrap:wrap;gap:0.7rem;">
+            <div class="adm-card-title" style="margin:0;">👥 সদস্যবর্গ (@Model.Members.Count জন)</div>
+            <a href="/Admin/MemberCreate?institutionId=@Model.Id" class="btn btn-primary">➕ সদস্য যোগ করুন</a>
+        </div>
+
+        @if (Model.Members.Any())
+        {
+            <div class="member-grid">
+                @foreach (var m in Model.Members)
+                {
+                    <div class="member-card">
+                        <span class="member-avatar">
+                            @if (!string.IsNullOrEmpty(m.ImagePath))
+                            {
+                                <img src="@m.ImagePath" alt="@m.Name" />
+                            }
+                            else
+                            {
+                                @m.Avatar
+                            }
+                        </span>
+                        <div class="member-name">@m.Name</div>
+                        @if (!string.IsNullOrEmpty(m.Role))
+                        {
+                            <div class="member-role">@m.Role</div>
+                        }
+                        @if (!string.IsNullOrEmpty(m.Profession))
+                        {
+                            <div class="member-info">💼 @m.Profession</div>
+                        }
+                        @if (!string.IsNullOrEmpty(m.Phone))
+                        {
+                            <div class="member-info">📞 @m.Phone</div>
+                        }
+                        <div class="member-actions">
+                            <a href="/Admin/MemberEdit/@m.Id" class="btn btn-edit btn-sm">✏️ সম্পাদনা</a>
+                            <form method="post" action="/Admin/MemberDelete" style="display:inline;"
+                                  onsubmit="return confirm('এই সদস্য মুছে ফেলবেন?')">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@m.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm">🗑️</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-members">
+                <div style="font-size:2.5rem;margin-bottom:0.8rem;">👥</div>
+                <p>এখনো কোনো সদস্য যোগ করা হয়নি।</p>
+                <a href="/Admin/MemberCreate?institutionId=@Model.Id" class="btn btn-primary" style="margin-top:1rem;">➕ প্রথম সদস্য যোগ করুন</a>
+            </div>
+        }
+    </div>
+
+</div>

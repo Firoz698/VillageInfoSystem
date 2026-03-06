@@ -7,34 +7,34 @@ public class VillageInfo
     public int Id { get; set; }
 
     [Display(Name = "গ্রামের নাম")]
-    public string VillageName { get; set; } = "খোকসা মল্লিক পাড়া গ্রাম";
+    public string VillageName { get; set; } = "";
 
     [Display(Name = "বিভাগ")]
-    public string Division { get; set; } = "খুলনা বিভাগ";
+    public string Division { get; set; } = "";
 
     [Display(Name = "গ্রামের ইতিহাস")]
     public string? History { get; set; }
 
     [Display(Name = "মোট জনসংখ্যা")]
-    public string TotalPopulation { get; set; } = "৩,৫০০+";
+    public string TotalPopulation { get; set; } = "";
 
     [Display(Name = "মোট পরিবার")]
-    public string TotalFamilies { get; set; } = "৭৫০+";
+    public string TotalFamilies { get; set; } = "";
 
     [Display(Name = "আয়তন")]
-    public string Area { get; set; } = "৪.২ কিমি²";
+    public string Area { get; set; } = "";
 
     [Display(Name = "পুরুষ জনসংখ্যা")]
-    public string MalePopulation { get; set; } = "১,৮৫০";
+    public string MalePopulation { get; set; } = "";
 
     [Display(Name = "মহিলা জনসংখ্যা")]
-    public string FemalePopulation { get; set; } = "১,৬৫০";
+    public string FemalePopulation { get; set; } = "";
 
     [Display(Name = "সাক্ষরতার হার")]
-    public string LiteracyRate { get; set; } = "৭৮%";
+    public string LiteracyRate { get; set; } = "";
 
     [Display(Name = "প্রতিষ্ঠার সাল")]
-    public string FoundedYear { get; set; } = "১৮৫০";
+    public string FoundedYear { get; set; } = "";
 
     [Display(Name = "যোগাযোগ ঠিকানা")]
     public string? Address { get; set; }

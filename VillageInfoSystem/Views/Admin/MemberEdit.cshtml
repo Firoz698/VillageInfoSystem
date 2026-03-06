@@ -1,0 +1,67 @@
+﻿@model VillageInfoSystem.Models.InstitutionMember
+@{
+    ViewData["Title"] = "সদস্য সম্পাদনা";
+    Layout = "_AdminLayout";
+}
+
+<div class="page-header">
+    <div class="page-header-left">
+        <h2>✏️ সদস্য সম্পাদনা</h2>
+        <p>@Model.Name — তথ্য আপডেট করুন</p>
+    </div>
+    <a href="/Admin/InstitutionEdit/@Model.InstitutionId" class="btn btn-outline">← প্রতিষ্ঠানে ফিরুন</a>
+</div>
+
+<div style="max-width:700px;">
+    <div class="card">
+        <form method="post" action="/Admin/MemberEdit" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="Id" value="@Model.Id" />
+            <input type="hidden" name="InstitutionId" value="@Model.InstitutionId" />
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">নাম *</label>
+                    <input name="Name" class="form-control" value="@Model.Name" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">পদবি / ভূমিকা</label>
+                    <input name="Role" class="form-control" value="@Model.Role" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">পেশা</label>
+                    <input name="Profession" class="form-control" value="@Model.Profession" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">ফোন নম্বর</label>
+                    <input name="Phone" class="form-control" value="@Model.Phone" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Avatar (emoji)</label>
+                    <input name="Avatar" class="form-control" value="@Model.Avatar" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">ক্রম (SortOrder)</label>
+                    <input type="number" name="SortOrder" class="form-control" value="@Model.SortOrder" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">ছবি পরিবর্তন (ঐচ্ছিক)</label>
+                @if (!string.IsNullOrEmpty(Model.ImagePath))
+                {
+                    <img src="@Model.ImagePath" alt="@Model.Name"
+                         style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid var(--green);display:block;margin-bottom:0.5rem;" />
+                    <input type="hidden" name="ImagePath" value="@Model.ImagePath" />
+                }
+                <input type="file" name="imageFile" class="form-control" accept="image/*" />
+                <div class="form-hint">নতুন ছবি না দিলে আগেরটা থাকবে।</div>
+            </div>
+
+            <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+                <button type="submit" class="btn btn-primary btn-lg">💾 আপডেট করুন</button>
+                <a href="/Admin/InstitutionEdit/@Model.InstitutionId" class="btn btn-outline btn-lg">বাতিল</a>
+            </div>
+        </form>
+    </div>
+</div>

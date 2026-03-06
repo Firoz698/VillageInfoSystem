@@ -449,5 +449,239 @@ namespace VillageInfoSystem.Controllers
             TempData["Success"] = "স্লাইডার মুছে ফেলা হয়েছে!";
             return RedirectToAction("SliderList");
         }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TickerToggle(int id, [FromBody] ToggleDto dto)
+        {
+            var ticker = await _db.TickerNews.FindAsync(id);
+            if (ticker == null) return NotFound();
+
+            ticker.IsActive = dto.IsActive;
+            await _db.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        public class ToggleDto
+        {
+            public bool IsActive { get; set; }
+        }
+
+
+        // GET: /Admin/TickerEdit/8
+        [HttpGet]
+        public async Task<IActionResult> TickerEdit(int id)
+        {
+            var ticker = await _db.TickerNews.FindAsync(id);
+            if (ticker == null) return NotFound();
+            return View(ticker);
+        }
+
+        // POST: /Admin/TickerEdit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TickerEdit(TickerNews model)
+        {
+            if (!ModelState.IsValid) return View(model);
+
+            var ticker = await _db.TickerNews.FindAsync(model.Id);
+            if (ticker == null) return NotFound();
+
+            ticker.Text = model.Text;
+            ticker.SortOrder = model.SortOrder;
+            ticker.IsActive = model.IsActive;
+
+            await _db.SaveChangesAsync();
+            return RedirectToAction("TickerList");
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // AdminController.cs — এই methods গুলো যোগ করুন বিদ্যমান controller-এ
+        // ══════════════════════════════════════════════════════════════
+
+        // ─── INSTITUTION CRUD ──────────────────────────────────────────────────────
+        [Authorize]
+        public async Task<IActionResult> InstitutionList()
+        {
+            var list = await _db.Institutions
+                .Include(i => i.Members)
+                .OrderBy(i => i.SortOrder)
+                .ToListAsync();
+            return View(list);
+        }
+
+        [Authorize, HttpGet]
+        public IActionResult InstitutionCreate() => View(new Institution());
+
+        [Authorize, HttpPost]
+        public async Task<IActionResult> InstitutionCreate(Institution item, IFormFile? imageFile)
+        {
+            ModelState.Remove("Members");
+            if (!ModelState.IsValid) return View(item);
+
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                var uploadPath = Path.Combine(_env.WebRootPath, "uploads", "institutions");
+                Directory.CreateDirectory(uploadPath);
+                var fileName = Guid.NewGuid() + Path.GetExtension(imageFile.FileName);
+                using var stream = System.IO.File.Create(Path.Combine(uploadPath, fileName));
+                await imageFile.CopyToAsync(stream);
+                item.ImagePath = "/uploads/institutions/" + fileName;
+            }
+
+            _db.Institutions.Add(item);
+            await _db.SaveChangesAsync();
+            TempData["Success"] = "প্রতিষ্ঠান যোগ করা হয়েছে!";
+            return RedirectToAction("InstitutionList");
+        }
+
+        [Authorize, HttpGet]
+        public async Task<IActionResult> InstitutionEdit(int id)
+        {
+            var item = await _db.Institutions
+                .Include(i => i.Members.OrderBy(m => m.SortOrder))
+                .FirstOrDefaultAsync(i => i.Id == id);
+            if (item == null) return NotFound();
+            return View(item);
+        }
+
+        [Authorize, HttpPost]
+        public async Task<IActionResult> InstitutionEdit(Institution item, IFormFile? imageFile)
+        {
+            ModelState.Remove("Members");
+            ModelState.Remove("ImagePath");
+            if (!ModelState.IsValid) return View(item);
+
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                var uploadPath = Path.Combine(_env.WebRootPath, "uploads", "institutions");
+                Directory.CreateDirectory(uploadPath);
+                var fileName = Guid.NewGuid() + Path.GetExtension(imageFile.FileName);
+                using var stream = System.IO.File.Create(Path.Combine(uploadPath, fileName));
+                await imageFile.CopyToAsync(stream);
+                item.ImagePath = "/uploads/institutions/" + fileName;
+            }
+            else
+            {
+                // পুরনো ImagePath রাখো
+                var existing = await _db.Institutions.AsNoTracking().FirstOrDefaultAsync(i => i.Id == item.Id);
+                item.ImagePath = existing?.ImagePath;
+            }
+
+            _db.Institutions.Update(item);
+            await _db.SaveChangesAsync();
+            TempData["Success"] = "প্রতিষ্ঠান আপডেট হয়েছে!";
+            return RedirectToAction("InstitutionList");
+        }
+
+        [Authorize, HttpPost]
+        public async Task<IActionResult> InstitutionDelete(int id)
+        {
+            var item = await _db.Institutions.FindAsync(id);
+            if (item != null)
+            {
+                if (!string.IsNullOrEmpty(item.ImagePath))
+                {
+                    var filePath = Path.Combine(_env.WebRootPath, item.ImagePath.TrimStart('/'));
+                    if (System.IO.File.Exists(filePath)) System.IO.File.Delete(filePath);
+                }
+                _db.Institutions.Remove(item);
+                await _db.SaveChangesAsync();
+            }
+            TempData["Success"] = "প্রতিষ্ঠান মুছে ফেলা হয়েছে!";
+            return RedirectToAction("InstitutionList");
+        }
+
+        // ─── INSTITUTION MEMBER CRUD ───────────────────────────────────────────────
+        [Authorize, HttpGet]
+        public IActionResult MemberCreate(int institutionId)
+        {
+            ViewBag.InstitutionId = institutionId;
+            return View(new InstitutionMember { InstitutionId = institutionId });
+        }
+
+        [Authorize, HttpPost]
+        public async Task<IActionResult> MemberCreate(InstitutionMember member, IFormFile? imageFile)
+        {
+            ModelState.Remove("Institution");
+            if (!ModelState.IsValid)
+            {
+                ViewBag.InstitutionId = member.InstitutionId;
+                return View(member);
+            }
+
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                var uploadPath = Path.Combine(_env.WebRootPath, "uploads", "members");
+                Directory.CreateDirectory(uploadPath);
+                var fileName = Guid.NewGuid() + Path.GetExtension(imageFile.FileName);
+                using var stream = System.IO.File.Create(Path.Combine(uploadPath, fileName));
+                await imageFile.CopyToAsync(stream);
+                member.ImagePath = "/uploads/members/" + fileName;
+            }
+
+            _db.InstitutionMembers.Add(member);
+            await _db.SaveChangesAsync();
+            TempData["Success"] = "সদস্য যোগ করা হয়েছে!";
+            return RedirectToAction("InstitutionEdit", new { id = member.InstitutionId });
+        }
+
+        [Authorize, HttpGet]
+        public async Task<IActionResult> MemberEdit(int id)
+        {
+            var item = await _db.InstitutionMembers.FindAsync(id);
+            if (item == null) return NotFound();
+            return View(item);
+        }
+
+        [Authorize, HttpPost]
+        public async Task<IActionResult> MemberEdit(InstitutionMember member, IFormFile? imageFile)
+        {
+            ModelState.Remove("Institution");
+            ModelState.Remove("ImagePath");
+            if (!ModelState.IsValid) return View(member);
+
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                var uploadPath = Path.Combine(_env.WebRootPath, "uploads", "members");
+                Directory.CreateDirectory(uploadPath);
+                var fileName = Guid.NewGuid() + Path.GetExtension(imageFile.FileName);
+                using var stream = System.IO.File.Create(Path.Combine(uploadPath, fileName));
+                await imageFile.CopyToAsync(stream);
+                member.ImagePath = "/uploads/members/" + fileName;
+            }
+            else
+            {
+                var existing = await _db.InstitutionMembers.AsNoTracking().FirstOrDefaultAsync(m => m.Id == member.Id);
+                member.ImagePath = existing?.ImagePath;
+            }
+
+            _db.InstitutionMembers.Update(member);
+            await _db.SaveChangesAsync();
+            TempData["Success"] = "সদস্য আপডেট হয়েছে!";
+            return RedirectToAction("InstitutionEdit", new { id = member.InstitutionId });
+        }
+
+        [Authorize, HttpPost]
+        public async Task<IActionResult> MemberDelete(int id)
+        {
+            var item = await _db.InstitutionMembers.FindAsync(id);
+            int instId = 0;
+            if (item != null)
+            {
+                instId = item.InstitutionId;
+                if (!string.IsNullOrEmpty(item.ImagePath))
+                {
+                    var filePath = Path.Combine(_env.WebRootPath, item.ImagePath.TrimStart('/'));
+                    if (System.IO.File.Exists(filePath)) System.IO.File.Delete(filePath);
+                }
+                _db.InstitutionMembers.Remove(item);
+                await _db.SaveChangesAsync();
+            }
+            TempData["Success"] = "সদস্য মুছে ফেলা হয়েছে!";
+            return RedirectToAction("InstitutionEdit", new { id = instId });
+        }
     }
 }

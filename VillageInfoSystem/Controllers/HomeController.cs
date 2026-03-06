@@ -1,6 +1,5 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 using VillageInfoSystem.Data;
 using VillageInfoSystem.Models;
 
@@ -9,11 +8,7 @@ namespace VillageInfoSystem.Controllers
     public class HomeController : Controller
     {
         private readonly AppDbContext _db;
-
-        public HomeController(AppDbContext db)
-        {
-            _db = db;
-        }
+        public HomeController(AppDbContext db) { _db = db; }
 
         public async Task<IActionResult> Index()
         {
@@ -26,6 +21,9 @@ namespace VillageInfoSystem.Controllers
             var tickers = await _db.TickerNews.Where(t => t.IsActive).OrderBy(t => t.SortOrder).ToListAsync();
             var sliders = await _db.SliderItems.Where(s => s.IsActive).OrderBy(s => s.SortOrder).ToListAsync();
 
+            // ✅ নতুন: Institutions (প্রথম ৬টা)
+            var institutions = await _db.Institutions.Where(i => i.IsActive).OrderBy(i => i.SortOrder).ToListAsync();
+
             ViewBag.Info = info;
             ViewBag.FeaturedNews = featuredNews;
             ViewBag.NewsList = newsList;
@@ -34,7 +32,24 @@ namespace VillageInfoSystem.Controllers
             ViewBag.Gallery = gallery;
             ViewBag.Tickers = tickers;
             ViewBag.Sliders = sliders;
+            ViewBag.Institutions = institutions;
+
             return View();
+        }
+
+        // ✅ নতুন: Institution Details Page
+        public async Task<IActionResult> InstitutionDetails(int id)
+        {
+            var institution = await _db.Institutions
+                .Include(i => i.Members.OrderBy(m => m.SortOrder))
+                .FirstOrDefaultAsync(i => i.Id == id && i.IsActive);
+
+            if (institution == null) return NotFound();
+
+            var info = await _db.VillageInfos.FirstOrDefaultAsync();
+            ViewBag.Info = info;
+
+            return View(institution);
         }
 
         public IActionResult Error() => View();
