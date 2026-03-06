@@ -20,8 +20,6 @@ namespace VillageInfoSystem.Controllers
             var gallery = await _db.GalleryItems.Where(g => g.IsActive).OrderBy(g => g.SortOrder).ToListAsync();
             var tickers = await _db.TickerNews.Where(t => t.IsActive).OrderBy(t => t.SortOrder).ToListAsync();
             var sliders = await _db.SliderItems.Where(s => s.IsActive).OrderBy(s => s.SortOrder).ToListAsync();
-
-            // ✅ নতুন: Institutions (প্রথম ৬টা)
             var institutions = await _db.Institutions.Where(i => i.IsActive).OrderBy(i => i.SortOrder).ToListAsync();
 
             ViewBag.Info = info;
@@ -37,7 +35,40 @@ namespace VillageInfoSystem.Controllers
             return View();
         }
 
-        // ✅ নতুন: Institution Details Page
+        // ✅ NewsDetails Page
+        public async Task<IActionResult> NewsDetails(int id)
+        {
+            var news = await _db.News
+                .FirstOrDefaultAsync(n => n.Id == id && n.IsActive);
+
+            if (news == null) return NotFound();
+
+            // একই Category থেকে সম্পর্কিত সংবাদ (এই news বাদে, সর্বশেষ ৫টি)
+            var relatedNews = await _db.News
+                .Where(n => n.IsActive && n.Id != id && n.Category == news.Category)
+                .OrderByDescending(n => n.PublishedAt)
+                .Take(5)
+                .ToListAsync();
+
+            // কম থাকলে অন্য news দিয়ে পূরণ
+            if (relatedNews.Count < 3)
+            {
+                var extraIds = relatedNews.Select(r => r.Id).ToList();
+                var extra = await _db.News
+                    .Where(n => n.IsActive && n.Id != id && !extraIds.Contains(n.Id))
+                    .OrderByDescending(n => n.PublishedAt)
+                    .Take(5 - relatedNews.Count)
+                    .ToListAsync();
+
+                relatedNews.AddRange(extra);
+            }
+
+            ViewBag.RelatedNews = relatedNews;
+
+            return View(news);
+        }
+
+        // ✅ Institution Details Page
         public async Task<IActionResult> InstitutionDetails(int id)
         {
             var institution = await _db.Institutions

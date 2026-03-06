@@ -160,7 +160,6 @@
         display: block;
     }
 
-    /* Character counter */
     .label-row {
         display: flex;
         justify-content: space-between;
@@ -181,7 +180,6 @@
             color: #e74c3c;
         }
 
-    /* Icon picker */
     .icon-picker {
         display: flex;
         gap: 0.5rem;
@@ -215,7 +213,6 @@
             box-shadow: 0 0 0 2px rgba(26,107,60,0.15);
         }
 
-    /* Category pills */
     .cat-pills {
         display: flex;
         gap: 0.5rem;
@@ -246,7 +243,6 @@
             border-color: var(--green);
         }
 
-    /* Toggle */
     .toggle-row {
         display: flex;
         gap: 1rem;
@@ -328,7 +324,6 @@
         color: var(--text-muted);
     }
 
-    /* Sidebar cards */
     .sidebar-card {
         background: white;
         border-radius: var(--radius);
@@ -358,7 +353,6 @@
         padding: 1.1rem 1.2rem;
     }
 
-    /* News preview card */
     .news-preview {
         border-radius: 12px;
         border: 1px solid var(--border);
@@ -373,18 +367,33 @@
         justify-content: center;
         font-size: 2.5rem;
         position: relative;
+        overflow: hidden;
+    }
+
+        .np-header img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .np-header-icon {
+        position: relative;
+        z-index: 1;
     }
 
     .np-cat-badge {
         position: absolute;
         top: 8px;
         left: 8px;
-        background: rgba(200,153,58,0.9);
+        background: rgba(200,153,58,0.92);
         color: var(--green-dark);
         padding: 0.15rem 0.6rem;
         border-radius: 50px;
         font-size: 0.65rem;
         font-weight: 800;
+        z-index: 2;
     }
 
     .np-body {
@@ -404,6 +413,86 @@
         color: var(--text-muted);
         line-height: 1.5;
     }
+
+    /* ── Image Upload ── */
+    .img-upload-area {
+        border: 2px dashed var(--border);
+        border-radius: 10px;
+        padding: 1.5rem 1rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        position: relative;
+        background: #fafcfa;
+    }
+
+        .img-upload-area:hover,
+        .img-upload-area.drag-over {
+            border-color: var(--green);
+            background: rgba(26,107,60,0.04);
+        }
+
+        .img-upload-area input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+    .img-upload-icon {
+        font-size: 2rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .img-upload-text {
+        font-size: 0.84rem;
+        color: var(--green-dark);
+        font-weight: 600;
+    }
+
+    .img-upload-hint {
+        font-size: 0.73rem;
+        color: var(--text-muted);
+        margin-top: 0.2rem;
+    }
+
+    .img-preview-wrap {
+        position: relative;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+    }
+
+        .img-preview-wrap img {
+            width: 100%;
+            max-height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+
+    .img-remove-btn {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        background: rgba(0,0,0,0.55);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+    }
+
+        .img-remove-btn:hover {
+            background: rgba(192,57,43,0.85);
+        }
 
     .form-actions {
         display: flex;
@@ -444,12 +533,13 @@
     <a href="/Admin/NewsList" class="btn btn-outline btn-sm">← সংবাদ তালিকা</a>
 </div>
 
-<form asp-action="NewsCreate" method="post" id="newsForm">
+<form asp-action="NewsCreate" method="post" enctype="multipart/form-data" id="newsForm">
     @Html.AntiForgeryToken()
     <div class="form-layout">
 
-        <!-- LEFT -->
+        <!-- ── LEFT ── -->
         <div>
+
             <!-- Title & Description -->
             <div class="form-section">
                 <div class="fs-header">
@@ -479,6 +569,36 @@
                 </div>
             </div>
 
+            <!-- Image Upload -->
+            <div class="form-section">
+                <div class="fs-header">
+                    <div class="fs-icon">🖼️</div>
+                    <div><h3>সংবাদের ছবি</h3><p>সংবাদের সাথে একটি ছবি যোগ করুন (ঐচ্ছিক)</p></div>
+                </div>
+                <div class="fs-body">
+                    <div id="uploadAreaWrap">
+                        <div class="img-upload-area" id="uploadArea"
+                             ondragover="handleDragOver(event)"
+                             ondragleave="handleDragLeave(event)"
+                             ondrop="handleDrop(event)">
+                            <input type="file" name="ImageFile" id="imageFileInput"
+                                   accept="image/jpeg,image/png,image/webp,image/gif"
+                                   onchange="handleFileSelect(this)" />
+                            <div class="img-upload-icon">📷</div>
+                            <div class="img-upload-text">ছবি আপলোড করুন</div>
+                            <div class="img-upload-hint">JPG, PNG, WEBP — সর্বোচ্চ ৫ MB<br>ক্লিক করুন অথবা ছবি টেনে আনুন</div>
+                        </div>
+                    </div>
+                    <div id="imgPreviewWrap" style="display:none;">
+                        <div class="img-preview-wrap">
+                            <img id="imgPreviewImg" src="" alt="preview" />
+                            <button type="button" class="img-remove-btn" onclick="removeImage()" title="ছবি সরান">✕</button>
+                        </div>
+                        <div class="field-hint" style="margin-top:0.4rem;" id="imgFileName"></div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Category & Icon -->
             <div class="form-section">
                 <div class="fs-header">
@@ -500,7 +620,6 @@
                                 <option>খেলাধুলা</option>
                                 <option>সংস্কৃতি</option>
                             </select>
-                            <!-- Quick select pills -->
                             <div class="cat-pills" id="catPills">
                                 @foreach (var cat in new[] { "সাধারণ", "শিক্ষা", "উন্নয়ন", "কৃষি", "স্বাস্থ্য", "ধর্মীয়", "খেলাধুলা", "সংস্কৃতি" })
                                 {
@@ -539,40 +658,32 @@
                             <div class="toggle-sw">
                                 <input asp-for="IsFeatured" type="checkbox" id="IsFeatured"
                                        onchange="syncToggleStyle('featuredToggle','IsFeatured')" />
-                                <div class="ts-track"></div>
-                                <div class="ts-thumb"></div>
+                                <div class="ts-track"></div><div class="ts-thumb"></div>
                             </div>
-                            <div class="ti-info">
-                                <strong>⭐ শীর্ষ সংবাদ</strong>
-                                <span>হোমপেজে বড় করে দেখাবে</span>
-                            </div>
+                            <div class="ti-info"><strong>⭐ শীর্ষ সংবাদ</strong><span>হোমপেজে বড় করে দেখাবে</span></div>
                         </label>
                         <label class="toggle-item checked" id="activeToggle" for="IsActive">
                             <div class="toggle-sw">
                                 <input asp-for="IsActive" type="checkbox" id="IsActive" checked
                                        onchange="syncToggleStyle('activeToggle','IsActive')" />
-                                <div class="ts-track"></div>
-                                <div class="ts-thumb" style="transform:translateX(18px)"></div>
+                                <div class="ts-track"></div><div class="ts-thumb" style="transform:translateX(18px)"></div>
                             </div>
-                            <div class="ti-info">
-                                <strong>✅ সক্রিয়</strong>
-                                <span>ওয়েবসাইটে প্রকাশিত থাকবে</span>
-                            </div>
+                            <div class="ti-info"><strong>✅ সক্রিয়</strong><span>ওয়েবসাইটে প্রকাশিত থাকবে</span></div>
                         </label>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- SIDEBAR -->
+        <!-- ── SIDEBAR ── -->
         <div>
-            <!-- Preview -->
             <div class="sidebar-card">
                 <div class="sc-hd">👁️ প্রিভিউ</div>
                 <div class="sc-bd">
                     <div class="news-preview">
-                        <div class="np-header">
-                            <span id="prevIcon">📰</span>
+                        <div class="np-header" id="prevHeader">
+                            <img id="prevImage" src="" alt="" style="display:none;" />
+                            <span class="np-header-icon" id="prevIcon">📰</span>
                             <div class="np-cat-badge" id="prevCat">সাধারণ</div>
                         </div>
                         <div class="np-body">
@@ -584,18 +695,16 @@
                 </div>
             </div>
 
-            <!-- Tips -->
             <div class="sidebar-card">
                 <div class="sc-hd">💡 নির্দেশিকা</div>
                 <div class="sc-bd" style="display:flex;flex-direction:column;gap:0.65rem;">
                     <div class="field-hint">⭐ একটি সংবাদকে শীর্ষ করলে হোমপেজে বড় করে দেখাবে</div>
+                    <div class="field-hint">🖼️ ছবি যোগ করলে সংবাদটি আরও আকর্ষণীয় হয়</div>
                     <div class="field-hint">🏷️ সঠিক বিভাগ দিলে পাঠকরা সহজে খুঁজে পাবেন</div>
-                    <div class="field-hint">🖼️ আইকন ইমোজি সংবাদকে আকর্ষণীয় করে তোলে</div>
                     <div class="field-hint">📅 ভবিষ্যৎ তারিখ দিলেও সক্রিয় থাকলে দেখাবে</div>
                 </div>
             </div>
 
-            <!-- Actions -->
             <div class="sidebar-card">
                 <div class="form-actions">
                     <a href="/Admin/NewsList" class="btn btn-outline">বাতিল</a>
@@ -607,54 +716,111 @@
 </form>
 
 <script>
+    // ── Image upload handlers ──
+    function handleFileSelect(input) {
+        if (input.files && input.files[0]) showPreview(input.files[0]);
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        document.getElementById('uploadArea').classList.add('drag-over');
+    }
+
+    function handleDragLeave(e) {
+        document.getElementById('uploadArea').classList.remove('drag-over');
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        document.getElementById('uploadArea').classList.remove('drag-over');
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+            // dataTransfer ফাইল input-এ set করা
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            document.getElementById('imageFileInput').files = dt.files;
+            showPreview(file);
+        }
+    }
+
+    function showPreview(file) {
+        if (file.size > 5 * 1024 * 1024) {
+            alert('ছবির আকার ৫ MB এর বেশি হতে পারবে না।');
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = e => {
+            document.getElementById('imgPreviewImg').src = e.target.result;
+            document.getElementById('imgPreviewWrap').style.display = 'block';
+            document.getElementById('uploadAreaWrap').style.display = 'none';
+            document.getElementById('imgFileName').textContent = '📎 ' + file.name;
+            // sidebar preview তেও দেখাও
+            const prevImg = document.getElementById('prevImage');
+            prevImg.src = e.target.result;
+            prevImg.style.display = 'block';
+            document.getElementById('prevIcon').style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function removeImage() {
+        document.getElementById('imageFileInput').value = '';
+        document.getElementById('imgPreviewImg').src = '';
+        document.getElementById('imgPreviewWrap').style.display = 'none';
+        document.getElementById('uploadAreaWrap').style.display = 'block';
+        document.getElementById('prevImage').style.display = 'none';
+        document.getElementById('prevIcon').style.display = 'block';
+    }
+
+    // ── Form helpers ──
     function updateTitleCounter() {
-        const v = document.getElementById('titleInput').value.length;
+        const v  = document.getElementById('titleInput').value.length;
         const el = document.getElementById('titleCounter');
         el.textContent = v + '/১০০';
-        el.className = 'char-counter' + (v > 90 ? ' warn' : '') + (v >= 100 ? ' over' : '');
+        el.className   = 'char-counter' + (v > 90 ? ' warn' : '') + (v >= 100 ? ' over' : '');
     }
+
     function updateDescCounter() {
-        const v = document.getElementById('descInput').value.length;
-        document.getElementById('descCounter').textContent = v;
+        document.getElementById('descCounter').textContent =
+            document.getElementById('descInput').value.length;
     }
+
     function updatePreview() {
         const title = document.getElementById('titleInput')?.value || 'শিরোনাম এখানে দেখাবে';
-        const desc = document.getElementById('descInput')?.value || 'বিবরণ এখানে দেখাবে...';
-        const icon = document.getElementById('iconInput')?.value || '📰';
-        const cat = document.getElementById('catSelect')?.value || 'সাধারণ';
+        const desc  = document.getElementById('descInput')?.value  || 'বিবরণ এখানে দেখাবে...';
+        const icon  = document.getElementById('iconInput')?.value  || '📰';
+        const cat   = document.getElementById('catSelect')?.value  || 'সাধারণ';
         document.getElementById('prevTitle').textContent = title.substring(0, 60);
-        document.getElementById('prevDesc').textContent = desc.substring(0, 80);
-        document.getElementById('prevIcon').textContent = icon || '📰';
-        document.getElementById('prevCat').textContent = cat;
+        document.getElementById('prevDesc').textContent  = desc.substring(0, 80);
+        document.getElementById('prevIcon').textContent  = icon || '📰';
+        document.getElementById('prevCat').textContent   = cat;
     }
+
     function selectIcon(icon) {
         document.getElementById('iconInput').value = icon;
-        document.querySelectorAll('.icon-option').forEach(el => el.classList.toggle('selected', el.textContent === icon));
+        document.querySelectorAll('.icon-option').forEach(el =>
+            el.classList.toggle('selected', el.textContent.trim() === icon));
         updatePreview();
     }
+
     function selectCat(cat) {
         document.getElementById('catSelect').value = cat;
-        syncCatPills();
-        updatePreview();
+        syncCatPills(); updatePreview();
     }
+
     function syncCatPills() {
         const cat = document.getElementById('catSelect').value;
-        document.querySelectorAll('.cat-pill').forEach(el => el.classList.toggle('selected', el.textContent === cat));
+        document.querySelectorAll('.cat-pill').forEach(el =>
+            el.classList.toggle('selected', el.textContent === cat));
     }
+
     function syncToggleStyle(wrapId, inputId) {
-        const checked = document.getElementById(inputId).checked;
-        document.getElementById(wrapId).classList.toggle('checked', checked);
+        document.getElementById(wrapId).classList.toggle('checked',
+            document.getElementById(inputId).checked);
     }
+
     window.addEventListener('DOMContentLoaded', () => {
         syncCatPills(); updatePreview();
         updateTitleCounter(); updateDescCounter();
-        // init toggle thumbs
-        ['IsFeatured','IsActive'].forEach(id => {
-            const cb = document.getElementById(id);
-            if (cb && cb.checked) {
-                const thumb = cb.nextElementSibling?.nextElementSibling;
-                if (thumb) thumb.style.transform = 'translateX(18px)';
-            }
-        });
     });
 </script>

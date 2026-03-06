@@ -16,6 +16,596 @@
 }
 
 <style>
+    /* ══════════════════════════════════
+           NEWS SECTION — CARD GRID
+        ══════════════════════════════════ */
+    #news {
+        background: #f5f9f6;
+        position: relative;
+        padding: 80px 0;
+    }
+
+        #news::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--green), var(--gold), var(--green-light));
+        }
+
+    /* ── Card Grid ── */
+    .news-card-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.6rem;
+        margin-top: 2.5rem;
+    }
+
+    /* ── Featured card spans full width ── */
+    .news-card.featured {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        min-height: 300px;
+    }
+
+    /* ── Base Card ── */
+    .news-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid rgba(26,107,60,0.09);
+        box-shadow: 0 4px 20px rgba(26,107,60,0.06);
+        transition: all 0.32s ease;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+        .news-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(26,107,60,0.15);
+            border-color: rgba(26,107,60,0.18);
+        }
+
+    /* ── Card Image Area ── */
+    .nc-img {
+        width: 100%;
+        height: 200px;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, var(--green-dark), var(--green-light));
+        flex-shrink: 0;
+    }
+
+    .news-card.featured .nc-img {
+        height: 100%;
+        min-height: 280px;
+    }
+
+    .nc-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.45s ease;
+    }
+
+    .news-card:hover .nc-img img {
+        transform: scale(1.06);
+    }
+
+    .nc-img-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.35));
+        z-index: 1;
+    }
+
+    /* Icon placeholder when no image */
+    .nc-img-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        background: linear-gradient(135deg, var(--green-dark), var(--green-light));
+        position: relative;
+        overflow: hidden;
+    }
+
+        .nc-img-placeholder::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
+        }
+
+    .nc-placeholder-icon {
+        font-size: 3.5rem;
+        position: relative;
+        z-index: 1;
+        transition: transform 0.3s;
+    }
+
+    .news-card:hover .nc-placeholder-icon {
+        transform: scale(1.1) rotate(-5deg);
+    }
+
+    /* ── Featured badge on image ── */
+    .nc-featured-badge {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        background: linear-gradient(135deg, var(--gold), var(--gold-light));
+        color: var(--green-dark);
+        font-size: 0.73rem;
+        font-weight: 800;
+        padding: 0.28rem 0.75rem;
+        border-radius: 50px;
+        z-index: 2;
+        box-shadow: 0 3px 12px rgba(200,153,58,0.4);
+        letter-spacing: 0.04em;
+    }
+
+    /* ── Card Body ── */
+    .nc-body {
+        padding: 1.3rem 1.4rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .news-card.featured .nc-body {
+        padding: 2rem 2rem 2rem;
+        justify-content: center;
+    }
+
+    /* Meta row */
+    .nc-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-bottom: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .nc-cat-badge {
+        background: rgba(26,107,60,0.08);
+        color: var(--green);
+        border: 1px solid rgba(26,107,60,0.15);
+        padding: 0.18rem 0.7rem;
+        border-radius: 50px;
+        font-size: 0.72rem;
+        font-weight: 700;
+    }
+
+    .nc-date {
+        font-size: 0.73rem;
+        color: var(--text-light);
+        margin-left: auto;
+    }
+
+    /* Title */
+    .nc-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1rem;
+        font-weight: 800;
+        color: var(--green-dark);
+        line-height: 1.4;
+        margin-bottom: 0.55rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        transition: color 0.2s;
+    }
+
+    .news-card.featured .nc-title {
+        font-size: 1.45rem;
+        -webkit-line-clamp: 3;
+        margin-bottom: 0.75rem;
+    }
+
+    .news-card:hover .nc-title {
+        color: var(--green);
+    }
+
+    /* Description */
+    .nc-desc {
+        color: var(--text-light);
+        font-size: 0.87rem;
+        line-height: 1.7;
+        flex: 1;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin-bottom: 1rem;
+    }
+
+    .news-card.featured .nc-desc {
+        font-size: 0.92rem;
+        -webkit-line-clamp: 4;
+    }
+
+    /* Read more link */
+    .nc-more {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        color: var(--green);
+        font-weight: 700;
+        font-size: 0.85rem;
+        margin-top: auto;
+        transition: gap 0.2s;
+    }
+
+    .news-card:hover .nc-more {
+        gap: 0.65rem;
+    }
+
+    /* ── Bottom divider line on hover ── */
+    .news-card::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--green), var(--gold));
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+        transform-origin: left;
+    }
+
+    .news-card:hover::after {
+        transform: scaleX(1);
+    }
+
+    /* ── See All button ── */
+    .news-all-wrap {
+        text-align: center;
+        margin-top: 2.5rem;
+    }
+
+    .news-all-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: linear-gradient(135deg, var(--green), var(--green-light));
+        color: white;
+        padding: 0.78rem 2.2rem;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 0.92rem;
+        text-decoration: none;
+        box-shadow: 0 6px 22px rgba(26,107,60,0.28);
+        transition: all 0.28s;
+    }
+
+        .news-all-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 34px rgba(26,107,60,0.38);
+            color: white;
+        }
+
+    /* ── Empty State ── */
+    .news-empty {
+        grid-column: 1/-1;
+        text-align: center;
+        padding: 4rem;
+        color: var(--text-light);
+    }
+
+    .news-empty-icon {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+        opacity: 0.4;
+    }
+
+    /* ── Responsive ── */
+    @@media (max-width: 960px) {
+        .news-card-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .news-card.featured {
+            grid-column: 1 / -1;
+            grid-template-columns: 1fr;
+        }
+
+            .news-card.featured .nc-img {
+                height: 220px;
+            }
+    }
+
+    @@media (max-width: 580px) {
+        .news-card-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .news-card.featured {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+<style>
+
+    /* ── News Grid ── */
+    #news .news-grid {
+        display: grid;
+        grid-template-columns: 1fr 360px;
+        gap: 1.8rem;
+        align-items: start;
+    }
+
+    /* ── Featured card (এখন <a> tag) ── */
+    a.news-featured {
+        display: flex;
+        flex-direction: column;
+        border-radius: 22px;
+        overflow: hidden;
+        border: 1px solid rgba(26,107,60,0.1);
+        box-shadow: 0 8px 32px rgba(26,107,60,0.08);
+        transition: all 0.35s;
+        background: white;
+        text-decoration: none;
+        color: inherit;
+        cursor: pointer;
+    }
+
+        a.news-featured:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 50px rgba(26,107,60,0.15);
+        }
+
+    .nf-real-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+
+    a.news-featured:hover .nf-real-img {
+        transform: scale(1.05);
+    }
+
+    .nf-img-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, transparent 35%, rgba(0,0,0,0.4));
+        z-index: 1;
+    }
+
+    .nf-img-icon {
+        z-index: 2;
+    }
+
+    .nf-cat {
+        z-index: 3;
+    }
+
+    .nf-meta-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.65rem;
+        flex-wrap: wrap;
+    }
+
+    .nf-badge {
+        background: rgba(26,107,60,0.08);
+        color: var(--green);
+        border: 1px solid rgba(26,107,60,0.15);
+        padding: 0.18rem 0.7rem;
+        border-radius: 50px;
+        font-size: 0.73rem;
+        font-weight: 700;
+    }
+
+    .nf-body h3 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: var(--green-dark);
+        line-height: 1.35;
+        margin-bottom: 0.6rem;
+    }
+
+    .nf-body p {
+        color: var(--text-light);
+        font-size: 0.9rem;
+        line-height: 1.7;
+        margin-bottom: 1rem;
+    }
+
+    .nf-more {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        color: var(--green);
+        font-weight: 700;
+        font-size: 0.88rem;
+        transition: gap 0.2s;
+    }
+
+    a.news-featured:hover .nf-more {
+        gap: 0.6rem;
+    }
+
+    /* ── Right Sidebar ── */
+    .news-sidebar {
+        background: white;
+        border: 1px solid rgba(26,107,60,0.1);
+        border-radius: 22px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(26,107,60,0.06);
+        display: flex;
+        flex-direction: column;
+        max-height: 540px;
+    }
+
+    .ns-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.9rem 1.2rem;
+        border-bottom: 1px solid rgba(26,107,60,0.08);
+        background: #f5f9f5;
+        font-size: 0.86rem;
+        font-weight: 700;
+        color: var(--green-dark);
+        flex-shrink: 0;
+    }
+
+    .ns-all-link {
+        font-size: 0.78rem;
+        color: var(--green);
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+        .ns-all-link:hover {
+            color: var(--gold);
+        }
+
+    .ns-scroll {
+        overflow-y: auto;
+        flex: 1;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(26,107,60,0.2) transparent;
+    }
+
+        .ns-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .ns-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .ns-scroll::-webkit-scrollbar-thumb {
+            background: rgba(26,107,60,0.22);
+            border-radius: 99px;
+        }
+
+    /* ── News item (এখন <a> tag) ── */
+    a.ni {
+        display: flex;
+        gap: 0.85rem;
+        align-items: flex-start;
+        padding: 0.9rem 1.1rem;
+        border-bottom: 1px solid rgba(26,107,60,0.06);
+        cursor: pointer;
+        transition: all 0.22s;
+        text-decoration: none;
+        color: inherit;
+        background: transparent;
+        border-radius: 0;
+    }
+
+        a.ni:last-child {
+            border-bottom: none;
+        }
+
+        a.ni:hover {
+            background: #f3fbf5;
+            padding-left: 1.35rem;
+        }
+
+    .ni-thumb {
+        width: 52px;
+        height: 52px;
+        border-radius: 10px;
+        overflow: hidden;
+        flex-shrink: 0;
+        border: 1px solid rgba(26,107,60,0.1);
+    }
+
+        .ni-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+    .ni-icon {
+        font-size: 1.7rem;
+        flex-shrink: 0;
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f0f8f2;
+        border-radius: 10px;
+    }
+
+    .ni-body {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .ni-cat {
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: var(--green);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.2rem;
+    }
+
+    .ni-body h4 {
+        font-size: 0.87rem;
+        font-weight: 700;
+        color: var(--green-dark);
+        line-height: 1.38;
+        margin-bottom: 0.28rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .ni-date {
+        font-size: 0.73rem;
+        color: var(--text-light);
+    }
+
+    /* ── Responsive ── */
+    @@media (max-width: 960px) {
+        #news .news-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .news-sidebar {
+            max-height: 400px;
+        }
+    }
+
+    @@media (max-width: 580px) {
+        .nf-img {
+            height: 190px;
+        }
+
+        .nf-body {
+            padding: 1.1rem 1.2rem 1.3rem;
+        }
+
+            .nf-body h3 {
+                font-size: 1.05rem;
+            }
+    }
     /* ═══ ABOUT / INSTITUTION CARDS ═══ */
     #about {
         background: linear-gradient(160deg, #f3f8f5 0%, #eef5f0 100%);
@@ -1238,7 +1828,7 @@
     <a href="#news" class="scroll-arrow" aria-label="নিচে স্ক্রোল করুন">⬇</a>
 </div>
 
-<!-- ═══ NEWS ═══ -->
+<!-- ═══ NEWS SECTION ═══ -->
 <section id="news">
     <div class="container">
         <div class="section-header reveal">
@@ -1247,48 +1837,100 @@
             <p class="section-desc">খোকসা মল্লিক পাড়া গ্রামের সাম্প্রতিক খবর, উন্নয়ন ও বিভিন্ন অনুষ্ঠানের বিবরণ</p>
             <div class="divider"></div>
         </div>
-        <div class="news-grid">
+
+        <div class="news-card-grid">
+
+            @* ── Featured Card (full width, horizontal layout) ── *@
             @if (featuredNews != null)
             {
-                <div class="news-featured reveal">
-                    <div class="nf-img">
-                        <div class="nf-cat">⭐ শীর্ষ সংবাদ</div>
-                        <div class="nf-img-icon">@featuredNews.Icon</div>
+                <a href="/Home/NewsDetails/@featuredNews.Id" class="news-card featured reveal">
+                    <div class="nc-img">
+                        @if (!string.IsNullOrEmpty(featuredNews.ImagePath))
+                        {
+                            <img src="@featuredNews.ImagePath" alt="@featuredNews.Title" />
+                            <div class="nc-img-overlay"></div>
+                        }
+                        else
+                        {
+                            <div class="nc-img-placeholder">
+                                <div class="nc-placeholder-icon">@featuredNews.Icon</div>
+                            </div>
+                        }
+                    <div class="nc-featured-badge">⭐ শীর্ষ সংবাদ</div>
+                </div>
+                <div class="nc-body">
+                    <div class="nc-meta">
+                        <span class="nc-cat-badge">@featuredNews.Category</span>
+                        <span class="nc-date">📅 @featuredNews.PublishedAt.ToString("dd MMM, yyyy")</span>
                     </div>
-                    <div class="nf-body">
-                        <div class="nf-date">📅 @featuredNews.PublishedAt.ToString("dd MMMM, yyyy")</div>
-                        <h3>@featuredNews.Title</h3>
-                        <p>@featuredNews.Description</p>
-                        <a href="#" class="nf-more">বিস্তারিত পড়ুন →</a>
+                    <div class="nc-title">@featuredNews.Title</div>
+                    <div class="nc-desc">
+                        @(featuredNews.Description != null && featuredNews.Description.Length > 200
+                                                ? featuredNews.Description.Substring(0, 200) + "…"
+                                                : featuredNews.Description)
                     </div>
+                    <span class="nc-more">বিস্তারিত পড়ুন →</span>
+                </div>
+            </a>
+                        }
+
+            @* ── Regular News Cards ── *@
+            @if (newsList != null && newsList.Any())
+            {
+                foreach (var n in newsList)
+                {
+                    <a href="/Home/NewsDetails/@n.Id" class="news-card reveal">
+                        <div class="nc-img">
+                            @if (!string.IsNullOrEmpty(n.ImagePath))
+                            {
+                                <img src="@n.ImagePath" alt="@n.Title" loading="lazy" />
+                                <div class="nc-img-overlay"></div>
+                            }
+                            else
+                            {
+                                <div class="nc-img-placeholder">
+                                    <div class="nc-placeholder-icon">@n.Icon</div>
+                                </div>
+                            }
+                </div>
+                <div class="nc-body">
+                    <div class="nc-meta">
+                        <span class="nc-cat-badge">@n.Category</span>
+                        <span class="nc-date">📅 @n.PublishedAt.ToString("dd MMM, yyyy")</span>
+                    </div>
+                    <div class="nc-title">@n.Title</div>
+                    <div class="nc-desc">
+                        @(n.Description != null && n.Description.Length > 100
+                                                ? n.Description.Substring(0, 100) + "…"
+                                                : n.Description)
+                    </div>
+                    <span class="nc-more">পড়ুন →</span>
+                </div>
+            </a>
+                        }
+            }
+            else if (featuredNews == null)
+            {
+                <div class="news-empty">
+                    <div class="news-empty-icon">📭</div>
+                    <p>এখনো কোনো সংবাদ যোগ করা হয়নি।</p>
                 </div>
             }
-            <div class="news-list">
-                @if (newsList != null && newsList.Any())
-                {
-                    foreach (var n in newsList)
-                    {
-                        <div class="ni reveal">
-                            <div class="ni-icon">@n.Icon</div>
-                            <div class="ni-body">
-                                <div class="ni-cat">@n.Category</div>
-                                <h4>@n.Title</h4>
-                                <span class="ni-date">📅 @n.PublishedAt.ToString("dd MMMM, yyyy")</span>
-                            </div>
-                        </div>
-                    }
-                }
-                else if (featuredNews == null)
-                {
-                    <div style="text-align:center;padding:3rem;color:var(--text-light);">
-                        <div style="font-size:3rem;margin-bottom:1rem;">📭</div>
-                        <p>এখনো কোনো সংবাদ যোগ করা হয়নি।</p>
-                    </div>
-                }
-            </div>
         </div>
+
+        @* ── See All Button ── *@
+        @if ((newsList != null && newsList.Count >= 5) || featuredNews != null)
+        {
+            <div class="news-all-wrap reveal">
+                <a href="/Home/AllNews" class="news-all-btn">
+                    📋 সব সংবাদ দেখুন →
+                </a>
+            </div>
+        }
     </div>
 </section>
+
+
 
 <!-- ═══ ABOUT / INSTITUTIONS ═══ -->
 <section id="about">

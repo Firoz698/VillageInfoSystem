@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VillageInfoSystem.Models;
 
@@ -27,4 +28,12 @@ public class News
 
     [Display(Name = "সক্রিয়")]
     public bool IsActive { get; set; } = true;
+
+    // ── Image ──
+    [Display(Name = "ছবি")]
+    public string? ImagePath { get; set; }  // DB তে শুধু path সেভ হবে
+
+    [NotMapped]  // DB তে সেভ হবে না
+    [Display(Name = "ছবি আপলোড")]
+    public IFormFile? ImageFile { get; set; }
 }

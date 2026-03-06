@@ -5,7 +5,6 @@
 }
 
 <style>
-    /* ── REUSE SAME STYLES ── */
     .form-page-header {
         display: flex;
         align-items: center;
@@ -220,6 +219,7 @@
         .icon-option.selected {
             border-color: var(--green);
             background: var(--green-muted);
+            box-shadow: 0 0 0 2px rgba(26,107,60,0.15);
         }
 
     .cat-pills {
@@ -376,18 +376,33 @@
         justify-content: center;
         font-size: 2.5rem;
         position: relative;
+        overflow: hidden;
+    }
+
+        .np-header img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .np-header-icon {
+        position: relative;
+        z-index: 1;
     }
 
     .np-cat-badge {
         position: absolute;
         top: 8px;
         left: 8px;
-        background: rgba(200,153,58,0.9);
+        background: rgba(200,153,58,0.92);
         color: var(--green-dark);
         padding: 0.15rem 0.6rem;
         border-radius: 50px;
         font-size: 0.65rem;
         font-weight: 800;
+        z-index: 2;
     }
 
     .np-body {
@@ -407,6 +422,131 @@
         color: var(--text-muted);
         line-height: 1.5;
     }
+
+    /* ── Image Upload ── */
+    .current-img-wrap {
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        margin-bottom: 0.7rem;
+        position: relative;
+    }
+
+        .current-img-wrap img {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+    .current-img-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.5rem 0.6rem;
+        background: #fafcfa;
+        border-top: 1px solid var(--border);
+    }
+
+    .current-img-label {
+        font-size: 0.76rem;
+        color: var(--text-muted);
+    }
+
+    .btn-img-delete {
+        background: #fff1f0;
+        border: 1px solid #f8bcb7;
+        color: #b53a2e;
+        border-radius: 6px;
+        padding: 0.22rem 0.65rem;
+        font-size: 0.74rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+        .btn-img-delete:hover {
+            background: #ffe3e0;
+        }
+
+    .img-upload-area {
+        border: 2px dashed var(--border);
+        border-radius: 10px;
+        padding: 1.4rem 1rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        position: relative;
+        background: #fafcfa;
+    }
+
+        .img-upload-area:hover,
+        .img-upload-area.drag-over {
+            border-color: var(--green);
+            background: rgba(26,107,60,0.04);
+        }
+
+        .img-upload-area input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+    .img-upload-icon {
+        font-size: 1.8rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .img-upload-text {
+        font-size: 0.83rem;
+        color: var(--green-dark);
+        font-weight: 600;
+    }
+
+    .img-upload-hint {
+        font-size: 0.72rem;
+        color: var(--text-muted);
+        margin-top: 0.2rem;
+    }
+
+    .img-new-preview {
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        position: relative;
+    }
+
+        .img-new-preview img {
+            width: 100%;
+            max-height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+
+    .img-remove-btn {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        background: rgba(0,0,0,0.55);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+    }
+
+        .img-remove-btn:hover {
+            background: rgba(192,57,43,0.85);
+        }
 
     .form-actions {
         display: flex;
@@ -450,13 +590,16 @@
     </div>
 </div>
 
-<form asp-action="NewsEdit" method="post" id="newsForm">
+<form asp-action="NewsEdit" asp-route-id="@Model.Id"
+      method="post" enctype="multipart/form-data" id="newsForm">
     @Html.AntiForgeryToken()
     <input asp-for="Id" type="hidden" />
 
     <div class="form-layout">
-        <!-- LEFT -->
+
+        <!-- ── LEFT ── -->
         <div>
+
             <!-- Title & Description -->
             <div class="form-section">
                 <div class="fs-header">
@@ -480,6 +623,62 @@
                         </div>
                         <textarea asp-for="Description" class="form-control" id="descInput"
                                   rows="5" oninput="updateDescCounter(); updatePreview();"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image Upload -->
+            <div class="form-section">
+                <div class="fs-header">
+                    <div class="fs-icon">🖼️</div>
+                    <div><h3>সংবাদের ছবি</h3><p>ছবি পরিবর্তন বা নতুন ছবি যোগ করুন</p></div>
+                </div>
+                <div class="fs-body">
+
+                    @* বর্তমান ছবি *@
+                    @if (!string.IsNullOrEmpty(Model.ImagePath))
+                    {
+                        <div id="currentImgSection">
+                            <div class="current-img-wrap">
+                                <img src="@Model.ImagePath" alt="বর্তমান ছবি" id="currentImgEl" />
+                                <div class="current-img-actions">
+                                    <span class="current-img-label">📌 বর্তমান ছবি</span>
+                                    <form method="post" action="/Admin/NewsDeleteImage/@Model.Id"
+                                          style="display:inline"
+                                          onsubmit="return confirm('ছবিটি স্থায়ীভাবে মুছে ফেলবেন?')">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn-img-delete">🗑️ ছবি মুছুন</button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="field-hint">নতুন ছবি আপলোড করলে বর্তমান ছবি স্বয়ংক্রিয়ভাবে replace হবে।</div>
+                        </div>
+                    }
+
+                    @* নতুন ছবি আপলোড *@
+                    <div style="margin-top: @(!string.IsNullOrEmpty(Model.ImagePath) ? "0.8rem" : "0")">
+                        <div id="uploadAreaWrap">
+                            <div class="img-upload-area" id="uploadArea"
+                                 ondragover="handleDragOver(event)"
+                                 ondragleave="handleDragLeave(event)"
+                                 ondrop="handleDrop(event)">
+                                <input type="file" name="ImageFile" id="imageFileInput"
+                                       accept="image/jpeg,image/png,image/webp,image/gif"
+                                       onchange="handleFileSelect(this)" />
+                                <div class="img-upload-icon">📷</div>
+                                <div class="img-upload-text">
+                                    @(!string.IsNullOrEmpty(Model.ImagePath) ? "নতুন ছবি দিয়ে replace করুন" : "ছবি আপলোড করুন")
+                                </div>
+                                <div class="img-upload-hint">JPG, PNG, WEBP — সর্বোচ্চ ৫ MB</div>
+                            </div>
+                        </div>
+                        <div id="newImgPreviewWrap" style="display:none;">
+                            <div class="img-new-preview">
+                                <img id="newImgPreviewImg" src="" alt="নতুন ছবির প্রিভিউ" />
+                                <button type="button" class="img-remove-btn" onclick="removeNewImage()" title="বাতিল">✕</button>
+                            </div>
+                            <div class="field-hint" style="margin-top:0.4rem;" id="newImgFileName"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -546,10 +745,7 @@
                                 <div class="ts-track"></div>
                                 <div class="ts-thumb" style="@(Model.IsFeatured ? "transform:translateX(18px)" : "")"></div>
                             </div>
-                            <div class="ti-info">
-                                <strong>⭐ শীর্ষ সংবাদ</strong>
-                                <span>হোমপেজে বড় করে দেখাবে</span>
-                            </div>
+                            <div class="ti-info"><strong>⭐ শীর্ষ সংবাদ</strong><span>হোমপেজে বড় করে দেখাবে</span></div>
                         </label>
                         <label class="toggle-item @(Model.IsActive ? "checked" : "")" id="activeToggle" for="IsActive">
                             <div class="toggle-sw">
@@ -558,29 +754,41 @@
                                 <div class="ts-track"></div>
                                 <div class="ts-thumb" style="@(Model.IsActive ? "transform:translateX(18px)" : "")"></div>
                             </div>
-                            <div class="ti-info">
-                                <strong>✅ সক্রিয়</strong>
-                                <span>ওয়েবসাইটে প্রকাশিত থাকবে</span>
-                            </div>
+                            <div class="ti-info"><strong>✅ সক্রিয়</strong><span>ওয়েবসাইটে প্রকাশিত থাকবে</span></div>
                         </label>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- SIDEBAR -->
+        <!-- ── SIDEBAR ── -->
         <div>
             <div class="sidebar-card">
                 <div class="sc-hd">👁️ প্রিভিউ</div>
                 <div class="sc-bd">
                     <div class="news-preview">
-                        <div class="np-header">
-                            <span id="prevIcon">@(Model.Icon ?? "📰")</span>
+                        <div class="np-header" id="prevHeader">
+                            @if (!string.IsNullOrEmpty(Model.ImagePath))
+                            {
+                                <img id="prevImage" src="@Model.ImagePath" alt="" />
+                            }
+                            else
+                            {
+                                <img id="prevImage" src="" alt="" style="display:none;" />
+                            }
+                            <span class="np-header-icon" id="prevIcon"
+                                  style="@(!string.IsNullOrEmpty(Model.ImagePath) ? "display:none" : "")">
+                                @(Model.Icon ?? "📰")
+                            </span>
                             <div class="np-cat-badge" id="prevCat">@(Model.Category ?? "সাধারণ")</div>
                         </div>
                         <div class="np-body">
                             <div class="np-title" id="prevTitle">@(Model.Title ?? "শিরোনাম")</div>
-                            <div class="np-desc" id="prevDesc">@(Model.Description?.Substring(0, Math.Min(Model.Description?.Length ?? 0, 80)) ?? "বিবরণ...")</div>
+                            <div class="np-desc" id="prevDesc">
+                                @(Model.Description != null
+                                                                ? (Model.Description.Length > 80 ? Model.Description.Substring(0, 80) + "…" : Model.Description)
+                                                                : "বিবরণ...")
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -601,7 +809,6 @@
                 </div>
             </div>
 
-            <!-- Actions -->
             <div class="sidebar-card">
                 <div class="form-actions">
                     <a href="/Admin/NewsList" class="btn btn-outline">বাতিল</a>
@@ -613,47 +820,107 @@
 </form>
 
 <script>
+    // ── Image upload ──
+    function handleFileSelect(input) {
+        if (input.files && input.files[0]) showNewPreview(input.files[0]);
+    }
+
+    function handleDragOver(e) { e.preventDefault(); document.getElementById('uploadArea').classList.add('drag-over'); }
+    function handleDragLeave(e) { document.getElementById('uploadArea').classList.remove('drag-over'); }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        document.getElementById('uploadArea').classList.remove('drag-over');
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            document.getElementById('imageFileInput').files = dt.files;
+            showNewPreview(file);
+        }
+    }
+
+    function showNewPreview(file) {
+        if (file.size > 5 * 1024 * 1024) { alert('ছবির আকার ৫ MB এর বেশি হতে পারবে না।'); return; }
+        const reader = new FileReader();
+        reader.onload = e => {
+            document.getElementById('newImgPreviewImg').src = e.target.result;
+            document.getElementById('newImgPreviewWrap').style.display = 'block';
+            document.getElementById('uploadAreaWrap').style.display = 'none';
+            document.getElementById('newImgFileName').textContent = '📎 ' + file.name;
+            // sidebar preview
+            const prevImg = document.getElementById('prevImage');
+            prevImg.src = e.target.result;
+            prevImg.style.display = 'block';
+            document.getElementById('prevIcon').style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function removeNewImage() {
+        document.getElementById('imageFileInput').value = '';
+        document.getElementById('newImgPreviewWrap').style.display = 'none';
+        document.getElementById('uploadAreaWrap').style.display = 'block';
+        // sidebar: পুরনো ছবিতে ফিরে যাও
+        const currentSrc = document.getElementById('currentImgEl')?.src;
+        const prevImg = document.getElementById('prevImage');
+        if (currentSrc) {
+            prevImg.src = currentSrc;
+            prevImg.style.display = 'block';
+            document.getElementById('prevIcon').style.display = 'none';
+        } else {
+            prevImg.style.display = 'none';
+            document.getElementById('prevIcon').style.display = 'block';
+        }
+    }
+
+    // ── Form helpers ──
     function updateTitleCounter() {
         const v = document.getElementById('titleInput').value.length;
         const el = document.getElementById('titleCounter');
         el.textContent = v + '/১০০';
         el.className = 'char-counter' + (v > 90 ? ' warn' : '');
     }
+
     function updateDescCounter() {
-        const v = document.getElementById('descInput').value.length;
-        document.getElementById('descCounter').textContent = v;
+        document.getElementById('descCounter').textContent =
+            document.getElementById('descInput').value.length;
     }
+
     function updatePreview() {
         const title = document.getElementById('titleInput')?.value || 'শিরোনাম';
-        const desc = document.getElementById('descInput')?.value || 'বিবরণ...';
-        const icon = document.getElementById('iconInput')?.value || '📰';
-        const cat = document.getElementById('catSelect')?.value || 'সাধারণ';
+        const desc  = document.getElementById('descInput')?.value  || 'বিবরণ...';
+        const icon  = document.getElementById('iconInput')?.value  || '📰';
+        const cat   = document.getElementById('catSelect')?.value  || 'সাধারণ';
         document.getElementById('prevTitle').textContent = title.substring(0, 60);
-        document.getElementById('prevDesc').textContent = desc.substring(0, 80);
-        document.getElementById('prevIcon').textContent = icon || '📰';
-        document.getElementById('prevCat').textContent = cat;
+        document.getElementById('prevDesc').textContent  = desc.substring(0, 80);
+        document.getElementById('prevIcon').textContent  = icon || '📰';
+        document.getElementById('prevCat').textContent   = cat;
     }
+
     function selectIcon(icon) {
         document.getElementById('iconInput').value = icon;
-        document.querySelectorAll('.icon-option').forEach(el => el.classList.toggle('selected', el.textContent === icon));
+        document.querySelectorAll('.icon-option').forEach(el =>
+            el.classList.toggle('selected', el.textContent.trim() === icon));
         updatePreview();
     }
-    function selectCat(cat) {
-        document.getElementById('catSelect').value = cat;
-        syncCatPills();
-        updatePreview();
-    }
+
+    function selectCat(cat) { document.getElementById('catSelect').value = cat; syncCatPills(); updatePreview(); }
+
     function syncCatPills() {
         const cat = document.getElementById('catSelect').value;
-        document.querySelectorAll('.cat-pill').forEach(el => el.classList.toggle('selected', el.textContent === cat));
+        document.querySelectorAll('.cat-pill').forEach(el =>
+            el.classList.toggle('selected', el.textContent === cat));
     }
+
     function syncToggleStyle(wrapId, inputId) {
-        document.getElementById(wrapId).classList.toggle('checked', document.getElementById(inputId).checked);
+        document.getElementById(wrapId).classList.toggle('checked',
+            document.getElementById(inputId).checked);
     }
+
     window.addEventListener('DOMContentLoaded', () => {
         syncCatPills(); updatePreview();
         updateTitleCounter(); updateDescCounter();
-        // sync current icon
         const curIcon = document.getElementById('iconInput')?.value;
         if (curIcon) {
             document.querySelectorAll('.icon-option').forEach(el => {

@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using VillageInfoSystem.Data;
 
@@ -12,6 +12,11 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("VillageInfoSystemConnection")));
 
+
+// Program.cs এ app.UseStaticFiles(); এর আগে যোগ করুন
+var uploadsPath = Path.Combine(builder.Environment.WebRootPath, "uploads", "news");
+if (!Directory.Exists(uploadsPath))
+    Directory.CreateDirectory(uploadsPath);
 
 // Cookie Authentication for Admin
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

@@ -4,6 +4,7 @@
     Layout = "_AdminLayout";
     int activeCount = Model.Count(n => n.IsActive);
     int featuredCount = Model.Count(n => n.IsFeatured);
+    int withImageCount = Model.Count(n => !string.IsNullOrEmpty(n.ImagePath));
 }
 
 <style>
@@ -29,7 +30,6 @@
         margin-top: 2px;
     }
 
-    /* Stats strip */
     .news-stats {
         display: flex;
         gap: 0.9rem;
@@ -56,7 +56,6 @@
             font-weight: 800;
         }
 
-    /* Search/filter bar */
     .filter-bar {
         background: white;
         border-radius: var(--radius);
@@ -118,7 +117,6 @@
             border-color: var(--green);
         }
 
-    /* Table card */
     .table-card {
         background: white;
         border-radius: var(--radius);
@@ -197,15 +195,37 @@
         display: none;
     }
 
-    /* News icon cell */
+    /* ── Image thumbnail ── */
+    .news-thumb {
+        width: 46px;
+        height: 46px;
+        border-radius: 8px;
+        object-fit: cover;
+        display: block;
+        border: 1px solid #e0ebe0;
+    }
+
+    .news-thumb-placeholder {
+        width: 46px;
+        height: 46px;
+        border-radius: 8px;
+        background: #f0f5f0;
+        border: 1px dashed #c8d8c8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        color: #adc4ad;
+    }
+
     .news-icon-cell {
         font-size: 1.5rem;
         line-height: 1;
     }
 
-    /* Title cell */
+    /* ── Title cell ── */
     .news-title-cell {
-        max-width: 260px;
+        max-width: 240px;
     }
 
     .news-title-text {
@@ -228,7 +248,6 @@
         margin-top: 1px;
     }
 
-    /* Actions */
     .actions-cell {
         display: flex;
         gap: 0.45rem;
@@ -236,7 +255,6 @@
         white-space: nowrap;
     }
 
-    /* Empty state */
     .empty-row td {
         text-align: center;
         padding: 3.5rem 1rem;
@@ -282,6 +300,7 @@
         <div class="ns-pill">📰 মোট: <strong>@Model.Count</strong></div>
         <div class="ns-pill">✅ সক্রিয়: <strong>@activeCount</strong></div>
         <div class="ns-pill">⭐ শীর্ষ: <strong>@featuredCount</strong></div>
+        <div class="ns-pill">🖼️ ছবি সহ: <strong>@withImageCount</strong></div>
         @if (Model.Count - activeCount > 0)
         {
             <div class="ns-pill">⏸️ নিষ্ক্রিয়: <strong>@(Model.Count - activeCount)</strong></div>
@@ -311,6 +330,8 @@
         <option value="active">সক্রিয়</option>
         <option value="inactive">নিষ্ক্রিয়</option>
         <option value="featured">শীর্ষ সংবাদ</option>
+        <option value="hasimage">ছবি আছে</option>
+        <option value="noimage">ছবি নেই</option>
     </select>
 </div>
 
@@ -327,7 +348,8 @@
         <table id="newsTable">
             <thead>
                 <tr>
-                    <th style="width:48px">আইকন</th>
+                    <th style="width:54px">ছবি</th>
+                    <th style="width:44px">আইকন</th>
                     <th>শিরোনাম</th>
                     <th class="hide-mobile">বিভাগ</th>
                     <th class="hide-mobile">তারিখ</th>
@@ -344,8 +366,25 @@
                         <tr data-title="@n.Title.ToLower()"
                             data-cat="@n.Category"
                             data-active="@n.IsActive.ToString().ToLower()"
-                            data-featured="@n.IsFeatured.ToString().ToLower()">
+                            data-featured="@n.IsFeatured.ToString().ToLower()"
+                            data-hasimage="@(!string.IsNullOrEmpty(n.ImagePath) ? "true" : "false")">
+
+                            <!-- ছবি thumbnail -->
+                            <td>
+                                @if (!string.IsNullOrEmpty(n.ImagePath))
+                                {
+                                    <img src="@n.ImagePath" alt="@n.Title" class="news-thumb" loading="lazy" />
+                                }
+                                else
+                                {
+                                    <div class="news-thumb-placeholder">📷</div>
+                                }
+                            </td>
+
+                            <!-- আইকন -->
                             <td><div class="news-icon-cell">@n.Icon</div></td>
+
+                            <!-- শিরোনাম -->
                             <td class="news-title-cell">
                                 <span class="news-title-text" title="@n.Title">@n.Title</span>
                                 @if (!string.IsNullOrEmpty(n.Description))
@@ -353,20 +392,38 @@
                                     <span class="news-title-desc">@(n.Description.Length > 55 ? n.Description.Substring(0, 55) + "…" : n.Description)</span>
                                 }
                             </td>
+
+                            <!-- বিভাগ -->
                             <td class="hide-mobile">
                                 <span class="badge badge-gold">@n.Category</span>
                             </td>
+
+                            <!-- তারিখ -->
                             <td class="hide-mobile" style="color:var(--text-muted);font-size:0.8rem;white-space:nowrap;">
                                 @n.PublishedAt.ToString("dd MMM yyyy")
                             </td>
+
+                            <!-- শীর্ষ -->
                             <td style="text-align:center">
-                                @(n.IsFeatured ? "⭐" : "<span style='color:#ccc'>—</span>")
+                                @if (n.IsFeatured)
+                                {
+                                    <text>⭐</text>
+                                }
+                                else
+                                {
+
+                                    <span style="color:#ccc">—</span>
+                                }
                             </td>
+
+                            <!-- অবস্থা -->
                             <td>
                                 <span class="badge @(n.IsActive ? "badge-success" : "badge-danger")">
                                     @(n.IsActive ? "✓ সক্রিয়" : "✗ নিষ্ক্রিয়")
                                 </span>
                             </td>
+
+                            <!-- কার্যক্রম -->
                             <td>
                                 <div class="actions-cell">
                                     <a href="/Admin/NewsEdit/@n.Id" class="btn btn-edit btn-sm">✏️ সম্পাদনা</a>
@@ -384,7 +441,7 @@
                 else
                 {
                     <tr class="empty-row">
-                        <td colspan="7">
+                        <td colspan="8">
                             <span class="er-icon">📭</span>
                             এখনো কোনো সংবাদ যোগ করা হয়নি।
                         </td>
@@ -398,21 +455,27 @@
 <script>
     function filterTable() {
         const search = document.getElementById('searchInput').value.toLowerCase();
-        const cat = document.getElementById('catFilter').value;
+        const cat    = document.getElementById('catFilter').value;
         const status = document.getElementById('statusFilter').value;
-        const rows = document.querySelectorAll('#newsTable tbody tr:not(.empty-row)');
-        let visible = 0;
+        const rows   = document.querySelectorAll('#newsTable tbody tr:not(.empty-row)');
+        let visible  = 0;
+
         rows.forEach(row => {
-            const titleMatch = !search || row.dataset.title.includes(search);
-            const catMatch = !cat || row.dataset.cat === cat;
-            let statusMatch = true;
-            if (status === 'active') statusMatch = row.dataset.active === 'true';
-            else if (status === 'inactive') statusMatch = row.dataset.active === 'false';
-            else if (status === 'featured') statusMatch = row.dataset.featured === 'true';
+            const titleMatch  = !search || row.dataset.title.includes(search);
+            const catMatch    = !cat    || row.dataset.cat === cat;
+            let statusMatch   = true;
+
+            if      (status === 'active')   statusMatch = row.dataset.active    === 'true';
+            else if (status === 'inactive') statusMatch = row.dataset.active    === 'false';
+            else if (status === 'featured') statusMatch = row.dataset.featured  === 'true';
+            else if (status === 'hasimage') statusMatch = row.dataset.hasimage  === 'true';
+            else if (status === 'noimage')  statusMatch = row.dataset.hasimage  === 'false';
+
             const show = titleMatch && catMatch && statusMatch;
             row.classList.toggle('filtered-out', !show);
             if (show) visible++;
         });
+
         const vc = document.getElementById('visibleCount');
         if (vc) vc.textContent = visible + ' টি';
     }
