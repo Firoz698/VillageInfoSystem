@@ -21,12 +21,15 @@
         --radius: 12px;
     }
 
-    * {
+    *, *::before, *::after {
         box-sizing: border-box;
+        margin: 0;
+        padding: 0;
     }
 
     .page-wrapper {
         animation: fadeUp 0.4s ease both;
+        width: 100%;
     }
 
     @@keyframes fadeUp {
@@ -41,29 +44,30 @@
         }
     }
 
-    /* ── Ticker Preview ── */
+    /* ── Ticker ── */
     .ticker-preview {
         background: linear-gradient(90deg, var(--red) 0%, #a52820 100%);
         border-radius: var(--radius);
-        margin-bottom: 1.5rem;
+        margin-bottom: 1.25rem;
         overflow: hidden;
         box-shadow: 0 4px 18px rgba(192,57,43,0.22);
         display: flex;
         align-items: stretch;
-        min-height: 44px;
+        min-height: 42px;
+        width: 100%;
     }
 
     .ticker-label {
-        background: rgba(0,0,0,0.25);
+        background: rgba(0,0,0,0.28);
         color: #fff;
         font-size: 0.68rem;
         font-weight: 800;
-        letter-spacing: 0.1em;
+        letter-spacing: 0.08em;
         text-transform: uppercase;
-        padding: 0 0.9rem;
+        padding: 0 0.85rem;
         display: flex;
         align-items: center;
-        gap: 0.4rem;
+        gap: 0.38rem;
         white-space: nowrap;
         flex-shrink: 0;
     }
@@ -74,6 +78,7 @@
             background: #ff6b6b;
             border-radius: 50%;
             animation: pulse 1.2s ease-in-out infinite;
+            flex-shrink: 0;
         }
 
     @@keyframes pulse {
@@ -84,7 +89,7 @@
 
         50% {
             opacity: 0.5;
-            transform: scale(0.75);
+            transform: scale(0.72);
         }
     }
 
@@ -94,6 +99,7 @@
         display: flex;
         align-items: center;
         position: relative;
+        min-width: 0;
     }
 
         .ticker-scroll-wrapper::before,
@@ -102,28 +108,28 @@
             position: absolute;
             top: 0;
             bottom: 0;
-            width: 30px;
+            width: 24px;
             z-index: 1;
             pointer-events: none;
         }
 
         .ticker-scroll-wrapper::before {
             left: 0;
-            background: linear-gradient(to right, rgba(160,40,32,0.6), transparent);
+            background: linear-gradient(to right, rgba(160,40,32,0.55), transparent);
         }
 
         .ticker-scroll-wrapper::after {
             right: 0;
-            background: linear-gradient(to left, rgba(160,40,32,0.6), transparent);
+            background: linear-gradient(to left, rgba(160,40,32,0.55), transparent);
         }
 
     .ticker-scroll {
         display: flex;
         align-items: center;
-        gap: 2.5rem;
+        gap: 2rem;
         white-space: nowrap;
         animation: scrollTicker 22s linear infinite;
-        padding: 0 0.8rem;
+        padding: 0 0.75rem;
         color: #fff;
         font-size: 0.82rem;
         font-weight: 500;
@@ -144,7 +150,7 @@
     }
 
     .ticker-sep {
-        opacity: 0.4;
+        opacity: 0.38;
     }
 
     /* ── Page Header ── */
@@ -152,35 +158,42 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        flex-wrap: wrap;
         gap: 0.75rem;
-        margin-bottom: 1.25rem;
+        margin-bottom: 1rem;
+        flex-wrap: nowrap;
     }
 
-    .page-header-left h1 {
-        font-family: 'Noto Serif Bengali', Georgia, serif;
-        font-size: clamp(1.1rem, 3vw, 1.5rem);
-        font-weight: 700;
-        color: var(--primary);
-        margin: 0 0 0.15rem;
+    .page-header-left {
+        min-width: 0;
+        flex: 1;
     }
 
-    .page-header-left p {
-        font-size: 0.8rem;
-        color: var(--text-muted);
-        margin: 0;
-    }
+        .page-header-left h1 {
+            font-family: 'Noto Serif Bengali', Georgia, serif;
+            font-size: clamp(1rem, 3.5vw, 1.4rem);
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.1rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .page-header-left p {
+            font-size: clamp(0.72rem, 2vw, 0.8rem);
+            color: var(--text-muted);
+        }
 
     .btn-add {
         display: inline-flex;
         align-items: center;
-        gap: 0.45rem;
+        gap: 0.4rem;
         background: var(--primary);
         color: #fff;
         text-decoration: none;
-        padding: 0.55rem 1rem;
+        padding: 0.52rem 0.9rem;
         border-radius: 8px;
-        font-size: 0.85rem;
+        font-size: 0.84rem;
         font-weight: 600;
         box-shadow: 0 2px 8px rgba(26,58,92,0.18);
         transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
@@ -194,19 +207,19 @@
             box-shadow: 0 5px 18px rgba(26,58,92,0.22);
         }
 
-    /* ── Stats Bar ── */
+    /* ── Stats ── */
     .stats-bar {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 0.75rem;
-        margin-bottom: 1.25rem;
+        gap: 0.65rem;
+        margin-bottom: 1rem;
     }
 
     .stat-card {
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: var(--radius);
-        padding: 0.9rem 1rem;
+        padding: 0.85rem 0.9rem;
         box-shadow: var(--shadow-sm);
         transition: box-shadow 0.2s;
     }
@@ -216,16 +229,19 @@
         }
 
     .stat-label {
-        font-size: 0.68rem;
+        font-size: clamp(0.6rem, 1.8vw, 0.68rem);
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.07em;
+        letter-spacing: 0.06em;
         color: var(--text-muted);
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.22rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .stat-value {
-        font-size: clamp(1.3rem, 4vw, 1.6rem);
+        font-size: clamp(1.2rem, 4vw, 1.55rem);
         font-weight: 700;
         color: var(--primary);
         line-height: 1;
@@ -246,40 +262,44 @@
         border-radius: var(--radius);
         overflow: hidden;
         box-shadow: var(--shadow-sm);
+        width: 100%;
     }
 
     .table-toolbar {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        flex-wrap: wrap;
         gap: 0.6rem;
-        padding: 0.85rem 1rem;
+        padding: 0.8rem 0.9rem;
         border-bottom: 1px solid var(--border);
         background: var(--surface-alt);
+        flex-wrap: nowrap;
     }
 
     .search-box {
         position: relative;
         display: flex;
         align-items: center;
+        flex: 1;
+        min-width: 0;
+        max-width: 260px;
     }
 
         .search-box svg {
             position: absolute;
-            left: 0.7rem;
+            left: 0.65rem;
             color: var(--text-muted);
             pointer-events: none;
             flex-shrink: 0;
         }
 
         .search-box input {
-            padding: 0.42rem 0.85rem 0.42rem 2.1rem;
+            width: 100%;
+            padding: 0.4rem 0.8rem 0.4rem 2rem;
             border: 1px solid var(--border);
             border-radius: 7px;
             font-size: 0.82rem;
             background: var(--surface);
-            width: clamp(140px, 30vw, 220px);
             outline: none;
             color: var(--text-main);
             transition: border-color 0.2s, box-shadow 0.2s;
@@ -291,29 +311,30 @@
             }
 
     .table-count {
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         color: var(--text-muted);
         white-space: nowrap;
+        flex-shrink: 0;
     }
 
     /* ── Desktop Table ── */
     .table-scroll {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
+        width: 100%;
     }
 
     table.data-table {
         width: 100%;
         border-collapse: collapse;
-        font-size: 0.85rem;
+        font-size: 0.84rem;
         color: var(--text-main);
-        min-width: 560px;
     }
 
         table.data-table thead th {
             background: var(--surface-alt);
-            padding: 0.7rem 0.9rem;
-            font-size: 0.68rem;
+            padding: 0.65rem 0.85rem;
+            font-size: 0.67rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.06em;
@@ -341,7 +362,7 @@
             }
 
         table.data-table td {
-            padding: 0.8rem 0.9rem;
+            padding: 0.75rem 0.85rem;
             vertical-align: middle;
         }
 
@@ -359,12 +380,13 @@
         background: #eff4ff;
         border: 1px solid #c5d7f8;
         color: #2b5aad;
-        font-size: 0.78rem;
+        font-size: 0.77rem;
         font-weight: 700;
+        flex-shrink: 0;
     }
 
     .news-text-cell {
-        max-width: 340px;
+        max-width: 320px;
     }
 
     .news-text {
@@ -374,6 +396,7 @@
         overflow: hidden;
         line-height: 1.5;
         color: var(--text-main);
+        word-break: break-word;
     }
 
     /* ── Toggle Switch ── */
@@ -381,13 +404,13 @@
         display: inline-flex;
         flex-direction: column;
         align-items: center;
-        gap: 0.28rem;
+        gap: 0.25rem;
     }
 
     .toggle-switch {
         position: relative;
-        width: 40px;
-        height: 22px;
+        width: 38px;
+        height: 21px;
         display: inline-block;
         flex-shrink: 0;
     }
@@ -410,14 +433,14 @@
         .toggle-slider::before {
             content: '';
             position: absolute;
-            width: 16px;
-            height: 16px;
+            width: 15px;
+            height: 15px;
             left: 3px;
             top: 3px;
             background: #fff;
             border-radius: 50%;
             transition: transform 0.25s;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
         }
 
     .toggle-switch input:checked + .toggle-slider {
@@ -425,18 +448,18 @@
     }
 
         .toggle-switch input:checked + .toggle-slider::before {
-            transform: translateX(18px);
+            transform: translateX(17px);
         }
 
     .toggle-switch.loading .toggle-slider {
-        opacity: 0.6;
+        opacity: 0.55;
         cursor: wait;
     }
 
     .toggle-label {
-        font-size: 0.68rem;
+        font-size: 0.66rem;
         font-weight: 600;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.03em;
     }
 
         .toggle-label.active {
@@ -447,72 +470,65 @@
             color: #b53a2e;
         }
 
-    /* ── Action Buttons ── */
+    /* ── Buttons ── */
     .action-group {
         display: inline-flex;
-        gap: 0.35rem;
+        gap: 0.3rem;
         align-items: center;
         justify-content: center;
-        flex-wrap: wrap;
+    }
+
+    .btn-edit, .btn-delete {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.28rem;
+        border-radius: 7px;
+        font-size: 0.74rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.15s, border-color 0.15s, transform 0.12s;
+        white-space: nowrap;
+        padding: 0.32rem 0.65rem;
+        text-decoration: none;
+        border-width: 1px;
+        border-style: solid;
     }
 
     .btn-edit {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.3rem;
         background: #eff4ff;
-        border: 1px solid #c5d7f8;
+        border-color: #c5d7f8;
         color: #2b5aad;
-        border-radius: 7px;
-        padding: 0.34rem 0.7rem;
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-decoration: none;
-        cursor: pointer;
-        transition: background 0.15s, border-color 0.15s, transform 0.12s;
-        white-space: nowrap;
     }
-
-        .btn-edit:hover {
-            background: #dbeaff;
-            border-color: #93baf7;
-            color: #1a4a9a;
-            transform: translateY(-1px);
-        }
 
     .btn-delete {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.3rem;
         background: #fff1f0;
-        border: 1px solid #f8bcb7;
+        border-color: #f8bcb7;
         color: #b53a2e;
-        border-radius: 7px;
-        padding: 0.34rem 0.7rem;
-        font-size: 0.75rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background 0.15s, border-color 0.15s, transform 0.12s;
-        white-space: nowrap;
     }
 
-        .btn-delete:hover {
-            background: #ffe3e0;
-            border-color: #f5a09a;
-            transform: translateY(-1px);
-        }
+    .btn-edit:hover {
+        background: #dbeaff;
+        border-color: #93baf7;
+        color: #1a4a9a;
+        transform: translateY(-1px);
+    }
+
+    .btn-delete:hover {
+        background: #ffe3e0;
+        border-color: #f5a09a;
+        transform: translateY(-1px);
+    }
 
     /* ── Toast ── */
     .toast-container {
         position: fixed;
-        bottom: 1.2rem;
+        bottom: 1rem;
         right: 1rem;
         z-index: 9999;
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 0.45rem;
         pointer-events: none;
         max-width: calc(100vw - 2rem);
     }
@@ -520,15 +536,14 @@
     .toast {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.65rem 1rem;
+        gap: 0.45rem;
+        padding: 0.6rem 0.9rem;
         border-radius: 9px;
-        font-size: 0.82rem;
+        font-size: 0.81rem;
         font-weight: 600;
         box-shadow: 0 4px 18px rgba(0,0,0,0.14);
         pointer-events: auto;
         animation: toastIn 0.3s ease both;
-        white-space: nowrap;
     }
 
         .toast.success {
@@ -550,7 +565,7 @@
     @@keyframes toastIn {
         from {
             opacity: 0;
-            transform: translateY(10px);
+            transform: translateY(8px);
         }
 
         to {
@@ -567,20 +582,24 @@
 
         to {
             opacity: 0;
-            transform: translateY(10px);
+            transform: translateY(8px);
         }
     }
 
     /* ── Mobile Cards ── */
+    .desktop-table {
+        display: block;
+    }
+
     .mobile-list {
         display: none;
     }
 
     .news-card {
-        padding: 0.9rem 1rem;
+        padding: 0.85rem 0.9rem;
         border-bottom: 1px solid var(--border);
         display: flex;
-        gap: 0.75rem;
+        gap: 0.65rem;
         align-items: flex-start;
         transition: background 0.15s;
     }
@@ -590,7 +609,7 @@
         }
 
         .news-card:hover {
-            background: #f0f5fb;
+            background: #f4f7fc;
         }
 
     .news-card-body {
@@ -598,116 +617,213 @@
         min-width: 0;
     }
 
-    .news-card-text {
-        font-size: 0.86rem;
+    .news-card-title {
+        font-size: 0.85rem;
         line-height: 1.5;
         color: var(--text-main);
         margin-bottom: 0.55rem;
         display: -webkit-box;
-        -webkit-line-clamp: 3;
+        -webkit-line-clamp: 4;
         -webkit-box-orient: vertical;
         overflow: hidden;
+        word-break: break-word;
     }
 
-    .news-card-meta {
+    .news-card-footer {
         display: flex;
         align-items: center;
+        justify-content: space-between;
         gap: 0.5rem;
         flex-wrap: wrap;
     }
 
-    .news-card-actions {
-        display: flex;
+    .toggle-inline {
+        display: inline-flex;
         align-items: center;
-        gap: 0.4rem;
-        margin-left: auto;
-        flex-wrap: wrap;
+        gap: 0.42rem;
+    }
+
+    .card-actions {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
     }
 
     /* ── Empty State ── */
     .empty-state {
         text-align: center;
-        padding: 3.5rem 1.5rem;
+        padding: 3rem 1.5rem;
         color: var(--text-muted);
     }
 
         .empty-state .empty-icon {
-            font-size: 2.5rem;
+            font-size: 2.4rem;
             display: block;
-            margin-bottom: 0.7rem;
+            margin-bottom: 0.65rem;
             opacity: 0.5;
         }
 
         .empty-state p {
-            margin: 0 0 1.25rem;
-            font-size: 0.88rem;
+            margin-bottom: 1.2rem;
+            font-size: 0.87rem;
         }
 
-    /* ── Responsive Breakpoints ── */
-
-    /* Tablet */
-    @@media (max-width: 900px) {
-        .news-text-cell {
-            max-width: 260px;
-        }
-
-        .btn-edit span, .btn-delete span {
+    /* ══════════════════════════
+           TABLET
+        ══════════════════════════ */
+    @@media (max-width: 860px) {
+        .btn-txt {
             display: none;
         }
 
         .btn-edit, .btn-delete {
-            padding: 0.38rem 0.5rem;
+            padding: 0.35rem 0.45rem;
+        }
+
+        .news-text-cell {
+            max-width: 220px;
         }
     }
 
-    /* Mobile */
-    @@media (max-width: 680px) {
+    /* ══════════════════════════
+           MOBILE — switch to cards
+        ══════════════════════════ */
+    @@media screen and (max-width: 640px) {
         .desktop-table {
-            display: none;
+            display: none !important;
         }
 
         .mobile-list {
-            display: block;
+            display: block !important;
         }
-
-        .stats-bar {
-            grid-template-columns: repeat(3, 1fr);
+        /* Header */
+        .page-header {
+            flex-wrap: wrap;
             gap: 0.5rem;
+            margin-bottom: 0.85rem;
         }
 
-        .stat-card {
-            padding: 0.7rem 0.75rem;
+        .page-header-left h1 {
+            font-size: 1.05rem;
         }
 
-        .stat-value {
-            font-size: 1.25rem;
+        .page-header-left p {
+            font-size: 0.72rem;
         }
 
-        .stat-label {
-            font-size: 0.62rem;
+        .btn-add-text {
+            display: none;
+        }
+
+        .btn-add {
+            padding: 0.48rem 0.75rem;
+        }
+        /* Ticker */
+        .ticker-preview {
+            min-height: 38px;
+            border-radius: 8px;
+            margin-bottom: 1rem;
         }
 
         .ticker-label {
-            font-size: 0.62rem;
-            padding: 0 0.7rem;
+            font-size: 0.58rem;
+            padding: 0 0.6rem;
         }
 
         .ticker-scroll {
-            font-size: 0.76rem;
-            gap: 1.8rem;
+            font-size: 0.74rem;
+            gap: 1.4rem;
+        }
+        /* Stats */
+        .stats-bar {
+            gap: 0.45rem;
+            margin-bottom: 0.9rem;
         }
 
-        .page-header {
-            gap: 0.5rem;
+        .stat-card {
+            padding: 0.65rem 0.7rem;
+            border-radius: 10px;
         }
 
-        .btn-add .btn-add-text {
-            display: none;
+        .stat-label {
+            font-size: 0.6rem;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+        }
+        /* Toolbar */
+        .table-toolbar {
+            padding: 0.65rem 0.8rem;
+            gap: 0.45rem;
+        }
+
+        .search-box {
+            flex: 1;
+            max-width: none;
+        }
+
+            .search-box input {
+                width: 100%;
+                font-size: 0.8rem;
+            }
+
+        .table-count {
+            font-size: 0.75rem;
+        }
+        /* Cards */
+        .news-card {
+            padding: 0.8rem 0.85rem;
+            gap: 0.6rem;
+        }
+
+        .news-card-title {
+            font-size: 0.84rem;
+        }
+
+        .order-chip {
+            width: 24px;
+            height: 24px;
+            font-size: 0.72rem;
+            border-radius: 5px;
+        }
+        /* Toggle */
+        .toggle-inline {
+            gap: 0.38rem;
+        }
+
+        .toggle-switch {
+            width: 36px;
+            height: 20px;
+        }
+
+        .toggle-slider::before {
+            width: 14px;
+            height: 14px;
+        }
+
+        .toggle-switch input:checked + .toggle-slider::before {
+            transform: translateX(16px);
+        }
+
+        .toggle-label {
+            font-size: 0.64rem;
+        }
+        /* Card buttons */
+        .card-actions {
+            gap: 0.28rem;
+        }
+
+        .btn-edit, .btn-delete {
+            padding: 0.3rem 0.55rem;
+            font-size: 0.73rem;
         }
     }
 
-    /* Small Mobile */
-    @@media (max-width: 420px) {
+    /* ══════════════════════════
+           SMALL PHONE
+        ══════════════════════════ */
+    @@media screen and (max-width: 400px) {
         .stats-bar {
             grid-template-columns: 1fr 1fr;
         }
@@ -716,39 +832,27 @@
                 grid-column: 1 / -1;
             }
 
-        .table-toolbar {
-            flex-direction: column;
-            align-items: stretch;
-        }
-
-        .search-box input {
-            width: 100%;
-        }
-
-        .search-box {
-            width: 100%;
-        }
-
-        .table-count {
-            text-align: right;
-        }
-
         .news-card {
-            padding: 0.8rem 0.85rem;
-            gap: 0.6rem;
+            padding: 0.72rem 0.75rem;
         }
 
-        .news-card-meta {
+        .news-card-title {
+            font-size: 0.8rem;
+        }
+
+        .news-card-footer {
+            flex-direction: column;
+            align-items: flex-start;
             gap: 0.4rem;
         }
 
-        .news-card-actions {
-            gap: 0.3rem;
+        .card-actions {
+            margin-left: 0;
         }
 
         .btn-edit, .btn-delete {
-            padding: 0.32rem 0.55rem;
-            font-size: 0.73rem;
+            padding: 0.28rem 0.48rem;
+            font-size: 0.7rem;
         }
     }
 </style>
@@ -763,8 +867,7 @@
         {
             <div class="ticker-preview">
                 <div class="ticker-label">
-                    <span class="dot"></span>
-                    লাইভ
+                    <span class="dot"></span> লাইভ
                 </div>
                 <div class="ticker-scroll-wrapper">
                     <div class="ticker-scroll">
@@ -833,15 +936,15 @@
         }
         else
         {
-            <!-- Desktop Table -->
+            <!-- ── Desktop Table ── -->
             <div class="table-scroll desktop-table">
                 <table class="data-table" id="tickerTable">
                     <thead>
                         <tr>
-                            <th class="center" style="width:54px">ক্রম</th>
+                            <th class="center" style="width:50px">ক্রম</th>
                             <th>সংবাদ টেক্সট</th>
-                            <th class="center" style="width:110px">অবস্থা</th>
-                            <th class="center" style="width:155px">কার্যক্রম</th>
+                            <th class="center" style="width:105px">অবস্থা</th>
+                            <th class="center" style="width:145px">কার্যক্রম</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody">
@@ -853,8 +956,7 @@
                                 <td class="center">
                                     <div class="toggle-wrap">
                                         <label class="toggle-switch" id="toggle-label-@t.Id">
-                                            <input type="checkbox"
-                                                   id="toggle-@t.Id"
+                                            <input type="checkbox" id="toggle-@t.Id"
                                                    @(t.IsActive ? "checked" : "")
                                                    onchange="toggleStatus(@t.Id, this)" />
                                             <span class="toggle-slider"></span>
@@ -871,7 +973,7 @@
                                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                                             </svg>
-                                            <span>সম্পাদনা</span>
+                                            <span class="btn-txt">সম্পাদনা</span>
                                         </a>
                                         <form method="post" action="/Admin/TickerDelete/@t.Id" style="display:inline" onsubmit="return confirmDelete()">
                                             @Html.AntiForgeryToken()
@@ -880,7 +982,7 @@
                                                     <polyline points="3 6 5 6 21 6" />
                                                     <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
                                                 </svg>
-                                                <span>মুছুন</span>
+                                                <span class="btn-txt">মুছুন</span>
                                             </button>
                                         </form>
                                     </div>
@@ -891,20 +993,19 @@
                 </table>
             </div>
 
-            <!-- Mobile Cards -->
+            <!-- ── Mobile Cards ── -->
             <div class="mobile-list" id="mobileList">
                 @foreach (var t in Model.OrderBy(t => t.SortOrder))
                 {
                     <div class="news-card" data-text="@t.Text.ToLower()" data-id="@t.Id">
-                        <div class="order-chip" style="margin-top:3px;flex-shrink:0">@t.SortOrder</div>
+                        <div class="order-chip" style="margin-top:2px">@t.SortOrder</div>
                         <div class="news-card-body">
-                            <div class="news-card-text">@t.Text</div>
-                            <div class="news-card-meta">
+                            <div class="news-card-title">@t.Text</div>
+                            <div class="news-card-footer">
                                 <!-- Toggle -->
-                                <div style="display:inline-flex;align-items:center;gap:0.45rem;">
-                                    <label class="toggle-switch">
-                                        <input type="checkbox"
-                                               id="toggle-mob-@t.Id"
+                                <div class="toggle-inline">
+                                    <label class="toggle-switch" id="toggle-mob-label-@t.Id">
+                                        <input type="checkbox" id="toggle-mob-@t.Id"
                                                @(t.IsActive ? "checked" : "")
                                                onchange="toggleStatus(@t.Id, this)" />
                                         <span class="toggle-slider"></span>
@@ -914,7 +1015,7 @@
                                     </span>
                                 </div>
                                 <!-- Actions -->
-                                <div class="news-card-actions">
+                                <div class="card-actions">
                                     <a href="/Admin/TickerEdit/@t.Id" class="btn-edit">
                                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
@@ -965,15 +1066,16 @@
     }
 
     async function toggleStatus(id, checkbox) {
-        const isActive = checkbox.checked;
-        const label = document.getElementById(`toggle-label-${id}`);
-        const textEl = document.getElementById(`toggle-text-${id}`);
-        const mobTextEl = document.getElementById(`toggle-mob-text-${id}`);
-        const mobCheckbox = document.getElementById(`toggle-mob-${id}`);
+        const isActive    = checkbox.checked;
+        const deskLabel   = document.getElementById(`toggle-label-${id}`);
+        const deskText    = document.getElementById(`toggle-text-${id}`);
+        const mobLabel    = document.getElementById(`toggle-mob-label-${id}`);
+        const mobText     = document.getElementById(`toggle-mob-text-${id}`);
+        const deskCb      = document.getElementById(`toggle-${id}`);
+        const mobCb       = document.getElementById(`toggle-mob-${id}`);
 
-        if (label) label.classList.add('loading');
-        checkbox.disabled = true;
-        if (mobCheckbox) mobCheckbox.disabled = true;
+        [deskCb, mobCb].forEach(cb => { if (cb) cb.disabled = true; });
+        [deskLabel, mobLabel].forEach(l => { if (l) l.classList.add('loading'); });
 
         try {
             const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '';
@@ -983,12 +1085,11 @@
                 body: JSON.stringify({ isActive })
             });
 
-            if (!res.ok) throw new Error('Server error');
+            if (!res.ok) throw new Error('fail');
 
             tickerTexts[id].active = isActive;
-            if (mobCheckbox) mobCheckbox.checked = isActive;
-
-            [textEl, mobTextEl].forEach(el => {
+            [deskCb, mobCb].forEach(cb => { if (cb) cb.checked = isActive; });
+            [deskText, mobText].forEach(el => {
                 if (!el) return;
                 el.textContent = isActive ? 'সক্রিয়' : 'নিষ্ক্রিয়';
                 el.className = `toggle-label ${isActive ? 'active' : 'inactive'}`;
@@ -998,40 +1099,33 @@
             updateTickerPreview();
             showToast(isActive ? '✓ সক্রিয় করা হয়েছে' : '✓ নিষ্ক্রিয় করা হয়েছে', 'success');
 
-        } catch (e) {
-            checkbox.checked = !isActive;
-            if (mobCheckbox) mobCheckbox.checked = !isActive;
+        } catch {
+            [deskCb, mobCb].forEach(cb => { if (cb) cb.checked = !isActive; });
             tickerTexts[id].active = !isActive;
             showToast('ত্রুটি! আবার চেষ্টা করুন।', 'error');
         } finally {
-            if (label) label.classList.remove('loading');
-            checkbox.disabled = false;
-            if (mobCheckbox) mobCheckbox.disabled = false;
+            [deskCb, mobCb].forEach(cb => { if (cb) cb.disabled = false; });
+            [deskLabel, mobLabel].forEach(l => { if (l) l.classList.remove('loading'); });
         }
     }
 
     function updateStats() {
-        const active = Object.values(tickerTexts).filter(t => t.active).length;
-        const inactive = Object.values(tickerTexts).filter(t => !t.active).length;
-        const aEl = document.getElementById('activeCount');
-        const iEl = document.getElementById('inactiveCount');
-        if (aEl) aEl.textContent = active;
-        if (iEl) iEl.textContent = inactive;
+        const vals = Object.values(tickerTexts);
+        document.getElementById('activeCount').textContent  = vals.filter(t => t.active).length;
+        document.getElementById('inactiveCount').textContent = vals.filter(t => !t.active).length;
     }
 
     function updateTickerPreview() {
         const wrapper = document.getElementById('tickerPreviewWrapper');
-        const activeEntries = Object.entries(tickerTexts).filter(([, v]) => v.active);
+        const active  = Object.entries(tickerTexts).filter(([, v]) => v.active);
+        if (!active.length) { wrapper.innerHTML = ''; return; }
 
-        if (activeEntries.length === 0) { wrapper.innerHTML = ''; return; }
-
-        let items = '';
-        activeEntries.forEach(([, v]) => {
-            items += `<span>${v.text}</span><span class="ticker-sep">◆</span>`;
-        });
+        const items = active.map(([, v]) =>
+            `<span>${v.text}</span><span class="ticker-sep">◆</span>`
+        ).join('');
 
         wrapper.innerHTML = `
-            <div class="ticker-preview" style="margin-bottom:1.5rem">
+            <div class="ticker-preview" style="margin-bottom:1.25rem">
                 <div class="ticker-label"><span class="dot"></span>লাইভ</div>
                 <div class="ticker-scroll-wrapper">
                     <div class="ticker-scroll">${items}</div>
@@ -1044,24 +1138,26 @@
     }
 
     function filterRows() {
-        const q = document.getElementById('searchInput').value.toLowerCase();
-        const rows = document.querySelectorAll('#tableBody tr');
-        const cards = document.querySelectorAll('#mobileList .news-card');
-        let count = 0;
-        rows.forEach(r => {
-            const match = r.dataset.text.includes(q);
-            r.style.display = match ? '' : 'none';
-            if (match) count++;
-        });
-        cards.forEach(c => {
-            const match = c.dataset.text.includes(q);
-            c.style.display = match ? '' : 'none';
-            if (match) count++;
-        });
-        // avoid double counting
-        const visibleRows = [...document.querySelectorAll('#tableBody tr')].filter(r => r.style.display !== 'none').length;
-        const visibleCards = [...document.querySelectorAll('#mobileList .news-card')].filter(c => c.style.display !== 'none').length;
-        const total = window.innerWidth <= 680 ? visibleCards : visibleRows;
-        document.getElementById('countLabel').textContent = `${total} টি সংবাদ`;
+        const q        = document.getElementById('searchInput').value.toLowerCase();
+        const isMobile = window.innerWidth <= 640;
+        let visible    = 0;
+
+        if (isMobile) {
+            document.querySelectorAll('#mobileList .news-card').forEach(c => {
+                const show = c.dataset.text.includes(q);
+                c.style.display = show ? 'flex' : 'none';
+                if (show) visible++;
+            });
+        } else {
+            document.querySelectorAll('#tableBody tr').forEach(r => {
+                const show = r.dataset.text.includes(q);
+                r.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+        }
+
+        document.getElementById('countLabel').textContent = `${visible} টি সংবাদ`;
     }
+
+    window.addEventListener('resize', filterRows);
 </script>
