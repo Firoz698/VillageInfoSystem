@@ -44,7 +44,7 @@
         }
     }
 
-    /* ── Ticker ── */
+    /* ── Ticker Preview ── */
     .ticker-preview {
         background: linear-gradient(90deg, var(--red) 0%, #a52820 100%);
         border-radius: var(--radius);
@@ -419,6 +419,7 @@
             opacity: 0;
             width: 0;
             height: 0;
+            position: absolute;
         }
 
     .toggle-slider {
@@ -586,7 +587,8 @@
         }
     }
 
-    /* ── Mobile Cards ── */
+    /* ── Mobile / Desktop visibility ──
+           CSS দিয়ে control — JS window.innerWidth নয় ── */
     .desktop-table {
         display: block;
     }
@@ -668,9 +670,7 @@
             font-size: 0.87rem;
         }
 
-    /* ══════════════════════════
-           TABLET
-        ══════════════════════════ */
+    /* ══════════ TABLET ══════════ */
     @@media (max-width: 860px) {
         .btn-txt {
             display: none;
@@ -685,9 +685,7 @@
         }
     }
 
-    /* ══════════════════════════
-           MOBILE — switch to cards
-        ══════════════════════════ */
+    /* ══════════ MOBILE — card view ══════════ */
     @@media screen and (max-width: 640px) {
         .desktop-table {
             display: none !important;
@@ -696,7 +694,7 @@
         .mobile-list {
             display: block !important;
         }
-        /* Header */
+
         .page-header {
             flex-wrap: wrap;
             gap: 0.5rem;
@@ -718,7 +716,7 @@
         .btn-add {
             padding: 0.48rem 0.75rem;
         }
-        /* Ticker */
+
         .ticker-preview {
             min-height: 38px;
             border-radius: 8px;
@@ -734,7 +732,7 @@
             font-size: 0.74rem;
             gap: 1.4rem;
         }
-        /* Stats */
+
         .stats-bar {
             gap: 0.45rem;
             margin-bottom: 0.9rem;
@@ -752,7 +750,7 @@
         .stat-value {
             font-size: 1.2rem;
         }
-        /* Toolbar */
+
         .table-toolbar {
             padding: 0.65rem 0.8rem;
             gap: 0.45rem;
@@ -771,7 +769,7 @@
         .table-count {
             font-size: 0.75rem;
         }
-        /* Cards */
+
         .news-card {
             padding: 0.8rem 0.85rem;
             gap: 0.6rem;
@@ -787,7 +785,7 @@
             font-size: 0.72rem;
             border-radius: 5px;
         }
-        /* Toggle */
+
         .toggle-inline {
             gap: 0.38rem;
         }
@@ -809,7 +807,7 @@
         .toggle-label {
             font-size: 0.64rem;
         }
-        /* Card buttons */
+
         .card-actions {
             gap: 0.28rem;
         }
@@ -820,9 +818,7 @@
         }
     }
 
-    /* ══════════════════════════
-           SMALL PHONE
-        ══════════════════════════ */
+    /* ══════════ SMALL PHONE ══════════ */
     @@media screen and (max-width: 400px) {
         .stats-bar {
             grid-template-columns: 1fr 1fr;
@@ -955,13 +951,14 @@
                                 <td class="news-text-cell"><div class="news-text">@t.Text</div></td>
                                 <td class="center">
                                     <div class="toggle-wrap">
-                                        <label class="toggle-switch" id="toggle-label-@t.Id">
-                                            <input type="checkbox" id="toggle-@t.Id"
-                                                   @(t.IsActive ? "checked" : "")
-                                                   onchange="toggleStatus(@t.Id, this)" />
+                                        <label class="toggle-switch" id="desk-label-@t.Id">
+                                            <input type="checkbox"
+                                                   data-id="@t.Id"
+                                                   data-role="desk"
+                                                   @(t.IsActive ? "checked" : "") />
                                             <span class="toggle-slider"></span>
                                         </label>
-                                        <span class="toggle-label @(t.IsActive ? "active" : "inactive")" id="toggle-text-@t.Id">
+                                        <span class="toggle-label @(t.IsActive ? "active" : "inactive")" id="desk-text-@t.Id">
                                             @(t.IsActive ? "সক্রিয়" : "নিষ্ক্রিয়")
                                         </span>
                                     </div>
@@ -1002,19 +999,18 @@
                         <div class="news-card-body">
                             <div class="news-card-title">@t.Text</div>
                             <div class="news-card-footer">
-                                <!-- Toggle -->
                                 <div class="toggle-inline">
-                                    <label class="toggle-switch" id="toggle-mob-label-@t.Id">
-                                        <input type="checkbox" id="toggle-mob-@t.Id"
-                                               @(t.IsActive ? "checked" : "")
-                                               onchange="toggleStatus(@t.Id, this)" />
+                                    <label class="toggle-switch" id="mob-label-@t.Id">
+                                        <input type="checkbox"
+                                               data-id="@t.Id"
+                                               data-role="mob"
+                                               @(t.IsActive ? "checked" : "") />
                                         <span class="toggle-slider"></span>
                                     </label>
-                                    <span class="toggle-label @(t.IsActive ? "active" : "inactive")" id="toggle-mob-text-@t.Id">
+                                    <span class="toggle-label @(t.IsActive ? "active" : "inactive")" id="mob-text-@t.Id">
                                         @(t.IsActive ? "সক্রিয়" : "নিষ্ক্রিয়")
                                     </span>
                                 </div>
-                                <!-- Actions -->
                                 <div class="card-actions">
                                     <a href="/Admin/TickerEdit/@t.Id" class="btn-edit">
                                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1044,6 +1040,9 @@
 </div>
 
 <script>
+    // ─────────────────────────────────────────
+    // State: server থেকে initial data
+    // ─────────────────────────────────────────
     const tickerTexts = {
         @foreach (var t in Model)
         {
@@ -1051,77 +1050,109 @@
         }
     };
 
-    function showToast(msg, type = 'success') {
-        const c = document.getElementById('toastContainer');
-        const el = document.createElement('div');
-        el.className = `toast ${type}`;
-        el.innerHTML = type === 'success'
-            ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>${msg}`
-            : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>${msg}`;
-        c.appendChild(el);
-        setTimeout(() => {
-            el.classList.add('hide');
-            el.addEventListener('animationend', () => el.remove());
-        }, 3000);
-    }
+    // ─────────────────────────────────────────
+    // Event delegation — inline onchange নয়
+    // এতে CSS দিয়ে hidden থাকা desktop toggle
+    // mobile-এ fire করবে না
+    // ─────────────────────────────────────────
+    document.addEventListener('change', function (e) {
+        const cb = e.target;
+        if (!cb.matches('input[type="checkbox"][data-id]')) return;
 
-    async function toggleStatus(id, checkbox) {
-        const isActive    = checkbox.checked;
-        const deskLabel   = document.getElementById(`toggle-label-${id}`);
-        const deskText    = document.getElementById(`toggle-text-${id}`);
-        const mobLabel    = document.getElementById(`toggle-mob-label-${id}`);
-        const mobText     = document.getElementById(`toggle-mob-text-${id}`);
-        const deskCb      = document.getElementById(`toggle-${id}`);
-        const mobCb       = document.getElementById(`toggle-mob-${id}`);
+        const id     = parseInt(cb.dataset.id, 10);
+        const isActive = cb.checked;
+        handleToggle(id, isActive);
+    });
 
-        [deskCb, mobCb].forEach(cb => { if (cb) cb.disabled = true; });
-        [deskLabel, mobLabel].forEach(l => { if (l) l.classList.add('loading'); });
+    // ─────────────────────────────────────────
+    // Core toggle — একবারই API call হবে
+    // ─────────────────────────────────────────
+    async function handleToggle(id, isActive) {
+        // উভয় checkbox silently sync (change event fire না করে)
+        setCheckboxSilent(`desk-label-${id}`, isActive);
+        setCheckboxSilent(`mob-label-${id}`,  isActive);
+
+        // Loading state
+        setLoading(id, true);
 
         try {
             const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '';
             const res = await fetch(`/Admin/TickerToggle/${id}`, {
-                method: 'POST',
+                method : 'POST',
                 headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token },
-                body: JSON.stringify({ isActive })
+                body   : JSON.stringify({ isActive })
             });
 
-            if (!res.ok) throw new Error('fail');
+            if (!res.ok) throw new Error();
 
             tickerTexts[id].active = isActive;
-            [deskCb, mobCb].forEach(cb => { if (cb) cb.checked = isActive; });
-            [deskText, mobText].forEach(el => {
-                if (!el) return;
-                el.textContent = isActive ? 'সক্রিয়' : 'নিষ্ক্রিয়';
-                el.className = `toggle-label ${isActive ? 'active' : 'inactive'}`;
-            });
-
+            updateLabel(id, isActive);
             updateStats();
             updateTickerPreview();
             showToast(isActive ? '✓ সক্রিয় করা হয়েছে' : '✓ নিষ্ক্রিয় করা হয়েছে', 'success');
 
         } catch {
-            [deskCb, mobCb].forEach(cb => { if (cb) cb.checked = !isActive; });
-            tickerTexts[id].active = !isActive;
+            // Rollback
+            const prev = !isActive;
+            tickerTexts[id].active = prev;
+            setCheckboxSilent(`desk-label-${id}`, prev);
+            setCheckboxSilent(`mob-label-${id}`,  prev);
+            updateLabel(id, prev);
             showToast('ত্রুটি! আবার চেষ্টা করুন।', 'error');
+
         } finally {
-            [deskCb, mobCb].forEach(cb => { if (cb) cb.disabled = false; });
-            [deskLabel, mobLabel].forEach(l => { if (l) l.classList.remove('loading'); });
+            setLoading(id, false);
         }
     }
 
+    // checkbox-এর checked property programmatically set করে —
+    // এতে 'change' event trigger হয় না, তাই double-fire নেই
+    function setCheckboxSilent(labelId, checked) {
+        const label = document.getElementById(labelId);
+        if (!label) return;
+        const cb = label.querySelector('input[type="checkbox"]');
+        if (cb) cb.checked = checked;
+    }
+
+    function setLoading(id, loading) {
+        [`desk-label-${id}`, `mob-label-${id}`].forEach(lid => {
+            const label = document.getElementById(lid);
+            if (!label) return;
+            label.classList.toggle('loading', loading);
+            const cb = label.querySelector('input');
+            if (cb) cb.disabled = loading;
+        });
+    }
+
+    function updateLabel(id, isActive) {
+        [`desk-text-${id}`, `mob-text-${id}`].forEach(tid => {
+            const el = document.getElementById(tid);
+            if (!el) return;
+            el.textContent = isActive ? 'সক্রিয়' : 'নিষ্ক্রিয়';
+            el.className   = `toggle-label ${isActive ? 'active' : 'inactive'}`;
+        });
+    }
+
+    // ─────────────────────────────────────────
+    // Stats update
+    // ─────────────────────────────────────────
     function updateStats() {
         const vals = Object.values(tickerTexts);
-        document.getElementById('activeCount').textContent  = vals.filter(t => t.active).length;
+        document.getElementById('activeCount').textContent   = vals.filter(t => t.active).length;
         document.getElementById('inactiveCount').textContent = vals.filter(t => !t.active).length;
     }
 
+    // ─────────────────────────────────────────
+    // Ticker preview rebuild
+    // ─────────────────────────────────────────
     function updateTickerPreview() {
         const wrapper = document.getElementById('tickerPreviewWrapper');
         const active  = Object.entries(tickerTexts).filter(([, v]) => v.active);
+
         if (!active.length) { wrapper.innerHTML = ''; return; }
 
         const items = active.map(([, v]) =>
-            `<span>${v.text}</span><span class="ticker-sep">◆</span>`
+            `<span>${escHtml(v.text)}</span><span class="ticker-sep">◆</span>`
         ).join('');
 
         wrapper.innerHTML = `
@@ -1133,31 +1164,62 @@
             </div>`;
     }
 
+    function escHtml(str) {
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // ─────────────────────────────────────────
+    // Delete confirm
+    // ─────────────────────────────────────────
     function confirmDelete() {
         return confirm('এই সংবাদটি স্থায়ীভাবে মুছে ফেলবেন?');
     }
 
+    // ─────────────────────────────────────────
+    // Search / Filter — CSS visibility দেখে
+    // ─────────────────────────────────────────
     function filterRows() {
-        const q        = document.getElementById('searchInput').value.toLowerCase();
-        const isMobile = window.innerWidth <= 640;
-        let visible    = 0;
+        const q = document.getElementById('searchInput').value.toLowerCase();
 
-        if (isMobile) {
-            document.querySelectorAll('#mobileList .news-card').forEach(c => {
-                const show = c.dataset.text.includes(q);
-                c.style.display = show ? 'flex' : 'none';
-                if (show) visible++;
-            });
-        } else {
-            document.querySelectorAll('#tableBody tr').forEach(r => {
-                const show = r.dataset.text.includes(q);
-                r.style.display = show ? '' : 'none';
-                if (show) visible++;
-            });
-        }
+        // Desktop rows
+        let deskVisible = 0;
+        document.querySelectorAll('#tableBody tr').forEach(r => {
+            const show = r.dataset.text.includes(q);
+            r.style.display = show ? '' : 'none';
+            if (show) deskVisible++;
+        });
 
-        document.getElementById('countLabel').textContent = `${visible} টি সংবাদ`;
+        // Mobile cards
+        let mobVisible = 0;
+        document.querySelectorAll('#mobileList .news-card').forEach(c => {
+            const show = c.dataset.text.includes(q);
+            c.style.display = show ? 'flex' : 'none';
+            if (show) mobVisible++;
+        });
+
+        // যে view visible সেটার count দেখাও
+        const isMobile = window.getComputedStyle(
+            document.querySelector('.mobile-list')
+        ).display !== 'none';
+
+        document.getElementById('countLabel').textContent =
+            `${isMobile ? mobVisible : deskVisible} টি সংবাদ`;
     }
 
-    window.addEventListener('resize', filterRows);
+    // ─────────────────────────────────────────
+    // Toast
+    // ─────────────────────────────────────────
+    function showToast(msg, type = 'success') {
+        const c  = document.getElementById('toastContainer');
+        const el = document.createElement('div');
+        el.className = `toast ${type}`;
+        el.innerHTML = type === 'success'
+            ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>${msg}`
+            : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>${msg}`;
+        c.appendChild(el);
+        setTimeout(() => {
+            el.classList.add('hide');
+            el.addEventListener('animationend', () => el.remove());
+        }, 3000);
+    }
 </script>

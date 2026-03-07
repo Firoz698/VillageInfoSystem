@@ -31,26 +31,56 @@ namespace VillageInfoSystem.Controllers
             ViewBag.Tickers = tickers;
             ViewBag.Sliders = sliders;
             ViewBag.Institutions = institutions;
-
             return View();
         }
 
-        // ✅ NewsDetails Page
+        // All News Page (with category filter + pagination)
+        public async Task<IActionResult> AllNews(string? category, int page = 1)
+        {
+            const int pageSize = 9;
+
+            var query = _db.News.Where(n => n.IsActive);
+            if (!string.IsNullOrEmpty(category))
+                query = query.Where(n => n.Category == category);
+
+            var totalCount = await query.CountAsync();
+            var newsList = await query
+                .OrderByDescending(n => n.IsFeatured)
+                .ThenByDescending(n => n.PublishedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var categories = await _db.News
+                .Where(n => n.IsActive)
+                .Select(n => n.Category)
+                .Distinct()
+                .ToListAsync();
+
+            var info = await _db.VillageInfos.FirstOrDefaultAsync();
+
+            ViewBag.Info = info;
+            ViewBag.NewsList = newsList;
+            ViewBag.Categories = categories;
+            ViewBag.CurrentCategory = category;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+            ViewBag.TotalCount = totalCount;
+            return View();
+        }
+
+        // News Details Page
         public async Task<IActionResult> NewsDetails(int id)
         {
-            var news = await _db.News
-                .FirstOrDefaultAsync(n => n.Id == id && n.IsActive);
-
+            var news = await _db.News.FirstOrDefaultAsync(n => n.Id == id && n.IsActive);
             if (news == null) return NotFound();
 
-            // একই Category থেকে সম্পর্কিত সংবাদ (এই news বাদে, সর্বশেষ ৫টি)
             var relatedNews = await _db.News
                 .Where(n => n.IsActive && n.Id != id && n.Category == news.Category)
                 .OrderByDescending(n => n.PublishedAt)
                 .Take(5)
                 .ToListAsync();
 
-            // কম থাকলে অন্য news দিয়ে পূরণ
             if (relatedNews.Count < 3)
             {
                 var extraIds = relatedNews.Select(r => r.Id).ToList();
@@ -59,27 +89,23 @@ namespace VillageInfoSystem.Controllers
                     .OrderByDescending(n => n.PublishedAt)
                     .Take(5 - relatedNews.Count)
                     .ToListAsync();
-
                 relatedNews.AddRange(extra);
             }
 
             ViewBag.RelatedNews = relatedNews;
-
             return View(news);
         }
 
-        // ✅ Institution Details Page
+        // Institution Details Page
         public async Task<IActionResult> InstitutionDetails(int id)
         {
             var institution = await _db.Institutions
                 .Include(i => i.Members.OrderBy(m => m.SortOrder))
                 .FirstOrDefaultAsync(i => i.Id == id && i.IsActive);
-
             if (institution == null) return NotFound();
 
             var info = await _db.VillageInfos.FirstOrDefaultAsync();
             ViewBag.Info = info;
-
             return View(institution);
         }
 
