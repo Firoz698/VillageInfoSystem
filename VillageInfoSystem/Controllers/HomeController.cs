@@ -14,7 +14,7 @@ namespace VillageInfoSystem.Controllers
         {
             var info = await _db.VillageInfos.FirstOrDefaultAsync();
             var featuredNews = await _db.News.Where(n => n.IsActive && n.IsFeatured).OrderByDescending(n => n.PublishedAt).FirstOrDefaultAsync();
-            var newsList = await _db.News.Where(n => n.IsActive && !n.IsFeatured).OrderByDescending(n => n.PublishedAt).Take(5).ToListAsync();
+            var newsList = await _db.News.Where(n => n.IsActive && !n.IsFeatured).OrderByDescending(n => n.PublishedAt).Take(6).ToListAsync();
             var facilities = await _db.Facilities.Where(f => f.IsActive).OrderBy(f => f.SortOrder).ToListAsync();
             var committee = await _db.CommitteeMembers.Where(c => c.IsActive).OrderBy(c => c.SortOrder).ToListAsync();
             var gallery = await _db.GalleryItems.Where(g => g.IsActive).OrderBy(g => g.SortOrder).ToListAsync();
