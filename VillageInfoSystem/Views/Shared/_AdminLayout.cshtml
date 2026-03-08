@@ -49,11 +49,11 @@
         }
 
         /* ══════════════════════════════════════
-                   SIDEBAR
-                ══════════════════════════════════════ */
+                           SIDEBAR
+                        ══════════════════════════════════════ */
         .sidebar {
             width: var(--sidebar-w);
-            min-height: 100vh;
+            height: 100vh;
             background: linear-gradient(180deg, var(--green-deeper) 0%, #0d3520 50%, var(--green-dark) 100%);
             display: flex;
             flex-direction: column;
@@ -63,6 +63,7 @@
             z-index: 500;
             transition: transform 0.32s cubic-bezier(.4,0,.2,1);
             box-shadow: 4px 0 24px rgba(0,0,0,0.18);
+            overflow: hidden;
         }
 
             .sidebar.collapsed {
@@ -85,6 +86,7 @@
             display: flex;
             align-items: center;
             gap: 0.85rem;
+            flex-shrink: 0;
         }
 
         .sb-logo-icon {
@@ -123,6 +125,7 @@
             display: flex;
             align-items: center;
             gap: 0.7rem;
+            flex-shrink: 0;
         }
 
         .sb-avatar {
@@ -163,6 +166,7 @@
             flex: 1;
             padding: 0.5rem 0 1rem;
             overflow-y: auto;
+            min-height: 0; /* ✅ FIXED: scroll এখন কাজ করবে */
         }
 
             .sidebar-nav::-webkit-scrollbar {
@@ -241,7 +245,6 @@
             background: rgba(255,255,255,0.1);
         }
 
-        /* ✅ Sub-menu badge (count indicator) */
         .nav-badge {
             margin-left: auto;
             background: rgba(200,153,58,0.25);
@@ -256,6 +259,7 @@
         .sidebar-footer {
             padding: 1rem 1.1rem;
             border-top: 1px solid rgba(255,255,255,0.07);
+            flex-shrink: 0;
         }
 
         .sb-logout {
@@ -287,8 +291,8 @@
         }
 
         /* ══════════════════════════════════════
-                   MAIN WRAPPER
-                ══════════════════════════════════════ */
+                           MAIN WRAPPER
+                        ══════════════════════════════════════ */
         .main-wrapper {
             margin-left: var(--sidebar-w);
             flex: 1;
@@ -303,8 +307,8 @@
             }
 
         /* ══════════════════════════════════════
-                   TOPBAR
-                ══════════════════════════════════════ */
+                           TOPBAR
+                        ══════════════════════════════════════ */
         .topbar {
             height: var(--topbar-h);
             background: var(--white);
@@ -427,8 +431,8 @@
         }
 
         /* ══════════════════════════════════════
-                   PAGE CONTENT
-                ══════════════════════════════════════ */
+                           PAGE CONTENT
+                        ══════════════════════════════════════ */
         .page-content {
             flex: 1;
             padding: 1.8rem;
@@ -437,8 +441,8 @@
         }
 
         /* ══════════════════════════════════════
-                   ALERTS
-                ══════════════════════════════════════ */
+                           ALERTS
+                        ══════════════════════════════════════ */
         .alert {
             display: flex;
             align-items: center;
@@ -478,8 +482,8 @@
         }
 
         /* ══════════════════════════════════════
-                   CARDS
-                ══════════════════════════════════════ */
+                           CARDS
+                        ══════════════════════════════════════ */
         .card {
             background: var(--white);
             border-radius: var(--radius);
@@ -519,8 +523,8 @@
         }
 
         /* ══════════════════════════════════════
-                   STATS GRID
-                ══════════════════════════════════════ */
+                           STATS GRID
+                        ══════════════════════════════════════ */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
@@ -591,8 +595,8 @@
         }
 
         /* ══════════════════════════════════════
-                   TABLE
-                ══════════════════════════════════════ */
+                           TABLE
+                        ══════════════════════════════════════ */
         .table-wrap {
             overflow-x: auto;
             border-radius: var(--radius-sm);
@@ -632,8 +636,8 @@
         }
 
         /* ══════════════════════════════════════
-                   BUTTONS
-                ══════════════════════════════════════ */
+                           BUTTONS
+                        ══════════════════════════════════════ */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -720,8 +724,8 @@
         }
 
         /* ══════════════════════════════════════
-                   FORMS
-                ══════════════════════════════════════ */
+                           FORMS
+                        ══════════════════════════════════════ */
         .form-group {
             margin-bottom: 1.2rem;
         }
@@ -805,8 +809,8 @@
         }
 
         /* ══════════════════════════════════════
-                   BADGES
-                ══════════════════════════════════════ */
+                           BADGES
+                        ══════════════════════════════════════ */
         .badge {
             padding: 0.22rem 0.65rem;
             border-radius: var(--radius-full);
@@ -837,8 +841,8 @@
         }
 
         /* ══════════════════════════════════════
-                   PAGE HEADER
-                ══════════════════════════════════════ */
+                           PAGE HEADER
+                        ══════════════════════════════════════ */
         .page-header {
             display: flex;
             align-items: flex-start;
@@ -862,8 +866,8 @@
         }
 
         /* ══════════════════════════════════════
-                   MOBILE OVERLAY
-                ══════════════════════════════════════ */
+                           MOBILE OVERLAY
+                        ══════════════════════════════════════ */
         .sidebar-overlay {
             display: none;
             position: fixed;
@@ -878,8 +882,8 @@
             }
 
         /* ══════════════════════════════════════
-                   FOOTER
-                ══════════════════════════════════════ */
+                           FOOTER
+                        ══════════════════════════════════════ */
         .page-footer {
             padding: 1rem 1.8rem;
             text-align: center;
@@ -895,8 +899,8 @@
             }
 
         /* ══════════════════════════════════════
-                   RESPONSIVE
-                ══════════════════════════════════════ */
+                           RESPONSIVE
+                        ══════════════════════════════════════ */
         @@media (max-width:1024px) {
             .sidebar {
                 transform: translateX(-100%);
@@ -953,8 +957,8 @@
         }
 
         /* ══════════════════════════════════════
-                   SCROLLBAR
-                ══════════════════════════════════════ */
+                           SCROLLBAR
+                        ══════════════════════════════════════ */
         ::-webkit-scrollbar {
             width: 5px;
             height: 5px;
@@ -974,8 +978,8 @@
             }
 
         /* ══════════════════════════════════════
-                   MISC UTILS
-                ══════════════════════════════════════ */
+                           MISC UTILS
+                        ══════════════════════════════════════ */
         .text-muted {
             color: var(--text-muted);
         }
@@ -1097,7 +1101,7 @@
                 <span class="nav-icon">👥</span> কমিটি সদস্য
             </a>
 
-            <!-- ✅ নতুন: প্রতিষ্ঠান ── -->
+            <!-- ── প্রতিষ্ঠান ── -->
             <div class="nav-section-label">প্রতিষ্ঠান</div>
             <a href="/Admin/InstitutionList"
                class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString()?.Contains("Institution") == true ? "active" : "")">

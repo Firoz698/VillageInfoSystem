@@ -58,7 +58,204 @@
             font-size: 0.88rem;
             margin-bottom: 1.4rem;
         }
+
+    /* ── Institution Image ── */
+    .inst-img {
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        object-fit: cover;
+        border: 1.5px solid var(--border);
+        background: var(--cream);
+        display: block;
+    }
+
+    .inst-img-placeholder {
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        background: var(--green-muted);
+        border: 1.5px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    /* ── Toggle Switch ── */
+    .toggle-wrap {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .toggle-switch {
+        position: relative;
+        width: 46px;
+        height: 24px;
+        flex-shrink: 0;
+    }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        .toggle-switch .slider {
+            position: absolute;
+            inset: 0;
+            background: #dce8df;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background 0.25s;
+            border: 1.5px solid #c5d8c9;
+        }
+
+            .toggle-switch .slider::before {
+                content: '';
+                position: absolute;
+                width: 18px;
+                height: 18px;
+                left: 2px;
+                top: 50%;
+                transform: translateY(-50%);
+                background: white;
+                border-radius: 50%;
+                transition: transform 0.25s;
+                box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+            }
+
+        .toggle-switch input:checked + .slider {
+            background: var(--green);
+            border-color: var(--green-dark);
+        }
+
+            .toggle-switch input:checked + .slider::before {
+                transform: translateY(-50%) translateX(22px);
+            }
+
+    .toggle-label {
+        font-size: 0.78rem;
+        font-weight: 600;
+        min-width: 44px;
+        transition: color 0.2s;
+    }
+
+        .toggle-label.on {
+            color: var(--green);
+        }
+
+        .toggle-label.off {
+            color: var(--text-muted);
+        }
+
+    /* ── Spinner (loading) ── */
+    .toggle-spinner {
+        display: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-top-color: var(--green);
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+    }
+
+    @@keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* ── Toast ── */
+    #toast {
+        position: fixed;
+        bottom: 1.5rem;
+        right: 1.5rem;
+        padding: 0.7rem 1.2rem;
+        border-radius: 10px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: white;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+        z-index: 9999;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 0.3s, transform 0.3s;
+        pointer-events: none;
+    }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #toast.success {
+            background: var(--green);
+        }
+
+        #toast.error {
+            background: #c0392b;
+        }
+
+    /* ── Responsive Card View (Mobile) ── */
+    .inst-cards-mobile {
+        display: none;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .inst-card-m {
+        background: white;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        padding: 1rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .inst-card-m-top {
+        display: flex;
+        gap: 0.85rem;
+        align-items: flex-start;
+        margin-bottom: 0.75rem;
+    }
+
+    .inst-card-m-info h4 {
+        font-size: 0.97rem;
+        font-weight: 700;
+        color: var(--green-dark);
+        margin-bottom: 0.2rem;
+    }
+
+    .inst-card-m-info .meta {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+    }
+
+    .inst-card-m-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        border-top: 1px solid var(--border);
+        padding-top: 0.75rem;
+    }
+
+    @@media (max-width: 768px) {
+        .table-desktop {
+            display: none !important;
+        }
+
+        .inst-cards-mobile {
+            display: flex !important;
+        }
+    }
 </style>
+
+<!-- Toast -->
+<div id="toast"></div>
 
 <div class="page-header">
     <div class="page-header-left">
@@ -72,16 +269,18 @@
 {
     <div class="inst-stats">
         <div class="is-pill">🏛️ মোট: <strong>@Model.Count</strong></div>
-        <div class="is-pill">✅ সক্রিয়: <strong>@activeCount</strong></div>
+        <div class="is-pill">✅ সক্রিয়: <strong id="activeCountPill">@activeCount</strong></div>
         <div class="is-pill">👥 মোট সদস্য: <strong>@Model.Sum(i => i.Members.Count)</strong></div>
     </div>
 
-    <div class="card">
+    <!-- ══ DESKTOP TABLE ══ -->
+    <div class="card table-desktop">
         <div class="table-wrap">
             <table>
                 <thead>
                     <tr>
                         <th>#</th>
+                        <th>ছবি</th>
                         <th>আইকন</th>
                         <th>নাম</th>
                         <th>বিভাগ</th>
@@ -94,26 +293,39 @@
                 <tbody>
                     @foreach (var inst in Model)
                     {
-                        <tr>
+                        <tr id="row-@inst.Id">
                             <td style="color:var(--text-muted);font-size:0.82rem;">@inst.SortOrder</td>
-                            <td style="font-size:1.4rem;">@inst.Icon</td>
-                            <td style="font-weight:700;color:var(--green-dark);">@inst.Name</td>
                             <td>
-                                <span class="badge badge-blue">@inst.Category</span>
-                            </td>
-                            <td style="color:var(--text-muted);font-size:0.85rem;">@(string.IsNullOrEmpty(inst.FoundedYear) ? "—" : inst.FoundedYear)</td>
-                            <td>
-                                <span class="badge badge-success">@inst.Members.Count জন</span>
-                            </td>
-                            <td>
-                                @if (inst.IsActive)
+                                @if (!string.IsNullOrEmpty(inst.ImagePath))
                                 {
-                                    <span class="badge badge-success">● সক্রিয়</span>
+                                    <img src="@inst.ImagePath" alt="@inst.Name" class="inst-img" />
                                 }
                                 else
                                 {
-                                    <span class="badge badge-danger">○ নিষ্ক্রিয়</span>
+                                    <div class="inst-img-placeholder">@inst.Icon</div>
                                 }
+                            </td>
+                            <td style="font-size:1.4rem;">@inst.Icon</td>
+                            <td style="font-weight:700;color:var(--green-dark);">@inst.Name</td>
+                            <td><span class="badge badge-blue">@inst.Category</span></td>
+                            <td style="color:var(--text-muted);font-size:0.85rem;">
+                                @(string.IsNullOrEmpty(inst.FoundedYear) ? "—" : inst.FoundedYear)
+                            </td>
+                            <td><span class="badge badge-success">@inst.Members.Count জন</span></td>
+                            <td>
+                                <div class="toggle-wrap">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox"
+                                               @(inst.IsActive ? "checked" : "")
+                                               onchange="toggleStatus(@inst.Id, this)" />
+                                        <span class="slider"></span>
+                                    </label>
+                                    <span class="toggle-label @(inst.IsActive ? "on" : "off")"
+                                          id="lbl-@inst.Id">
+                                        @(inst.IsActive ? "সক্রিয়" : "নিষ্ক্রিয়")
+                                    </span>
+                                    <div class="toggle-spinner" id="spin-@inst.Id"></div>
+                                </div>
                             </td>
                             <td>
                                 <div class="actions-wrap">
@@ -133,6 +345,64 @@
             </table>
         </div>
     </div>
+
+    <!-- ══ MOBILE CARDS ══ -->
+    <div class="inst-cards-mobile">
+        @foreach (var inst in Model)
+        {
+            <div class="inst-card-m" id="card-@inst.Id">
+                <div class="inst-card-m-top">
+                    @if (!string.IsNullOrEmpty(inst.ImagePath))
+                    {
+                        <img src="@inst.ImagePath" alt="@inst.Name" class="inst-img" />
+                    }
+                    else
+                    {
+                        <div class="inst-img-placeholder">@inst.Icon</div>
+                    }
+                    <div class="inst-card-m-info">
+                        <h4>@inst.Icon @inst.Name</h4>
+                        <div class="meta">
+                            <span class="badge badge-blue">@inst.Category</span>
+                            &nbsp;
+                            @if (!string.IsNullOrEmpty(inst.FoundedYear))
+                            {
+                                <span>📅 @inst.FoundedYear</span>
+                            }
+                        </div>
+                        <div class="meta" style="margin-top:0.3rem;">
+                            👥 @inst.Members.Count জন সদস্য
+                        </div>
+                    </div>
+                </div>
+                <div class="inst-card-m-bottom">
+                    <div class="toggle-wrap">
+                        <label class="toggle-switch">
+                            <input type="checkbox"
+                                   @(inst.IsActive ? "checked" : "")
+                                   onchange="toggleStatus(@inst.Id, this)" />
+                            <span class="slider"></span>
+                        </label>
+                        <span class="toggle-label @(inst.IsActive ? "on" : "off")"
+                              id="lbl-m-@inst.Id">
+                            @(inst.IsActive ? "সক্রিয়" : "নিষ্ক্রিয়")
+                        </span>
+                        <div class="toggle-spinner" id="spin-m-@inst.Id"></div>
+                    </div>
+                    <div class="actions-wrap">
+                        <a href="/Admin/InstitutionEdit/@inst.Id" class="btn btn-edit btn-sm">✏️ সম্পাদনা</a>
+                        <form method="post" action="/Admin/InstitutionDelete"
+                              style="display:inline;"
+                              onsubmit="return confirm('এই প্রতিষ্ঠান মুছে ফেলবেন?')">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@inst.Id" />
+                            <button type="submit" class="btn btn-danger btn-sm">🗑️</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 }
 else
 {
@@ -143,3 +413,77 @@ else
         <a href="/Admin/InstitutionCreate" class="btn btn-primary">➕ প্রথম প্রতিষ্ঠান যোগ করুন</a>
     </div>
 }
+
+<script>
+    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+    async function toggleStatus(id, checkbox) {
+        const isActive = checkbox.checked;
+
+        // Show spinner, disable checkbox
+        checkbox.disabled = true;
+        showSpinner(id, true);
+
+        try {
+            const res = await fetch('/Admin/InstitutionToggleStatus', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': token ?? ''
+                },
+                body: JSON.stringify({ id: id, isActive: isActive })
+            });
+
+            if (!res.ok) throw new Error('Server error');
+
+            // Update label (desktop + mobile)
+            updateLabel(id, isActive);
+
+            // Update active count pill
+            updateActiveCount(isActive);
+
+            showToast(isActive ? '✅ সক্রিয় করা হয়েছে' : '○ নিষ্ক্রিয় করা হয়েছে', 'success');
+
+        } catch (e) {
+            // Revert on failure
+            checkbox.checked = !isActive;
+            showToast('⚠️ আপডেট ব্যর্থ হয়েছে', 'error');
+        } finally {
+            checkbox.disabled = false;
+            showSpinner(id, false);
+        }
+    }
+
+    function updateLabel(id, isActive) {
+        ['lbl-' + id, 'lbl-m-' + id].forEach(lid => {
+            const el = document.getElementById(lid);
+            if (!el) return;
+            el.textContent = isActive ? 'সক্রিয়' : 'নিষ্ক্রিয়';
+            el.className = 'toggle-label ' + (isActive ? 'on' : 'off');
+        });
+    }
+
+    function updateActiveCount(isActive) {
+        const pill = document.getElementById('activeCountPill');
+        if (!pill) return;
+        let count = parseInt(pill.textContent) || 0;
+        pill.textContent = isActive ? count + 1 : Math.max(0, count - 1);
+    }
+
+    function showSpinner(id, show) {
+        ['spin-' + id, 'spin-m-' + id].forEach(sid => {
+            const el = document.getElementById(sid);
+            if (el) el.style.display = show ? 'block' : 'none';
+        });
+    }
+
+    // Toast
+    let toastTimer;
+    function showToast(msg, type) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.className = 'show ' + type;
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => { t.className = ''; }, 2800);
+    }
+</script>
