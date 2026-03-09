@@ -1,0 +1,416 @@
+﻿@* ══════════════════════════════════════
+   Views/Admin/FundList.cshtml
+   ══════════════════════════════════════ *@
+@model List<VillageInfoSystem.Models.FundCampaign>
+@{
+    ViewData["Title"] = "ফান্ড ব্যবস্থাপনা";
+    Layout = "_AdminLayout";
+}
+
+<style>
+    .fund-header-stats {
+        display: flex;
+        gap: .9rem;
+        margin-bottom: 1.4rem;
+        flex-wrap: wrap;
+    }
+
+    .fhs-pill {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        padding: .52rem 1rem;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 50px;
+        font-size: .82rem;
+        color: var(--text-muted);
+        box-shadow: var(--shadow-sm);
+    }
+
+        .fhs-pill strong {
+            color: var(--green-dark);
+            font-size: .97rem;
+            font-weight: 800;
+        }
+
+    .campaign-row {
+        border-bottom: 1px solid #f0f5f1;
+    }
+
+        .campaign-row:last-child {
+            border-bottom: none;
+        }
+
+    .prog-bar-sm {
+        width: 100%;
+        height: 7px;
+        background: rgba(26,107,60,.1);
+        border-radius: 50px;
+        overflow: hidden;
+        margin-top: 4px;
+    }
+
+    .prog-fill-sm {
+        height: 100%;
+        background: linear-gradient(90deg,var(--green),var(--gold-light));
+        border-radius: 50px;
+    }
+
+    /* Donation status tabs */
+    .status-tabs {
+        display: flex;
+        gap: .5rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.2rem;
+    }
+
+    .st-tab {
+        padding: .38rem .9rem;
+        border-radius: 50px;
+        font-size: .78rem;
+        font-weight: 700;
+        border: 1.5px solid var(--border);
+        cursor: pointer;
+        background: white;
+        color: var(--text-muted);
+        transition: all .2s;
+        text-decoration: none;
+    }
+
+        .st-tab.active {
+            background: var(--green);
+            color: white;
+            border-color: var(--green);
+        }
+
+        .st-tab.pending {
+            border-color: #f39c12;
+            color: #f39c12;
+        }
+
+            .st-tab.pending.active {
+                background: #f39c12;
+                color: white;
+            }
+
+        .st-tab.accepted {
+            border-color: #27ae60;
+            color: #27ae60;
+        }
+
+            .st-tab.accepted.active {
+                background: #27ae60;
+                color: white;
+            }
+
+        .st-tab.rejected {
+            border-color: #c0392b;
+            color: #c0392b;
+        }
+
+            .st-tab.rejected.active {
+                background: #c0392b;
+                color: white;
+            }
+
+    .status-badge-pending {
+        background: #fef9e7;
+        color: #f39c12;
+        border: 1px solid #fdeaa7;
+    }
+
+    .status-badge-accepted {
+        background: #e8f8ee;
+        color: #1a7a3c;
+        border: 1px solid #b8e8c8;
+    }
+
+    .status-badge-rejected {
+        background: #fdeaea;
+        color: #c0392b;
+        border: 1px solid #f5c6c6;
+    }
+
+    .donor-name {
+        font-weight: 700;
+        color: var(--green-dark);
+        font-size: .9rem;
+    }
+
+    .donor-meta {
+        font-size: .78rem;
+        color: var(--text-muted);
+        margin-top: 2px;
+    }
+
+    .amount-cell {
+        font-weight: 800;
+        color: var(--green-dark);
+        font-size: .95rem;
+    }
+
+    .txn-id {
+        font-size: .78rem;
+        color: var(--text-muted);
+        font-family: monospace;
+    }
+
+    /* Toggle switch (reuse from institution list) */
+    .toggle-switch {
+        position: relative;
+        width: 46px;
+        height: 24px;
+        flex-shrink: 0
+    }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute
+        }
+
+        .toggle-switch .slider {
+            position: absolute;
+            inset: 0;
+            background: #dce8df;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background .25s;
+            border: 1.5px solid #c5d8c9
+        }
+
+            .toggle-switch .slider::before {
+                content: '';
+                position: absolute;
+                width: 18px;
+                height: 18px;
+                left: 2px;
+                top: 50%;
+                transform: translateY(-50%);
+                background: white;
+                border-radius: 50%;
+                transition: transform .25s;
+                box-shadow: 0 1px 4px rgba(0,0,0,.18)
+            }
+
+        .toggle-switch input:checked + .slider {
+            background: var(--green);
+            border-color: var(--green-dark)
+        }
+
+            .toggle-switch input:checked + .slider::before {
+                transform: translateY(-50%) translateX(22px)
+            }
+
+    #toast {
+        position: fixed;
+        bottom: 1.5rem;
+        right: 1.5rem;
+        padding: .7rem 1.2rem;
+        border-radius: 10px;
+        font-size: .85rem;
+        font-weight: 600;
+        color: white;
+        box-shadow: 0 4px 20px rgba(0,0,0,.18);
+        z-index: 9999;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity .3s,transform .3s;
+        pointer-events: none
+    }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateY(0)
+        }
+
+        #toast.success {
+            background: var(--green)
+        }
+
+        #toast.error {
+            background: #c0392b
+        }
+
+    .action-form-inline {
+        display: inline;
+    }
+</style>
+
+<div id="toast"></div>
+
+<div class="page-header">
+    <div class="page-header-left">
+        <h2>💰 ফান্ড ব্যবস্থাপনা</h2>
+        <p>সকল ফান্ড ক্যাম্পেইন ও অনুদান আবেদন পরিচালনা</p>
+    </div>
+    <a href="/Admin/FundCreate" class="btn btn-primary">➕ নতুন ফান্ড</a>
+</div>
+
+@{
+    decimal totalGoal = Model.Sum(c => c.GoalAmount);
+    decimal totalColl = Model.Sum(c => c.CollectedAmount);
+    int totalApps = Model.Sum(c => c.Applications.Count);
+    int pendingApps = Model.Sum(c => c.Applications.Count(a => a.Status == "pending"));
+}
+
+<div class="fund-header-stats">
+    <div class="fhs-pill">💰 মোট ফান্ড: <strong>@Model.Count</strong></div>
+    <div class="fhs-pill">🎯 মোট লক্ষ্য: <strong>৳@totalGoal.ToString("N0")</strong></div>
+    <div class="fhs-pill">💚 সংগৃহীত: <strong>৳@totalColl.ToString("N0")</strong></div>
+    <div class="fhs-pill">📋 মোট আবেদন: <strong>@totalApps</strong></div>
+    @if (pendingApps > 0)
+    {
+        <div class="fhs-pill" style="border-color:#f39c12;color:#f39c12">
+            ⏳ পেন্ডিং: <strong>@pendingApps</strong>
+        </div>
+    }
+</div>
+
+<!-- ── Campaign list ── -->
+@foreach (var camp in Model)
+{
+    decimal pct = camp.GoalAmount > 0 ? Math.Min(100, Math.Round(camp.CollectedAmount / camp.GoalAmount * 100, 1)) : 0;
+    var pending = camp.Applications.Where(a => a.Status == "pending").ToList();
+    var accepted = camp.Applications.Where(a => a.Status == "accepted").ToList();
+    var rejected = camp.Applications.Where(a => a.Status == "rejected").ToList();
+
+    <div class="card" style="margin-bottom:1.6rem">
+        <!-- Campaign header row -->
+        <div class="card-header">
+            <div class="card-title">
+                <div class="card-title-icon">@camp.Icon</div>
+                @camp.Title
+                @if (!camp.IsActive)
+                {
+                    <span class="badge badge-danger" style="margin-left:.5rem">নিষ্ক্রিয়</span>
+                }
+            </div>
+            <div class="d-flex gap-1 flex-wrap align-center">
+                <!-- Active toggle -->
+                <label class="toggle-switch" title="সক্রিয়/নিষ্ক্রিয়">
+                    <input type="checkbox" @(camp.IsActive ? "checked" : "")
+                           onchange="toggleCampaign(@camp.Id, this)" />
+                    <span class="slider"></span>
+                </label>
+                <a href="/Admin/FundEdit/@camp.Id" class="btn btn-edit btn-sm">✏️ সম্পাদনা</a>
+                <form method="post" action="/Admin/FundDelete" class="action-form-inline"
+                      onsubmit="return confirm('এই ফান্ড মুছে ফেলবেন? সকল আবেদনও মুছে যাবে।')">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@camp.Id" />
+                    <button type="submit" class="btn btn-danger btn-sm">🗑️</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Progress -->
+        <div style="margin-bottom:1.2rem">
+            <div style="display:flex;justify-content:space-between;font-size:.8rem;font-weight:700;color:var(--green-dark);margin-bottom:.4rem">
+                <span>@pct% সম্পন্ন</span>
+                <span style="color:var(--text-muted)">৳@camp.CollectedAmount.ToString("N0") / ৳@camp.GoalAmount.ToString("N0")</span>
+            </div>
+            <div class="prog-bar-sm"><div class="prog-fill-sm" style="width:@pct%"></div></div>
+        </div>
+
+        <!-- Donation applications tabs -->
+        @if (camp.Applications.Any())
+        {
+            <div class="status-tabs">
+                <span class="st-tab active" onclick="showTab(this, 'tab-all-@camp.Id')">
+                    সব (@camp.Applications.Count)
+                </span>
+                <span class="st-tab pending @(pending.Any() ? "" : "opacity-40")"
+                      onclick="showTab(this, 'tab-pending-@camp.Id')">
+                    ⏳ পেন্ডিং (@pending.Count)
+                </span>
+                <span class="st-tab accepted" onclick="showTab(this, 'tab-accepted-@camp.Id')">
+                    ✅ গৃহীত (@accepted.Count)
+                </span>
+                <span class="st-tab rejected" onclick="showTab(this, 'tab-rejected-@camp.Id')">
+                    ❌ প্রত্যাখ্যাত (@rejected.Count)
+                </span>
+            </div>
+
+            <!-- All tab -->
+            <div id="tab-all-@camp.Id" class="tab-content">
+                @await Html.PartialAsync("_DonationTable", camp.Applications.OrderByDescending(a => a.AppliedAt).ToList())
+            </div>
+            <div id="tab-pending-@camp.Id" class="tab-content" style="display:none">
+                @await Html.PartialAsync("_DonationTable", pending.OrderByDescending(a => a.AppliedAt).ToList())
+            </div>
+            <div id="tab-accepted-@camp.Id" class="tab-content" style="display:none">
+                @await Html.PartialAsync("_DonationTable", accepted.OrderByDescending(a => a.AppliedAt).ToList())
+            </div>
+            <div id="tab-rejected-@camp.Id" class="tab-content" style="display:none">
+                @await Html.PartialAsync("_DonationTable", rejected.OrderByDescending(a => a.AppliedAt).ToList())
+            </div>
+        }
+        else
+        {
+            <div style="text-align:center;padding:2rem;color:var(--text-muted);font-size:.88rem">
+                📭 এখনো কোনো আবেদন নেই
+            </div>
+        }
+    </div>
+}
+
+@if (!Model.Any())
+{
+    <div class="empty-box" style="background:white;border-radius:var(--radius);border:2px dashed var(--border);padding:4rem 2rem;text-align:center">
+        <span style="font-size:3.5rem;display:block;margin-bottom:1rem;opacity:.35">💰</span>
+        <h4 style="color:var(--green-dark);font-size:1.1rem;margin-bottom:.5rem">কোনো ফান্ড নেই</h4>
+        <p style="color:var(--text-muted);font-size:.88rem;margin-bottom:1.4rem">নতুন ফান্ড ক্যাম্পেইন তৈরি করুন</p>
+        <a href="/Admin/FundCreate" class="btn btn-primary">➕ নতুন ফান্ড তৈরি করুন</a>
+    </div>
+}
+
+<script>
+    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+    function showTab(tabEl, tabId) {
+        const parent = tabEl.closest('.card');
+        parent.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+        parent.querySelectorAll('.st-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(tabId).style.display = '';
+        tabEl.classList.add('active');
+    }
+
+    async function toggleCampaign(id, cb) {
+        cb.disabled = true;
+        try {
+            const res = await fetch('/Admin/FundToggle', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token ?? '' },
+                body: JSON.stringify({ id, isActive: cb.checked })
+            });
+            if (!res.ok) throw new Error();
+            showToast(cb.checked ? '✅ ফান্ড সক্রিয় হয়েছে' : '○ নিষ্ক্রিয় হয়েছে', 'success');
+        } catch { cb.checked = !cb.checked; showToast('⚠️ আপডেট ব্যর্থ', 'error'); }
+        finally { cb.disabled = false; }
+    }
+
+    async function updateDonation(id, status) {
+        const note = status === 'rejected'
+            ? (prompt('প্রত্যাখ্যানের কারণ (ঐচ্ছিক):') ?? '')
+            : '';
+        try {
+            const res = await fetch('/Admin/DonationUpdateStatus', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token ?? '' },
+                body: JSON.stringify({ id, status, adminNote: note })
+            });
+            if (!res.ok) throw new Error();
+            showToast('✅ সফলভাবে আপডেট হয়েছে', 'success');
+            setTimeout(() => location.reload(), 1000);
+        } catch { showToast('⚠️ আপডেট ব্যর্থ', 'error'); }
+    }
+
+    let _t;
+    function showToast(msg, type) {
+        const t = document.getElementById('toast');
+        t.textContent = msg; t.className = 'show ' + type;
+        clearTimeout(_t); _t = setTimeout(() => t.className = '', 2800);
+    }
+</script>

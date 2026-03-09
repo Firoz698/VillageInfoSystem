@@ -1,0 +1,687 @@
+﻿@model VillageInfoSystem.Models.FundCampaign
+@{
+    ViewData["Title"] = "অনুদান আবেদন";
+    Layout = null; // নিজস্ব layout, অথবা আপনার public layout set করুন
+    var info = ViewBag.Info as VillageInfoSystem.Models.VillageInfo;
+    decimal pct = Model.GoalAmount > 0
+        ? Math.Min(100, Math.Round(Model.CollectedAmount / Model.GoalAmount * 100, 1))
+        : 0;
+}
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>অনুদান আবেদন — @Model.Title</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #1a6b3c;
+            --green-dark: #0f4226;
+            --green-deeper: #082818;
+            --green-light: #2d9b5a;
+            --gold: #c8993a;
+            --gold-light: #e8b84b;
+            --cream: #f5f7f5;
+            --white: #fff;
+            --text: #1c2b1e;
+            --text-light: #6b8070;
+            --border: #e2ece5;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --shadow-sm: 0 1px 4px rgba(0,0,0,.06);
+            --shadow-md: 0 4px 20px rgba(0,0,0,.08);
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        html {
+            font-size: 15px
+        }
+
+        body {
+            font-family: 'Hind Siliguri',sans-serif;
+            background: var(--cream);
+            color: var(--text);
+            min-height: 100vh
+        }
+
+        /* ── top nav ── */
+        .top-nav {
+            background: var(--green-deeper);
+            padding: .9rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem
+        }
+
+            .top-nav a {
+                color: rgba(255,255,255,.7);
+                text-decoration: none;
+                font-size: .85rem;
+                transition: color .2s
+            }
+
+                .top-nav a:hover {
+                    color: var(--gold-light)
+                }
+
+            .top-nav .sep {
+                color: rgba(255,255,255,.25)
+            }
+
+            .top-nav .page-title {
+                color: white;
+                font-weight: 700;
+                font-size: .9rem;
+                margin-left: auto
+            }
+
+        /* ── wrapper ── */
+        .page-wrap {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1.2rem;
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 2rem;
+            align-items: start
+        }
+
+        /* ── campaign info card ── */
+        .camp-info-card {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 1.5rem
+        }
+
+        .camp-header {
+            background: linear-gradient(135deg,var(--green-deeper),var(--green));
+            padding: 2rem 1.8rem;
+            color: white
+        }
+
+        .camp-icon-wrap {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            background: rgba(255,255,255,.12);
+            border: 2px solid rgba(255,255,255,.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.2rem
+        }
+
+        .camp-header h2 {
+            font-family: 'Playfair Display',serif;
+            font-size: 1.35rem;
+            font-weight: 900;
+            line-height: 1.3;
+            margin-bottom: .5rem
+        }
+
+        .camp-header p {
+            color: rgba(255,255,255,.75);
+            font-size: .86rem;
+            line-height: 1.65
+        }
+
+        .camp-body {
+            padding: 1.5rem 1.8rem
+        }
+
+        .camp-progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: .8rem;
+            font-weight: 700;
+            color: var(--green-dark);
+            margin-bottom: .45rem
+        }
+
+            .camp-progress-label span:last-child {
+                color: var(--text-light)
+            }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(26,107,60,.1);
+            border-radius: 50px;
+            overflow: hidden;
+            margin-bottom: .8rem
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg,var(--green),var(--gold-light));
+            border-radius: 50px
+        }
+
+        .camp-nums {
+            display: flex;
+            justify-content: space-between;
+            font-size: .82rem
+        }
+
+        .collected {
+            color: var(--green);
+            font-weight: 800
+        }
+
+        .goal-amt {
+            color: var(--text-light)
+        }
+
+        .camp-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 1.2rem 0
+        }
+
+        .camp-stat-row {
+            display: flex;
+            gap: 1rem;
+            margin-top: .5rem
+        }
+
+        .camp-stat {
+            flex: 1;
+            text-align: center;
+            padding: .8rem;
+            background: var(--cream);
+            border-radius: 10px;
+            border: 1px solid var(--border)
+        }
+
+        .camp-stat-num {
+            font-family: 'Playfair Display',serif;
+            font-size: 1.25rem;
+            font-weight: 900;
+            color: var(--green-dark);
+            display: block
+        }
+
+        .camp-stat-lbl {
+            font-size: .72rem;
+            color: var(--text-light)
+        }
+
+        /* ── form card ── */
+        .form-card {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
+            overflow: hidden
+        }
+
+        .form-card-header {
+            background: linear-gradient(135deg,var(--green),var(--green-light));
+            padding: 1.4rem 1.8rem
+        }
+
+            .form-card-header h3 {
+                font-family: 'Playfair Display',serif;
+                font-size: 1.2rem;
+                font-weight: 900;
+                color: white
+            }
+
+            .form-card-header p {
+                color: rgba(255,255,255,.75);
+                font-size: .82rem;
+                margin-top: .2rem
+            }
+
+        .form-body {
+            padding: 1.8rem
+        }
+
+        .form-group {
+            margin-bottom: 1.15rem
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 700;
+            color: var(--green-dark);
+            margin-bottom: .38rem;
+            font-size: .86rem
+        }
+
+        .req {
+            color: #e74c3c;
+            margin-left: 2px
+        }
+
+        .form-control {
+            width: 100%;
+            padding: .68rem .95rem;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: 'Hind Siliguri',sans-serif;
+            font-size: .9rem;
+            color: var(--text);
+            background: white;
+            transition: all .2s
+        }
+
+            .form-control:focus {
+                outline: none;
+                border-color: var(--green);
+                box-shadow: 0 0 0 3px rgba(26,107,60,.1)
+            }
+
+            .form-control::placeholder {
+                color: #b0c0b5
+            }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 90px
+        }
+
+        .form-hint {
+            font-size: .74rem;
+            color: var(--text-light);
+            margin-top: .25rem
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem
+        }
+
+        /* payment method */
+        .pay-options {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: .7rem;
+            margin-top: .45rem
+        }
+
+        .pay-opt {
+            position: relative
+        }
+
+            .pay-opt input[type=radio] {
+                position: absolute;
+                opacity: 0;
+                width: 0;
+                height: 0
+            }
+
+            .pay-opt label {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: .35rem;
+                padding: .75rem .5rem;
+                border: 1.5px solid var(--border);
+                border-radius: 10px;
+                cursor: pointer;
+                transition: all .2s;
+                font-size: .8rem;
+                font-weight: 600;
+                color: var(--text-light)
+            }
+
+                .pay-opt label .pay-icon {
+                    font-size: 1.5rem
+                }
+
+            .pay-opt input:checked + label {
+                border-color: var(--green);
+                background: rgba(26,107,60,.06);
+                color: var(--green)
+            }
+
+        /* amount quick pick */
+        .amount-quick {
+            display: flex;
+            gap: .55rem;
+            flex-wrap: wrap;
+            margin-top: .5rem
+        }
+
+        .aq-btn {
+            padding: .38rem .85rem;
+            border: 1.5px solid var(--border);
+            border-radius: 50px;
+            font-size: .78rem;
+            font-weight: 700;
+            cursor: pointer;
+            background: white;
+            color: var(--text-light);
+            transition: all .2s;
+            font-family: 'Hind Siliguri',sans-serif
+        }
+
+            .aq-btn:hover, .aq-btn.active {
+                border-color: var(--green);
+                background: rgba(26,107,60,.07);
+                color: var(--green)
+            }
+
+        /* submit */
+        .submit-btn {
+            width: 100%;
+            padding: .85rem;
+            background: linear-gradient(135deg,var(--green),var(--green-light));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Hind Siliguri',sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 6px 22px rgba(26,107,60,.28);
+            transition: all .25s;
+            margin-top: .5rem
+        }
+
+            .submit-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 32px rgba(26,107,60,.38)
+            }
+
+            .submit-btn:active {
+                transform: scale(.98)
+            }
+
+        /* validation errors */
+        .field-error {
+            color: #c0392b;
+            font-size: .76rem;
+            margin-top: .25rem;
+            display: flex;
+            align-items: center;
+            gap: .3rem
+        }
+
+        .alert-danger {
+            background: #fdf0ef;
+            color: #c0392b;
+            border: 1px solid #f8c0c0;
+            border-left: 4px solid #e74c3c;
+            padding: .85rem 1.1rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 1.2rem;
+            font-size: .88rem
+        }
+
+        /* success */
+        .success-wrap {
+            text-align: center;
+            padding: 3rem 2rem
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            display: block
+        }
+
+        .success-wrap h3 {
+            font-family: 'Playfair Display',serif;
+            font-size: 1.4rem;
+            color: var(--green-dark);
+            margin-bottom: .5rem
+        }
+
+        .success-wrap p {
+            color: var(--text-light);
+            font-size: .9rem;
+            line-height: 1.7
+        }
+
+        .success-id {
+            display: inline-block;
+            margin: .8rem 0;
+            padding: .4rem 1.2rem;
+            background: rgba(26,107,60,.08);
+            border: 1px solid rgba(26,107,60,.2);
+            border-radius: 50px;
+            font-weight: 700;
+            color: var(--green-dark);
+            font-size: .9rem
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: .45rem;
+            margin-top: 1.2rem;
+            background: linear-gradient(135deg,var(--green),var(--green-light));
+            color: white;
+            padding: .72rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: .9rem;
+            text-decoration: none;
+            box-shadow: 0 4px 16px rgba(26,107,60,.28);
+            transition: all .25s
+        }
+
+            .back-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 24px rgba(26,107,60,.38);
+                color: white
+            }
+
+        @@media(max-width:768px) {
+            .page-wrap {
+                grid-template-columns: 1fr
+            }
+
+            .camp-info-card {
+                position: static
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr
+            }
+        }
+
+        @@media(max-width:480px) {
+            .pay-options {
+                grid-template-columns: 1fr 1fr
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- top nav -->
+    <div class="top-nav">
+        <a href="/">🏠 হোম</a>
+        <span class="sep">›</span>
+        <a href="/#fund">ফান্ড</a>
+        <span class="sep">›</span>
+        <span style="color:rgba(255,255,255,.9)">অনুদান আবেদন</span>
+        <span class="page-title">@Model.Title</span>
+    </div>
+
+    <div class="page-wrap">
+
+        <!-- ── Campaign info (right/top) ── -->
+        <div class="camp-info-card" style="order:2">
+            <div class="camp-header">
+                <div class="camp-icon-wrap">@Model.Icon</div>
+                <h2>@Model.Title</h2>
+                <p>@Model.Description</p>
+            </div>
+            <div class="camp-body">
+                <div class="camp-progress-label">
+                    <span>@pct% সম্পন্ন</span>
+                    <span>লক্ষ্যমাত্রা</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width:@pct%"></div>
+                </div>
+                <div class="camp-nums">
+                    <span class="collected">💚 ৳@Model.CollectedAmount.ToString("N0")</span>
+                    <span class="goal-amt">লক্ষ্য ৳@Model.GoalAmount.ToString("N0")</span>
+                </div>
+                <div class="camp-divider"></div>
+                <div class="camp-stat-row">
+                    <div class="camp-stat">
+                        <span class="camp-stat-num">@Model.Applications.Count(a => a.Status == "accepted")</span>
+                        <div class="camp-stat-lbl">গৃহীত দান</div>
+                    </div>
+                    <div class="camp-stat">
+                        <span class="camp-stat-num">@Model.Applications.Count(a => a.Status == "pending")</span>
+                        <div class="camp-stat-lbl">পেন্ডিং</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Application Form ── -->
+        <div class="form-card" style="order:1">
+
+            @if (TempData["DonateSuccess"] != null)
+            {
+                <div class="success-wrap">
+                    <span class="success-icon">✅</span>
+                    <h3>আবেদন সফলভাবে জমা হয়েছে!</h3>
+                    <p>আপনার অনুদানের আবেদন আমরা পেয়েছি।<br>Admin যাচাই করার পর আপনাকে জানানো হবে।</p>
+                    <div class="success-id">আবেদন নম্বর: #@TempData["DonateId"]</div>
+                    <br>
+                    <a href="/" class="back-btn">🏠 হোমে ফিরুন</a>
+                </div>
+            }
+            else
+            {
+                <div class="form-card-header">
+                    <h3>💚 অনুদান আবেদন ফর্ম</h3>
+                    <p>নিচের তথ্যগুলো পূরণ করে আবেদন জমা দিন</p>
+                </div>
+                <div class="form-body">
+
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert-danger">⚠️ @ViewBag.Error</div>
+                    }
+
+                    <form method="post" action="/Home/DonateApply/@Model.Id" novalidate>
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">পূর্ণ নাম <span class="req">*</span></label>
+                                <input type="text" name="FullName" class="form-control" placeholder="আপনার পুরো নাম" required />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">মোবাইল নম্বর <span class="req">*</span></label>
+                                <input type="tel" name="Phone" class="form-control" placeholder="01XXXXXXXXX" required />
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">ইমেইল (ঐচ্ছিক)</label>
+                                <input type="email" name="Email" class="form-control" placeholder="example@email.com" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">ঠিকানা <span class="req">*</span></label>
+                                <input type="text" name="Address" class="form-control" placeholder="গ্রাম, উপজেলা, জেলা" required />
+                            </div>
+                        </div>
+
+                        <!-- Amount -->
+                        <div class="form-group">
+                            <label class="form-label">দানের পরিমাণ (টাকা) <span class="req">*</span></label>
+                            <div class="amount-quick">
+                                <button type="button" class="aq-btn" onclick="setAmount(100)">৳১০০</button>
+                                <button type="button" class="aq-btn" onclick="setAmount(500)">৳৫০০</button>
+                                <button type="button" class="aq-btn" onclick="setAmount(1000)">৳১,০০০</button>
+                                <button type="button" class="aq-btn" onclick="setAmount(5000)">৳৫,০০০</button>
+                                <button type="button" class="aq-btn" onclick="setAmount(10000)">৳১০,০০০</button>
+                            </div>
+                            <input type="number" name="Amount" id="amountInput" class="form-control" style="margin-top:.5rem"
+                                   placeholder="পরিমাণ লিখুন" min="10" required />
+                            <div class="form-hint">সর্বনিম্ন ১০ টাকা</div>
+                        </div>
+
+                        <!-- Payment method -->
+                        <div class="form-group">
+                            <label class="form-label">পেমেন্ট পদ্ধতি <span class="req">*</span></label>
+                            <div class="pay-options">
+                                <div class="pay-opt">
+                                    <input type="radio" name="PaymentMethod" id="bkash" value="bKash" checked />
+                                    <label for="bkash"><span class="pay-icon">📱</span>bKash</label>
+                                </div>
+                                <div class="pay-opt">
+                                    <input type="radio" name="PaymentMethod" id="nagad" value="Nagad" />
+                                    <label for="nagad"><span class="pay-icon">💜</span>Nagad</label>
+                                </div>
+                                <div class="pay-opt">
+                                    <input type="radio" name="PaymentMethod" id="rocket" value="Rocket" />
+                                    <label for="rocket"><span class="pay-icon">🚀</span>Rocket</label>
+                                </div>
+                                <div class="pay-opt">
+                                    <input type="radio" name="PaymentMethod" id="bank" value="Bank" />
+                                    <label for="bank"><span class="pay-icon">🏦</span>Bank</label>
+                                </div>
+                                <div class="pay-opt">
+                                    <input type="radio" name="PaymentMethod" id="cash" value="Cash" />
+                                    <label for="cash"><span class="pay-icon">💵</span>নগদ</label>
+                                </div>
+                                <div class="pay-opt">
+                                    <input type="radio" name="PaymentMethod" id="other" value="Other" />
+                                    <label for="other"><span class="pay-icon">🔄</span>অন্যান্য</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Transaction ID -->
+                        <div class="form-group">
+                            <label class="form-label">ট্রানজেকশন আইডি</label>
+                            <input type="text" name="TransactionId" class="form-control"
+                                   placeholder="পেমেন্ট করার পর Transaction ID দিন (ঐচ্ছিক)" />
+                            <div class="form-hint">বিকাশ/নগদ/রকেট পেমেন্ট করলে Transaction ID দিলে দ্রুত যাচাই হবে</div>
+                        </div>
+
+                        <!-- Message -->
+                        <div class="form-group">
+                            <label class="form-label">বার্তা (ঐচ্ছিক)</label>
+                            <textarea name="Message" class="form-control" rows="3"
+                                  placeholder="আপনার ইচ্ছা বা বার্তা লিখুন..."></textarea>
+                        </div>
+
+                        <button type="submit" class="submit-btn">
+                            💚 আবেদন জমা দিন
+                        </button>
+                    </form>
+                </div>
+            }
+        </div>
+    </div>
+
+    <script>
+        function setAmount(val) {
+            document.getElementById('amountInput').value = val;
+            document.querySelectorAll('.aq-btn').forEach(b => {
+                b.classList.toggle('active', parseInt(b.textContent.replace(/[^\d]/g,'')) === val);
+            });
+        }
+        // sync manual input with quick btns
+        document.getElementById('amountInput')?.addEventListener('input', function() {
+            document.querySelectorAll('.aq-btn').forEach(b => b.classList.remove('active'));
+        });
+    </script>
+</body>
+</html>
