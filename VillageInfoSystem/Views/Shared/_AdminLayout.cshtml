@@ -50,7 +50,7 @@
 
         /* ══════════════════════════════════════
                            SIDEBAR
-                        ══════════════════════════════════════ */
+                ══════════════════════════════════════ */
         .sidebar {
             width: var(--sidebar-w);
             height: 100vh;
@@ -166,7 +166,7 @@
             flex: 1;
             padding: 0.5rem 0 1rem;
             overflow-y: auto;
-            min-height: 0; /* ✅ FIXED: scroll এখন কাজ করবে */
+            min-height: 0;
         }
 
             .sidebar-nav::-webkit-scrollbar {
@@ -292,7 +292,7 @@
 
         /* ══════════════════════════════════════
                            MAIN WRAPPER
-                        ══════════════════════════════════════ */
+                ══════════════════════════════════════ */
         .main-wrapper {
             margin-left: var(--sidebar-w);
             flex: 1;
@@ -308,7 +308,7 @@
 
         /* ══════════════════════════════════════
                            TOPBAR
-                        ══════════════════════════════════════ */
+                ══════════════════════════════════════ */
         .topbar {
             height: var(--topbar-h);
             background: var(--white);
@@ -432,7 +432,7 @@
 
         /* ══════════════════════════════════════
                            PAGE CONTENT
-                        ══════════════════════════════════════ */
+                ══════════════════════════════════════ */
         .page-content {
             flex: 1;
             padding: 1.8rem;
@@ -442,7 +442,7 @@
 
         /* ══════════════════════════════════════
                            ALERTS
-                        ══════════════════════════════════════ */
+                ══════════════════════════════════════ */
         .alert {
             display: flex;
             align-items: center;
@@ -483,7 +483,7 @@
 
         /* ══════════════════════════════════════
                            CARDS
-                        ══════════════════════════════════════ */
+                ══════════════════════════════════════ */
         .card {
             background: var(--white);
             border-radius: var(--radius);
@@ -524,7 +524,7 @@
 
         /* ══════════════════════════════════════
                            STATS GRID
-                        ══════════════════════════════════════ */
+                ══════════════════════════════════════ */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
@@ -596,7 +596,7 @@
 
         /* ══════════════════════════════════════
                            TABLE
-                        ══════════════════════════════════════ */
+                ══════════════════════════════════════ */
         .table-wrap {
             overflow-x: auto;
             border-radius: var(--radius-sm);
@@ -637,7 +637,7 @@
 
         /* ══════════════════════════════════════
                            BUTTONS
-                        ══════════════════════════════════════ */
+                ══════════════════════════════════════ */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -725,7 +725,7 @@
 
         /* ══════════════════════════════════════
                            FORMS
-                        ══════════════════════════════════════ */
+                ══════════════════════════════════════ */
         .form-group {
             margin-bottom: 1.2rem;
         }
@@ -810,7 +810,7 @@
 
         /* ══════════════════════════════════════
                            BADGES
-                        ══════════════════════════════════════ */
+                ══════════════════════════════════════ */
         .badge {
             padding: 0.22rem 0.65rem;
             border-radius: var(--radius-full);
@@ -842,7 +842,7 @@
 
         /* ══════════════════════════════════════
                            PAGE HEADER
-                        ══════════════════════════════════════ */
+                ══════════════════════════════════════ */
         .page-header {
             display: flex;
             align-items: flex-start;
@@ -867,7 +867,7 @@
 
         /* ══════════════════════════════════════
                            MOBILE OVERLAY
-                        ══════════════════════════════════════ */
+                ══════════════════════════════════════ */
         .sidebar-overlay {
             display: none;
             position: fixed;
@@ -883,7 +883,7 @@
 
         /* ══════════════════════════════════════
                            FOOTER
-                        ══════════════════════════════════════ */
+                ══════════════════════════════════════ */
         .page-footer {
             padding: 1rem 1.8rem;
             text-align: center;
@@ -900,7 +900,7 @@
 
         /* ══════════════════════════════════════
                            RESPONSIVE
-                        ══════════════════════════════════════ */
+                ══════════════════════════════════════ */
         @@media (max-width:1024px) {
             .sidebar {
                 transform: translateX(-100%);
@@ -958,7 +958,7 @@
 
         /* ══════════════════════════════════════
                            SCROLLBAR
-                        ══════════════════════════════════════ */
+                ══════════════════════════════════════ */
         ::-webkit-scrollbar {
             width: 5px;
             height: 5px;
@@ -979,7 +979,7 @@
 
         /* ══════════════════════════════════════
                            MISC UTILS
-                        ══════════════════════════════════════ */
+                ══════════════════════════════════════ */
         .text-muted {
             color: var(--text-muted);
         }
@@ -1041,6 +1041,9 @@
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
     <!-- ══ SIDEBAR ══ -->
+    @{
+        var ca = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    }
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="sb-logo-icon">🌿</div>
@@ -1064,7 +1067,7 @@
             <!-- ── প্রধান ── -->
             <div class="nav-section-label">প্রধান</div>
             <a href="/Admin/Dashboard"
-               class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Dashboard" ? "active" : "")">
+               class="nav-item @(ca == "Dashboard" ? "active" : "")">
                 <span class="nav-icon">📊</span> ড্যাশবোর্ড
             </a>
             <a href="/" target="_blank" class="nav-item">
@@ -1074,52 +1077,67 @@
             <!-- ── কন্টেন্ট ── -->
             <div class="nav-section-label">কন্টেন্ট</div>
             <a href="/Admin/NewsList"
-               class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString()?.Contains("News") == true ? "active" : "")">
+               class="nav-item @(ca.StartsWith("News") ? "active" : "")">
                 <span class="nav-icon">📰</span> সংবাদ
             </a>
             <a href="/Admin/TickerList"
-               class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString()?.Contains("Ticker") == true ? "active" : "")">
+               class="nav-item @(ca.StartsWith("Ticker") ? "active" : "")">
                 <span class="nav-icon">📺</span> ব্রেকিং নিউজ
             </a>
             <a href="/Admin/GalleryList"
-               class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString()?.Contains("Gallery") == true ? "active" : "")">
+               class="nav-item @(ca.StartsWith("Gallery") ? "active" : "")">
                 <span class="nav-icon">🖼️</span> গ্যালারি
             </a>
             <a href="/Admin/SliderList"
-               class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString()?.Contains("Slider") == true ? "active" : "")">
+               class="nav-item @(ca.StartsWith("Slider") ? "active" : "")">
                 <span class="nav-icon">🎞️</span> স্লাইডার
             </a>
 
             <!-- ── তথ্য ── -->
             <div class="nav-section-label">তথ্য</div>
             <a href="/Admin/FacilityList"
-               class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString()?.Contains("Facility") == true ? "active" : "")">
+               class="nav-item @(ca.StartsWith("Facility") ? "active" : "")">
                 <span class="nav-icon">🏛️</span> সুবিধাসমূহ
             </a>
             <a href="/Admin/CommitteeList"
-               class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString()?.Contains("Committee") == true ? "active" : "")">
+               class="nav-item @(ca.StartsWith("Committee") ? "active" : "")">
                 <span class="nav-icon">👥</span> কমিটি সদস্য
             </a>
 
             <!-- ── প্রতিষ্ঠান ── -->
             <div class="nav-section-label">প্রতিষ্ঠান</div>
             <a href="/Admin/InstitutionList"
-               class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString()?.Contains("Institution") == true ? "active" : "")">
+               class="nav-item @(ca.StartsWith("Institution") ? "active" : "")">
                 <span class="nav-icon">🏢</span> প্রতিষ্ঠান তালিকা
             </a>
             <a href="/Admin/InstitutionCreate"
-               class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "InstitutionCreate" ? "active" : "")">
+               class="nav-item @(ca == "InstitutionCreate" ? "active" : "")">
                 <span class="nav-icon">➕</span> নতুন প্রতিষ্ঠান
             </a>
             <a href="/Admin/MemberCreate"
-               class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "MemberCreate" ? "active" : "")">
+               class="nav-item @(ca == "MemberCreate" ? "active" : "")">
                 <span class="nav-icon">👤</span> নতুন সদস্য
+            </a>
+
+            <!-- ── তহবিল ── -->
+            <div class="nav-section-label">তহবিল ব্যবস্থাপনা</div>
+            <a href="/Admin/UserList"
+               class="nav-item @(ca == "UserList" || ca == "UserCreate" || ca == "UserEdit" ? "active" : "")">
+                <span class="nav-icon">👤</span> সদস্য তালিকা
+            </a>
+            <a href="/Admin/FundList"
+               class="nav-item @(ca == "FundList" || ca == "FundCreate" || ca == "FundEdit" ? "active" : "")">
+                <span class="nav-icon">💵</span> ফান্ড এন্ট্রি
+            </a>
+            <a href="/Admin/DonationList"
+               class="nav-item @(ca == "DonationList" || ca == "DonationCreate" || ca == "DonationEdit" ? "active" : "")">
+                <span class="nav-icon">🎁</span> অনুদান তালিকা
             </a>
 
             <!-- ── সেটিংস ── -->
             <div class="nav-section-label">সেটিংস</div>
             <a href="/Admin/VillageInfoEdit"
-               class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString()?.Contains("VillageInfo") == true ? "active" : "")">
+               class="nav-item @(ca.StartsWith("VillageInfo") ? "active" : "")">
                 <span class="nav-icon">⚙️</span> গ্রামের তথ্য
             </a>
 
@@ -1183,13 +1201,22 @@
         const overlay     = document.getElementById('sidebarOverlay');
         const isMobile    = () => window.innerWidth <= 1024;
 
+        // ── Page load এ আগের state restore করো ──
+        const wasCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+        if (!isMobile() && wasCollapsed) {
+            sidebar.classList.add('collapsed');
+            mainWrapper.classList.add('expanded');
+        }
+
         function toggleSidebar() {
             if (isMobile()) {
                 sidebar.classList.toggle('mobile-open');
                 overlay.classList.toggle('active');
             } else {
-                sidebar.classList.toggle('collapsed');
+                const isNowCollapsed = sidebar.classList.toggle('collapsed');
                 mainWrapper.classList.toggle('expanded');
+                // ── State save করো ──
+                localStorage.setItem('sidebarCollapsed', isNowCollapsed);
             }
         }
 
@@ -1209,7 +1236,7 @@
         document.querySelectorAll('.alert').forEach(el => {
             setTimeout(() => {
                 el.style.transition = 'opacity 0.5s';
-                el.style.opacity = '0';
+                el.style.opacity    = '0';
                 setTimeout(() => el.remove(), 500);
             }, 4500);
         });

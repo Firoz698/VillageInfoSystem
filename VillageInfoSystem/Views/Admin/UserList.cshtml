@@ -1,0 +1,76 @@
+﻿@model List<VillageInfoSystem.Models.Fund.User>
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "সদস্য তালিকা";
+}
+
+<div class="page-header">
+    <div class="page-header-left">
+        <h2>👤 সদস্য তালিকা</h2>
+        <p>তহবিলে অংশগ্রহণকারী সকল সদস্য</p>
+    </div>
+    <a href="/Admin/UserCreate" class="btn btn-primary">➕ নতুন সদস্য</a>
+</div>
+
+<div class="card">
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>সদস্য</th>
+                    <th>ফোন</th>
+                    <th>ঠিকানা</th>
+                    <th>যোগদান</th>
+                    <th>মোট চাঁদা</th>
+                    <th>অ্যাকশন</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    int i = 1;
+                    foreach (var u in Model)
+                    {
+                        var total = u.Funds?.Sum(f => f.Amount) ?? 0;
+                        <tr>
+                            <td class="text-muted">@i</td>
+                            <td>
+                                <div class="d-flex align-center gap-1">
+                                    @if (!string.IsNullOrEmpty(u.ProfileImage))
+                                    {
+                                        <img src="@u.ProfileImage" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--border);" />
+                                    }
+                                    else
+                                    {
+                                        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--green-light));display:flex;align-items:center;justify-content:center;font-size:1rem;">👤</div>
+                                    }
+                                    <strong>@u.Name</strong>
+                                </div>
+                            </td>
+                            <td>@u.Phone</td>
+                            <td class="text-muted">@(u.Address ?? "—")</td>
+                            <td class="text-muted">@u.JoinDate.ToString("dd MMM, yyyy")</td>
+                            <td><span class="badge badge-success">৳ @total.ToString("N0")</span></td>
+                            <td>
+                                <div class="actions-wrap">
+                                    <a href="/Admin/UserEdit/@u.Id" class="btn btn-edit btn-sm">✏️ সম্পাদনা</a>
+                                    <form method="post" action="/Admin/UserDelete/@u.Id"
+                                          onsubmit="return confirm('এই সদস্য মুছে ফেলবেন?')">
+                                        @Html.AntiForgeryToken()
+                                        <button class="btn btn-danger btn-sm" type="submit">🗑️</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        i++;
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="7" class="text-center text-muted" style="padding:2.5rem;">কোনো সদস্য নেই</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -21,6 +21,15 @@ namespace VillageInfoSystem.Controllers
             var tickers = await _db.TickerNews.Where(t => t.IsActive).OrderBy(t => t.SortOrder).ToListAsync();
             var sliders = await _db.SliderItems.Where(s => s.IsActive).OrderBy(s => s.SortOrder).ToListAsync();
             var institutions = await _db.Institutions.Where(i => i.IsActive).OrderBy(i => i.SortOrder).ToListAsync();
+            var totalFund = await _db.Funds.SumAsync(f => (decimal?)f.Amount) ?? 0;
+            var totalDonation = await _db.Donations.SumAsync(d => (decimal?)d.Amount) ?? 0;
+            var fundUsers = await _db.Users
+                .Include(u => u.Funds)
+                .OrderBy(u => u.Name)
+                .ToListAsync();
+            var donations = await _db.Donations
+                .OrderByDescending(d => d.Date)
+                .ToListAsync();
 
             ViewBag.Info = info;
             ViewBag.FeaturedNews = featuredNews;
@@ -31,6 +40,10 @@ namespace VillageInfoSystem.Controllers
             ViewBag.Tickers = tickers;
             ViewBag.Sliders = sliders;
             ViewBag.Institutions = institutions;
+            ViewBag.TotalFund = totalFund;
+            ViewBag.TotalDonation = totalDonation;
+            ViewBag.FundUsers = fundUsers;
+            ViewBag.Donations = donations;
             return View();
         }
 

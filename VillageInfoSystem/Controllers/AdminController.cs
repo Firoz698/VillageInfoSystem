@@ -790,5 +790,277 @@ namespace VillageInfoSystem.Controllers
             public bool IsActive { get; set; }
         }
 
+
+        // ─── FUND USER CRUD ───────────────────────────────────────────────────────
+        [Authorize]
+        public async Task<IActionResult> UserList()
+        {
+            var list = await _db.Users
+                .Include(u => u.Funds)
+                .OrderBy(u => u.Name)
+                .ToListAsync();
+            return View(list);
+        }
+
+        [Authorize, HttpGet]
+        public IActionResult UserCreate() => View(new VillageInfoSystem.Models.Fund.User());
+
+        [Authorize, HttpPost]
+        public async Task<IActionResult> UserCreate(VillageInfoSystem.Models.Fund.User user, IFormFile? profileImage)
+        {
+            if (!ModelState.IsValid) return View(user);
+
+            if (profileImage != null && profileImage.Length > 0)
+            {
+                var uploadPath = Path.Combine(_env.WebRootPath, "uploads", "users");
+                Directory.CreateDirectory(uploadPath);
+                var fileName = Guid.NewGuid() + Path.GetExtension(profileImage.FileName);
+                using var stream = System.IO.File.Create(Path.Combine(uploadPath, fileName));
+                await profileImage.CopyToAsync(stream);
+                user.ProfileImage = "/uploads/users/" + fileName;
+            }
+
+            _db.Users.Add(user);
+            await _db.SaveChangesAsync();
+            TempData["Success"] = "সদস্য যোগ করা হয়েছে!";
+            return RedirectToAction("UserList");
+        }
+
+        [Authorize, HttpGet]
+        public async Task<IActionResult> UserEdit(int id)
+        {
+            var item = await _db.Users.FindAsync(id);
+            if (item == null) return NotFound();
+            return View(item);
+        }
+
+        [Authorize, HttpPost]
+        public async Task<IActionResult> UserEdit(VillageInfoSystem.Models.Fund.User user, IFormFile? profileImage)
+        {
+            ModelState.Remove("ProfileImage");
+            if (!ModelState.IsValid) return View(user);
+
+            if (profileImage != null && profileImage.Length > 0)
+            {
+                var uploadPath = Path.Combine(_env.WebRootPath, "uploads", "users");
+                Directory.CreateDirectory(uploadPath);
+                var fileName = Guid.NewGuid() + Path.GetExtension(profileImage.FileName);
+                using var stream = System.IO.File.Create(Path.Combine(uploadPath, fileName));
+                await profileImage.CopyToAsync(stream);
+                user.ProfileImage = "/uploads/users/" + fileName;
+            }
+            else
+            {
+                var existing = await _db.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == user.Id);
+                user.ProfileImage = existing?.ProfileImage;
+            }
+
+            _db.Users.Update(user);
+            await _db.SaveChangesAsync();
+            TempData["Success"] = "সদস্য আপডেট হয়েছে!";
+            return RedirectToAction("UserList");
+        }
+
+        [Authorize, HttpPost]
+        public async Task<IActionResult> UserDelete(int id)
+        {
+            var item = await _db.Users.FindAsync(id);
+            if (item != null)
+            {
+                if (!string.IsNullOrEmpty(item.ProfileImage))
+                {
+                    var filePath = Path.Combine(_env.WebRootPath, item.ProfileImage.TrimStart('/'));
+                    if (System.IO.File.Exists(filePath)) System.IO.File.Delete(filePath);
+                }
+                _db.Users.Remove(item);
+                await _db.SaveChangesAsync();
+            }
+            TempData["Success"] = "সদস্য মুছে ফেলা হয়েছে!";
+            return RedirectToAction("UserList");
+        }
+
+        // ─── FUND CRUD ────────────────────────────────────────────────────────────
+        //[Authorize]
+        //public async Task<IActionResult> FundList()
+        //{
+        //    var list = await _db.Funds
+        //        .Include(f => f.User)
+        //        .OrderByDescending(f => f.Date)
+        //        .ToListAsync();
+        //    return View(list);
+        //}
+        [Authorize]
+        public async Task<IActionResult> FundList()
+        {
+            var list = await _db.Funds
+                .Include(f => f.User)
+                .OrderByDescending(f => f.Date)
+                .ToListAsync();
+            var total = list.Sum(f => f.Amount);
+            ViewBag.FundList = list;
+            ViewBag.TotalFund = total;
+            return View();
+        }
+
+
+        [Authorize, HttpGet]
+        public async Task<IActionResult> FundCreate()
+        {
+            ViewBag.Users = await _db.Users.OrderBy(u => u.Name).ToListAsync();
+            return View(new VillageInfoSystem.Models.Fund.Fund());
+        }
+
+        [Authorize, HttpPost]
+        public async Task<IActionResult> FundCreate(VillageInfoSystem.Models.Fund.Fund fund, IFormFile? paymentImage)
+        {
+            ModelState.Remove("User");
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Users = await _db.Users.OrderBy(u => u.Name).ToListAsync();
+                return View(fund);
+            }
+
+            if (paymentImage != null && paymentImage.Length > 0)
+            {
+                var uploadPath = Path.Combine(_env.WebRootPath, "uploads", "funds");
+                Directory.CreateDirectory(uploadPath);
+                var fileName = Guid.NewGuid() + Path.GetExtension(paymentImage.FileName);
+                using var stream = System.IO.File.Create(Path.Combine(uploadPath, fileName));
+                await paymentImage.CopyToAsync(stream);
+                fund.PaymentImage = "/uploads/funds/" + fileName;
+            }
+
+            _db.Funds.Add(fund);
+            await _db.SaveChangesAsync();
+            TempData["Success"] = "ফান্ড এন্ট্রি যোগ করা হয়েছে!";
+            return RedirectToAction("FundList");
+        }
+
+        [Authorize, HttpGet]
+        public async Task<IActionResult> FundEdit(int id)
+        {
+            var item = await _db.Funds.FindAsync(id);
+            if (item == null) return NotFound();
+            ViewBag.Users = await _db.Users.OrderBy(u => u.Name).ToListAsync();
+            return View(item);
+        }
+
+        [Authorize, HttpPost]
+        public async Task<IActionResult> FundEdit(VillageInfoSystem.Models.Fund.Fund fund, IFormFile? paymentImage)
+        {
+            ModelState.Remove("User");
+            ModelState.Remove("PaymentImage");
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Users = await _db.Users.OrderBy(u => u.Name).ToListAsync();
+                return View(fund);
+            }
+
+            if (paymentImage != null && paymentImage.Length > 0)
+            {
+                var uploadPath = Path.Combine(_env.WebRootPath, "uploads", "funds");
+                Directory.CreateDirectory(uploadPath);
+                var fileName = Guid.NewGuid() + Path.GetExtension(paymentImage.FileName);
+                using var stream = System.IO.File.Create(Path.Combine(uploadPath, fileName));
+                await paymentImage.CopyToAsync(stream);
+                fund.PaymentImage = "/uploads/funds/" + fileName;
+            }
+            else
+            {
+                var existing = await _db.Funds.AsNoTracking().FirstOrDefaultAsync(f => f.Id == fund.Id);
+                fund.PaymentImage = existing?.PaymentImage;
+            }
+
+            _db.Funds.Update(fund);
+            await _db.SaveChangesAsync();
+            TempData["Success"] = "ফান্ড আপডেট হয়েছে!";
+            return RedirectToAction("FundList");
+        }
+
+        [Authorize, HttpPost]
+        public async Task<IActionResult> FundDelete(int id)
+        {
+            var item = await _db.Funds.FindAsync(id);
+            if (item != null) { _db.Funds.Remove(item); await _db.SaveChangesAsync(); }
+            TempData["Success"] = "মুছে ফেলা হয়েছে!";
+            return RedirectToAction("FundList");
+        }
+
+        // ─── DONATION CRUD ────────────────────────────────────────────────────────
+        [Authorize]
+        public async Task<IActionResult> DonationList()
+        {
+            var list = await _db.Donations.OrderByDescending(d => d.Date).ToListAsync();
+            return View(list);
+        }
+
+        [Authorize, HttpGet]
+        public IActionResult DonationCreate() => View(new VillageInfoSystem.Models.Fund.Donation());
+
+        [Authorize, HttpPost]
+        public async Task<IActionResult> DonationCreate(VillageInfoSystem.Models.Fund.Donation donation, IFormFile? image)
+        {
+            if (!ModelState.IsValid) return View(donation);
+
+            if (image != null && image.Length > 0)
+            {
+                var uploadPath = Path.Combine(_env.WebRootPath, "uploads", "donations");
+                Directory.CreateDirectory(uploadPath);
+                var fileName = Guid.NewGuid() + Path.GetExtension(image.FileName);
+                using var stream = System.IO.File.Create(Path.Combine(uploadPath, fileName));
+                await image.CopyToAsync(stream);
+                donation.Image = "/uploads/donations/" + fileName;
+            }
+
+            _db.Donations.Add(donation);
+            await _db.SaveChangesAsync();
+            TempData["Success"] = "ডোনেশন যোগ করা হয়েছে!";
+            return RedirectToAction("DonationList");
+        }
+
+        [Authorize, HttpGet]
+        public async Task<IActionResult> DonationEdit(int id)
+        {
+            var item = await _db.Donations.FindAsync(id);
+            if (item == null) return NotFound();
+            return View(item);
+        }
+
+        [Authorize, HttpPost]
+        public async Task<IActionResult> DonationEdit(VillageInfoSystem.Models.Fund.Donation donation, IFormFile? image)
+        {
+            ModelState.Remove("Image");
+            if (!ModelState.IsValid) return View(donation);
+
+            if (image != null && image.Length > 0)
+            {
+                var uploadPath = Path.Combine(_env.WebRootPath, "uploads", "donations");
+                Directory.CreateDirectory(uploadPath);
+                var fileName = Guid.NewGuid() + Path.GetExtension(image.FileName);
+                using var stream = System.IO.File.Create(Path.Combine(uploadPath, fileName));
+                await image.CopyToAsync(stream);
+                donation.Image = "/uploads/donations/" + fileName;
+            }
+            else
+            {
+                var existing = await _db.Donations.AsNoTracking().FirstOrDefaultAsync(d => d.Id == donation.Id);
+                donation.Image = existing?.Image;
+            }
+
+            _db.Donations.Update(donation);
+            await _db.SaveChangesAsync();
+            TempData["Success"] = "ডোনেশন আপডেট হয়েছে!";
+            return RedirectToAction("DonationList");
+        }
+
+        [Authorize, HttpPost]
+        public async Task<IActionResult> DonationDelete(int id)
+        {
+            var item = await _db.Donations.FindAsync(id);
+            if (item != null) { _db.Donations.Remove(item); await _db.SaveChangesAsync(); }
+            TempData["Success"] = "মুছে ফেলা হয়েছে!";
+            return RedirectToAction("DonationList");
+        }
+
     }
 }

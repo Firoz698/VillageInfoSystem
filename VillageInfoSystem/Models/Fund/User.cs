@@ -6,22 +6,24 @@ namespace VillageInfoSystem.Models.Fund
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Name is required")]
+        [Required(ErrorMessage = "নাম আবশ্যক")]
         [StringLength(100)]
-        [Display(Name = "Full Name")]
-        public string Name { get; set; } = string.Empty;
+        [Display(Name = "পূর্ণ নাম")]
+        public string Name { get; set; } = "";
 
-        [Required(ErrorMessage = "Phone is required")]
+        [Required(ErrorMessage = "ফোন নম্বর আবশ্যক")]
         [StringLength(20)]
-        public string Phone { get; set; } = string.Empty;
+        [Display(Name = "ফোন নম্বর")]
+        public string Phone { get; set; } = "";
 
         [StringLength(250)]
+        [Display(Name = "ঠিকানা")]
         public string? Address { get; set; }
 
-        [Display(Name = "Profile Image")]
+        [Display(Name = "প্রোফাইল ছবি")]
         public string? ProfileImage { get; set; }
 
-        [Display(Name = "Join Date")]
+        [Display(Name = "যোগদানের তারিখ")]
         [DataType(DataType.Date)]
         public DateTime JoinDate { get; set; } = DateTime.Today;
 

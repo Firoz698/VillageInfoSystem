@@ -1352,6 +1352,365 @@
     <a href="#news" class="scroll-arrow" aria-label="নিচে স্ক্রোল করুন">⬇</a>
 </div>
 
+<!-- ═══ FUND SECTION ═══ -->
+<section id="fund" style="background: linear-gradient(160deg, #f5f9f6 0%, #eef5f0 100%); padding: 80px 0; position: relative;">
+    <style>
+        .fund-total-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .fund-stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(26,107,60,0.09);
+            box-shadow: 0 4px 20px rgba(26,107,60,0.07);
+            transition: all 0.3s;
+        }
+
+            .fund-stat-card:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 16px 48px rgba(26,107,60,0.13);
+            }
+
+        .fund-stat-icon {
+            font-size: 2.4rem;
+            margin-bottom: 0.8rem;
+            display: block;
+        }
+
+        .fund-stat-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--green-dark);
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .fund-stat-label {
+            color: var(--text-light);
+            font-size: 0.87rem;
+        }
+
+        /* Member List */
+        .fund-member-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(26,107,60,0.07);
+            margin-bottom: 3rem;
+        }
+
+            .fund-member-table thead tr {
+                background: linear-gradient(135deg, var(--green-dark), var(--green-light));
+                color: white;
+            }
+
+            .fund-member-table th, .fund-member-table td {
+                padding: 0.9rem 1.2rem;
+                text-align: left;
+                font-size: 0.9rem;
+                border-bottom: 1px solid rgba(26,107,60,0.07);
+            }
+
+            .fund-member-table th {
+                font-weight: 700;
+                font-size: 0.85rem;
+                letter-spacing: 0.03em;
+            }
+
+            .fund-member-table tbody tr:hover {
+                background: rgba(26,107,60,0.03);
+            }
+
+            .fund-member-table tbody tr:last-child td {
+                border-bottom: none;
+            }
+
+        .fund-member-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(26,107,60,0.2);
+        }
+
+        .fund-member-avatar-placeholder {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--green), var(--green-light));
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: white;
+        }
+
+        .fund-member-total {
+            font-weight: 700;
+            color: var(--green-dark);
+        }
+
+        .fund-member-badge {
+            background: rgba(26,107,60,0.09);
+            color: var(--green);
+            padding: 0.18rem 0.65rem;
+            border-radius: 50px;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        /* Donation Cards */
+        .donation-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.4rem;
+        }
+
+        .donation-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(26,107,60,0.09);
+            box-shadow: 0 4px 20px rgba(26,107,60,0.06);
+            transition: all 0.3s;
+        }
+
+            .donation-card:hover {
+                transform: translateY(-7px);
+                box-shadow: 0 18px 48px rgba(26,107,60,0.14);
+            }
+
+        .donation-card-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .donation-card-img-placeholder {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, var(--green-dark), var(--green-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .donation-card-body {
+            padding: 1.2rem 1.3rem 1.4rem;
+        }
+
+        .donation-card-title {
+            font-weight: 800;
+            color: var(--green-dark);
+            font-size: 0.98rem;
+            margin-bottom: 0.4rem;
+            line-height: 1.35;
+        }
+
+        .donation-card-desc {
+            color: var(--text-light);
+            font-size: 0.84rem;
+            line-height: 1.6;
+            margin-bottom: 0.8rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .donation-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(26,107,60,0.07);
+        }
+
+        .donation-amount {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: var(--green);
+        }
+
+        .donation-date {
+            font-size: 0.78rem;
+            color: var(--text-light);
+        }
+
+        @@media (max-width: 960px) {
+            .fund-total-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .donation-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @@media (max-width: 580px) {
+            .fund-total-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .donation-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .fund-member-table th:nth-child(4),
+            .fund-member-table td:nth-child(4) {
+                display: none;
+            }
+        }
+    </style>
+
+    <div class="container">
+        <!-- Section Header -->
+        <div class="section-header reveal">
+            <div class="section-tag">💰 তহবিল</div>
+            <h2 class="section-title">গ্রামের তহবিল ও অনুদান</h2>
+            <p class="section-desc">আমাদের গ্রামের উন্নয়নে সংগৃহীত তহবিল এবং মহৎ দাতাদের তালিকা</p>
+            <div class="divider"></div>
+        </div>
+
+        <!-- ── Stat Cards ── -->
+        @{
+            var totalFund = (decimal)(ViewBag.TotalFund ?? 0m);
+            var totalDonation = (decimal)(ViewBag.TotalDonation ?? 0m);
+            var fundUsers = ViewBag.FundUsers as List<VillageInfoSystem.Models.Fund.User>;
+            var donations = ViewBag.Donations as List<VillageInfoSystem.Models.Fund.Donation>;
+            var grandTotal = totalFund + totalDonation;
+        }
+        <div class="fund-total-grid reveal">
+            <div class="fund-stat-card">
+                <span class="fund-stat-icon">💵</span>
+                <span class="fund-stat-num">৳ @grandTotal.ToString("N0")</span>
+                <span class="fund-stat-label">মোট তহবিল</span>
+            </div>
+            <div class="fund-stat-card">
+                <span class="fund-stat-icon">👥</span>
+                <span class="fund-stat-num">@(fundUsers?.Count ?? 0)</span>
+                <span class="fund-stat-label">মোট সদস্য</span>
+            </div>
+            <div class="fund-stat-card">
+                <span class="fund-stat-icon">🎁</span>
+                <span class="fund-stat-num">@(donations?.Count ?? 0)</span>
+                <span class="fund-stat-label">মোট অনুদান প্রকল্প</span>
+            </div>
+        </div>
+
+        <!-- ── Member Table ── -->
+        @if (fundUsers != null && fundUsers.Any())
+        {
+            <div class="section-header reveal" style="margin-bottom:1.5rem;">
+                <div class="section-tag">👤 সদস্য তালিকা</div>
+                <h3 class="section-title" style="font-size:1.5rem;">যারা ফান্ডে অবদান রেখেছেন</h3>
+            </div>
+            <div class="reveal" style="overflow-x:auto;margin-bottom:3rem;">
+                <table class="fund-member-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>সদস্য</th>
+                            <th>ফোন</th>
+                            <th>যোগদান</th>
+                            <th>মোট চাঁদা</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int si = 1;
+                        }
+                        @foreach (var u in fundUsers)
+                        {
+                            var userTotal = u.Funds?.Sum(f => f.Amount) ?? 0;
+                            <tr>
+                                <td style="color:var(--text-light);font-size:0.82rem;">@si</td>
+                                <td>
+                                    <div style="display:flex;align-items:center;gap:0.7rem;">
+                                        @if (!string.IsNullOrEmpty(u.ProfileImage))
+                                        {
+                                            <img src="@u.ProfileImage" class="fund-member-avatar" alt="@u.Name" />
+                                        }
+                                        else
+                                        {
+                                            <div class="fund-member-avatar-placeholder">👤</div>
+                                        }
+                                        <div>
+                                            <div style="font-weight:700;color:var(--green-dark);font-size:0.9rem;">@u.Name</div>
+                                            @if (!string.IsNullOrEmpty(u.Address))
+                                            {
+                                                <div style="font-size:0.76rem;color:var(--text-light);">@u.Address</div>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="fund-member-badge">📞 @u.Phone</span></td>
+                                <td style="font-size:0.82rem;color:var(--text-light);">@u.JoinDate.ToString("dd MMM, yyyy")</td>
+                                <td><span class="fund-member-total">৳ @userTotal.ToString("N0")</span></td>
+                            </tr>
+                            si++;
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr style="background:rgba(26,107,60,0.04);">
+                            <td colspan="4" style="font-weight:700;color:var(--green-dark);padding:0.9rem 1.2rem;">মোট সংগৃহীত (চাঁদা)</td>
+                            <td style="font-weight:900;color:var(--green);font-size:1rem;padding:0.9rem 1.2rem;">৳ @totalFund.ToString("N0")</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        }
+
+        <!-- ── Donation Cards ── -->
+        @if (donations != null && donations.Any())
+        {
+            <div class="section-header reveal" style="margin-bottom:1.5rem;">
+                <div class="section-tag">🎁 অনুদান</div>
+                <h3 class="section-title" style="font-size:1.5rem;">অনুদানের তালিকা</h3>
+            </div>
+            <div class="donation-grid reveal">
+                @foreach (var d in donations)
+                {
+                    <div class="donation-card">
+                        @if (!string.IsNullOrEmpty(d.Image))
+                        {
+                            <img src="@d.Image" alt="@d.Title" class="donation-card-img" loading="lazy" />
+                        }
+                        else
+                        {
+                            <div class="donation-card-img-placeholder">🎁</div>
+                        }
+                        <div class="donation-card-body">
+                            <div class="donation-card-title">@d.Title</div>
+                            @if (!string.IsNullOrEmpty(d.Description))
+                            {
+                                <div class="donation-card-desc">@d.Description</div>
+                            }
+                            <div class="donation-card-footer">
+                                <span class="donation-amount">৳ @d.Amount.ToString("N0")</span>
+                                <span class="donation-date">📅 @d.Date.ToString("dd MMM, yyyy")</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</section>
+
+
 <!-- ═══ NEWS SECTION ═══ -->
 <section id="news">
     <div class="container">

@@ -1,0 +1,75 @@
+﻿@model List<VillageInfoSystem.Models.Fund.Donation>
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "অনুদান তালিকা";
+}
+
+<div class="page-header">
+    <div class="page-header-left">
+        <h2>🎁 অনুদান তালিকা</h2>
+        <p>সকল অনুদান প্রকল্পের তালিকা</p>
+    </div>
+    <a href="/Admin/DonationCreate" class="btn btn-primary">➕ নতুন অনুদান</a>
+</div>
+
+<div class="card">
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>ছবি</th>
+                    <th>শিরোনাম</th>
+                    <th>পরিমাণ</th>
+                    <th>তারিখ</th>
+                    <th>বিবরণ</th>
+                    <th>অ্যাকশন</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    int i = 1;
+                    foreach (var d in Model)
+                    {
+                        <tr>
+                            <td class="text-muted">@i</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(d.Image))
+                                {
+                                    <img src="@d.Image" style="width:44px;height:44px;object-fit:cover;border-radius:8px;border:1px solid var(--border);" />
+                                }
+                                else
+                                {
+
+                                    <span style="font-size:1.6rem;">🎁</span>
+                                }
+                            </td>
+                            <td><strong>@d.Title</strong></td>
+                            <td><span class="badge badge-gold">৳ @d.Amount.ToString("N0")</span></td>
+                            <td class="text-muted">@d.Date.ToString("dd MMM, yyyy")</td>
+                            <td class="text-muted" style="max-width:200px;white-space:normal;">
+                                @(d.Description?.Length > 60 ? d.Description.Substring(0, 60) + "…" : d.Description ?? "—")
+                            </td>
+                            <td>
+                                <div class="actions-wrap">
+                                    <a href="/Admin/DonationEdit/@d.Id" class="btn btn-edit btn-sm">✏️ সম্পাদনা</a>
+                                    <form method="post" action="/Admin/DonationDelete/@d.Id"
+                                          onsubmit="return confirm('মুছে ফেলবেন?')">
+                                        @Html.AntiForgeryToken()
+                                        <button class="btn btn-danger btn-sm" type="submit">🗑️</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        i++;
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="7" class="text-center text-muted" style="padding:2.5rem;">কোনো অনুদান নেই</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,43 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "নতুন অনুদান";
+}
+
+<div class="page-header">
+    <div class="page-header-left">
+        <h2>🎁 নতুন অনুদান যোগ করুন</h2>
+    </div>
+    <a href="/Admin/DonationList" class="btn btn-outline">← ফিরে যান</a>
+</div>
+
+<div class="card">
+    <form method="post" enctype="multipart/form-data" action="/Admin/DonationCreate">
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            <label class="form-label">📌 শিরোনাম *</label>
+            <input name="Title" class="form-control" placeholder="অনুদানের শিরোনাম" required />
+        </div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label">💰 পরিমাণ (টাকা) *</label>
+                <input name="Amount" type="number" step="0.01" min="1"
+                       class="form-control" placeholder="০.০০" required />
+            </div>
+            <div class="form-group">
+                <label class="form-label">📅 তারিখ *</label>
+                <input name="Date" type="date" class="form-control"
+                       value="@DateTime.Today.ToString("yyyy-MM-dd")" required />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">📝 বিবরণ</label>
+            <textarea name="Description" class="form-control" rows="4"
+                      placeholder="অনুদানের বিস্তারিত বিবরণ..."></textarea>
+        </div>
+        <div class="form-group">
+            <label class="form-label">🖼️ ছবি</label>
+            <input name="image" type="file" class="form-control" accept="image/*" />
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg">✅ অনুদান যোগ করুন</button>
+    </form>
+</div>
