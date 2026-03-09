@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VillageInfoSystem.Models;
+using VillageInfoSystem.Models.Fund;
 
 namespace VillageInfoSystem.Data
 {
@@ -16,6 +17,9 @@ namespace VillageInfoSystem.Data
         public DbSet<TickerNews> TickerNews => Set<TickerNews>();
         public DbSet<Institution> Institutions => Set<Institution>();
         public DbSet<InstitutionMember> InstitutionMembers => Set<InstitutionMember>();
+        public DbSet<User> Users => Set<User>();
+        public DbSet<Fund> Funds => Set<Fund>();
+        public DbSet<Donation> Donations => Set<Donation>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
