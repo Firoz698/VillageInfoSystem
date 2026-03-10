@@ -278,7 +278,7 @@
         <h2>🎞️ স্লাইডার ম্যানেজমেন্ট</h2>
         <p>হোমপেজ হিরো স্লাইডারের সকল স্লাইড পরিচালনা করুন</p>
     </div>
-    <a href="/Admin/SliderCreate" class="btn btn-primary">
+    <a href="/Slider/SliderCreate" class="btn btn-primary">
         ➕ নতুন স্লাইড যোগ করুন
     </a>
 </div>
@@ -343,10 +343,10 @@
 
                 <!-- Actions -->
                 <div class="sc-actions">
-                    <a href="/Admin/SliderEdit/@s.Id" class="btn btn-edit btn-sm">
+                    <a href="/Slider/SliderEdit/@s.Id" class="btn btn-edit btn-sm">
                         ✏️ সম্পাদনা
                     </a>
-                    <form method="post" action="/Admin/SliderDelete/@s.Id"
+                    <form method="post" action="/Slider/SliderDelete/@s.Id"
                           style="flex:1;display:flex;"
                           onsubmit="return confirm('এই স্লাইড মুছে ফেলবেন?')">
                         @Html.AntiForgeryToken()
@@ -365,6 +365,6 @@ else
         <span class="eb-icon">🎞️</span>
         <h4>কোনো স্লাইড যোগ করা হয়নি</h4>
         <p>হোমপেজে সুন্দর স্লাইডশো দেখাতে নতুন স্লাইড যোগ করুন।</p>
-        <a href="/Admin/SliderCreate" class="btn btn-primary">➕ প্রথম স্লাইড যোগ করুন</a>
+        <a href="/slider/SliderCreate" class="btn btn-primary">➕ প্রথম স্লাইড যোগ করুন</a>
     </div>
 }

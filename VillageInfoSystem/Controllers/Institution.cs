@@ -111,5 +111,22 @@ namespace VillageInfoSystem.Controllers
             TempData["Success"] = "প্রতিষ্ঠান মুছে ফেলা হয়েছে!";
             return RedirectToAction("InstitutionList");
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> InstitutionToggleStatus([FromBody] ToggleDtos dto)
+        {
+            var inst = await _db.Institutions.FindAsync(dto.Id);
+            if (inst == null) return NotFound();
+            inst.IsActive = dto.IsActive;
+            await _db.SaveChangesAsync();
+            return Ok();
+        }
+
+        public class ToggleDtos
+        {
+            public int Id { get; set; }
+            public bool IsActive { get; set; }
+        }
     }
 }

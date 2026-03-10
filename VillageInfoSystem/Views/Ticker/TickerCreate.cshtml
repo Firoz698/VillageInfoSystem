@@ -9,12 +9,12 @@
         <h2>📺 নতুন ব্রেকিং নিউজ যোগ করুন</h2>
         <p>ওয়েবসাইটের উপরে স্ক্রল করে দেখানো সংবাদ যোগ করুন</p>
     </div>
-    <a href="/Admin/TickerList" class="btn btn-outline">← তালিকায় ফিরুন</a>
+    <a href="/Ticker/TickerList" class="btn btn-outline">← তালিকায় ফিরুন</a>
 </div>
 
 <div style="max-width: 700px;">
     <div class="card">
-        <form method="post" action="/Admin/TickerCreate">
+        <form method="post" action="/Ticker/TickerCreate">
             @Html.AntiForgeryToken()
 
             <div class="form-group">
@@ -59,7 +59,7 @@
 
             <div style="display:flex; gap:0.8rem; flex-wrap:wrap;">
                 <button type="submit" class="btn btn-primary btn-lg">💾 সংরক্ষণ করুন</button>
-                <a href="/Admin/TickerList" class="btn btn-outline btn-lg">বাতিল</a>
+                <a href="/Ticker/TickerList" class="btn btn-outline btn-lg">বাতিল</a>
             </div>
         </form>
     </div>

@@ -514,7 +514,7 @@
     </div>
     <div style="display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;">
         <div class="edit-id-badge">🆔 স্লাইড #@Model.Id</div>
-        <a href="/Admin/SliderList" class="btn btn-outline btn-sm">← ফিরে যান</a>
+        <a href="/Slider/SliderList" class="btn btn-outline btn-sm">← ফিরে যান</a>
     </div>
 </div>
 
@@ -672,7 +672,7 @@
                 <div class="sc-hd" style="color:#c0392b;background:#fdf5f5;border-color:rgba(231,76,60,0.15);">⚠️ ডিলিট জোন</div>
                 <div class="sc-bd">
                     <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.9rem;">এই স্লাইড স্থায়ীভাবে মুছে ফেলতে নিচের বাটনে ক্লিক করুন।</p>
-                    <form method="post" action="/Admin/SliderDelete/@Model.Id"
+                    <form method="post" action="/Slider/SliderDelete/@Model.Id"
                           onsubmit="return confirm('এই স্লাইড মুছে ফেলবেন? এটি পূর্বাবস্থায় ফেরানো যাবে না।')">
                         @Html.AntiForgeryToken()
                         <button type="submit" class="btn btn-danger btn-sm" style="width:100%;justify-content:center;">
@@ -685,7 +685,7 @@
             <!-- Submit -->
             <div class="sidebar-card">
                 <div class="form-actions">
-                    <a href="/Admin/SliderList" class="btn btn-outline">বাতিল</a>
+                    <a href="/Slider/SliderList" class="btn btn-outline">বাতিল</a>
                     <button type="submit" class="btn btn-primary">💾 আপডেট করুন</button>
                 </div>
             </div>

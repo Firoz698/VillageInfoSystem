@@ -1,6 +1,6 @@
 @model VillageInfoSystem.Models.News
 @{
-    ViewData["Title"] = "নতুন সংবাদ যোগ";
+    ViewData["Title"] = "সংবাদ সম্পাদনা";
     Layout = "_AdminLayout";
 }
 
@@ -28,6 +28,19 @@
         font-size: 0.84rem;
         color: var(--text-muted);
         margin-top: 2px;
+    }
+
+    .edit-id-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.3rem 0.8rem;
+        background: rgba(26,107,60,0.07);
+        border: 1px solid rgba(26,107,60,0.15);
+        border-radius: 50px;
+        font-size: 0.76rem;
+        color: var(--green-dark);
+        font-weight: 600;
     }
 
     .form-layout {
@@ -174,10 +187,6 @@
 
         .char-counter.warn {
             color: #e67e22;
-        }
-
-        .char-counter.over {
-            color: #e74c3c;
         }
 
     .icon-picker {
@@ -415,10 +424,55 @@
     }
 
     /* ── Image Upload ── */
+    .current-img-wrap {
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        margin-bottom: 0.7rem;
+        position: relative;
+    }
+
+        .current-img-wrap img {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+    .current-img-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.5rem 0.6rem;
+        background: #fafcfa;
+        border-top: 1px solid var(--border);
+    }
+
+    .current-img-label {
+        font-size: 0.76rem;
+        color: var(--text-muted);
+    }
+
+    .btn-img-delete {
+        background: #fff1f0;
+        border: 1px solid #f8bcb7;
+        color: #b53a2e;
+        border-radius: 6px;
+        padding: 0.22rem 0.65rem;
+        font-size: 0.74rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+        .btn-img-delete:hover {
+            background: #ffe3e0;
+        }
+
     .img-upload-area {
         border: 2px dashed var(--border);
         border-radius: 10px;
-        padding: 1.5rem 1rem;
+        padding: 1.4rem 1rem;
         text-align: center;
         cursor: pointer;
         transition: all 0.2s;
@@ -442,30 +496,30 @@
         }
 
     .img-upload-icon {
-        font-size: 2rem;
-        margin-bottom: 0.4rem;
+        font-size: 1.8rem;
+        margin-bottom: 0.3rem;
     }
 
     .img-upload-text {
-        font-size: 0.84rem;
+        font-size: 0.83rem;
         color: var(--green-dark);
         font-weight: 600;
     }
 
     .img-upload-hint {
-        font-size: 0.73rem;
+        font-size: 0.72rem;
         color: var(--text-muted);
         margin-top: 0.2rem;
     }
 
-    .img-preview-wrap {
-        position: relative;
+    .img-new-preview {
         border-radius: 10px;
         overflow: hidden;
         border: 1px solid var(--border);
+        position: relative;
     }
 
-        .img-preview-wrap img {
+        .img-new-preview img {
             width: 100%;
             max-height: 180px;
             object-fit: cover;
@@ -527,14 +581,20 @@
 <!-- Header -->
 <div class="form-page-header">
     <div class="fph-left">
-        <h2>📰 নতুন সংবাদ যোগ করুন</h2>
-        <p>গ্রামের সংবাদ বিভাগে নতুন সংবাদ যোগ করুন</p>
+        <h2>✏️ সংবাদ সম্পাদনা করুন</h2>
+        <p>বিদ্যমান সংবাদের তথ্য আপডেট করুন</p>
     </div>
-    <a href="/Admin/NewsList" class="btn btn-outline btn-sm">← সংবাদ তালিকা</a>
+    <div style="display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;">
+        <div class="edit-id-badge">🆔 সংবাদ #@Model.Id</div>
+        <a href="/News/NewsList" class="btn btn-outline btn-sm">← সংবাদ তালিকা</a>
+    </div>
 </div>
 
-<form asp-action="NewsCreate" method="post" enctype="multipart/form-data" id="newsForm">
+<form asp-action="NewsEdit" asp-route-id="@Model.Id"
+      method="post" enctype="multipart/form-data" id="newsForm">
     @Html.AntiForgeryToken()
+    <input asp-for="Id" type="hidden" />
+
     <div class="form-layout">
 
         <!-- ── LEFT ── -->
@@ -544,7 +604,7 @@
             <div class="form-section">
                 <div class="fs-header">
                     <div class="fs-icon">📝</div>
-                    <div><h3>সংবাদের বিষয়বস্তু</h3><p>শিরোনাম ও বিস্তারিত বিবরণ লিখুন</p></div>
+                    <div><h3>সংবাদের বিষয়বস্তু</h3><p>শিরোনাম ও বিস্তারিত বিবরণ সম্পাদনা করুন</p></div>
                 </div>
                 <div class="fs-body">
                     <div class="form-group">
@@ -553,7 +613,6 @@
                             <span class="char-counter" id="titleCounter">০/১০০</span>
                         </div>
                         <input asp-for="Title" class="form-control" id="titleInput"
-                               placeholder="সংবাদের শিরোনাম লিখুন"
                                oninput="updateTitleCounter(); updatePreview();" maxlength="100" />
                         <span asp-validation-for="Title" class="validation-msg"></span>
                     </div>
@@ -563,7 +622,6 @@
                             <span class="char-counter" id="descCounter">০</span>
                         </div>
                         <textarea asp-for="Description" class="form-control" id="descInput"
-                                  placeholder="সংবাদের বিস্তারিত বিবরণ এখানে লিখুন..."
                                   rows="5" oninput="updateDescCounter(); updatePreview();"></textarea>
                     </div>
                 </div>
@@ -573,28 +631,54 @@
             <div class="form-section">
                 <div class="fs-header">
                     <div class="fs-icon">🖼️</div>
-                    <div><h3>সংবাদের ছবি</h3><p>সংবাদের সাথে একটি ছবি যোগ করুন (ঐচ্ছিক)</p></div>
+                    <div><h3>সংবাদের ছবি</h3><p>ছবি পরিবর্তন বা নতুন ছবি যোগ করুন</p></div>
                 </div>
                 <div class="fs-body">
-                    <div id="uploadAreaWrap">
-                        <div class="img-upload-area" id="uploadArea"
-                             ondragover="handleDragOver(event)"
-                             ondragleave="handleDragLeave(event)"
-                             ondrop="handleDrop(event)">
-                            <input type="file" name="ImageFile" id="imageFileInput"
-                                   accept="image/jpeg,image/png,image/webp,image/gif"
-                                   onchange="handleFileSelect(this)" />
-                            <div class="img-upload-icon">📷</div>
-                            <div class="img-upload-text">ছবি আপলোড করুন</div>
-                            <div class="img-upload-hint">JPG, PNG, WEBP — সর্বোচ্চ ৫ MB<br>ক্লিক করুন অথবা ছবি টেনে আনুন</div>
+
+                    @* বর্তমান ছবি *@
+                    @if (!string.IsNullOrEmpty(Model.ImagePath))
+                    {
+                        <div id="currentImgSection">
+                            <div class="current-img-wrap">
+                                <img src="@Model.ImagePath" alt="বর্তমান ছবি" id="currentImgEl" />
+                                <div class="current-img-actions">
+                                    <span class="current-img-label">📌 বর্তমান ছবি</span>
+                                    <form method="post" action="/News/NewsDeleteImage/@Model.Id"
+                                          style="display:inline"
+                                          onsubmit="return confirm('ছবিটি স্থায়ীভাবে মুছে ফেলবেন?')">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn-img-delete">🗑️ ছবি মুছুন</button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="field-hint">নতুন ছবি আপলোড করলে বর্তমান ছবি স্বয়ংক্রিয়ভাবে replace হবে।</div>
                         </div>
-                    </div>
-                    <div id="imgPreviewWrap" style="display:none;">
-                        <div class="img-preview-wrap">
-                            <img id="imgPreviewImg" src="" alt="preview" />
-                            <button type="button" class="img-remove-btn" onclick="removeImage()" title="ছবি সরান">✕</button>
+                    }
+
+                    @* নতুন ছবি আপলোড *@
+                    <div style="margin-top: @(!string.IsNullOrEmpty(Model.ImagePath) ? "0.8rem" : "0")">
+                        <div id="uploadAreaWrap">
+                            <div class="img-upload-area" id="uploadArea"
+                                 ondragover="handleDragOver(event)"
+                                 ondragleave="handleDragLeave(event)"
+                                 ondrop="handleDrop(event)">
+                                <input type="file" name="ImageFile" id="imageFileInput"
+                                       accept="image/jpeg,image/png,image/webp,image/gif"
+                                       onchange="handleFileSelect(this)" />
+                                <div class="img-upload-icon">📷</div>
+                                <div class="img-upload-text">
+                                    @(!string.IsNullOrEmpty(Model.ImagePath) ? "নতুন ছবি দিয়ে replace করুন" : "ছবি আপলোড করুন")
+                                </div>
+                                <div class="img-upload-hint">JPG, PNG, WEBP — সর্বোচ্চ ৫ MB</div>
+                            </div>
                         </div>
-                        <div class="field-hint" style="margin-top:0.4rem;" id="imgFileName"></div>
+                        <div id="newImgPreviewWrap" style="display:none;">
+                            <div class="img-new-preview">
+                                <img id="newImgPreviewImg" src="" alt="নতুন ছবির প্রিভিউ" />
+                                <button type="button" class="img-remove-btn" onclick="removeNewImage()" title="বাতিল">✕</button>
+                            </div>
+                            <div class="field-hint" style="margin-top:0.4rem;" id="newImgFileName"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -603,7 +687,7 @@
             <div class="form-section">
                 <div class="fs-header">
                     <div class="fs-icon">🏷️</div>
-                    <div><h3>বিভাগ ও আইকন</h3><p>সংবাদের বিভাগ ও প্রতীক নির্বাচন করুন</p></div>
+                    <div><h3>বিভাগ ও আইকন</h3><p>বিভাগ ও প্রতীক পরিবর্তন করুন</p></div>
                 </div>
                 <div class="fs-body">
                     <div class="field-grid-2">
@@ -630,7 +714,7 @@
                         <div class="form-group">
                             <label class="form-label">আইকন ইমোজি</label>
                             <input asp-for="Icon" class="form-control" id="iconInput"
-                                   placeholder="📰" oninput="updatePreview()" maxlength="8" />
+                                   oninput="updatePreview()" maxlength="8" />
                             <div class="icon-picker">
                                 @foreach (var ic in new[] { "📰", "🏫", "🛣️", "🌾", "🏥", "🕌", "⚽", "🎭", "🌿", "📢", "🏆", "🔨" })
                                 {
@@ -646,7 +730,7 @@
             <div class="form-section">
                 <div class="fs-header">
                     <div class="fs-icon">📅</div>
-                    <div><h3>তারিখ ও সেটিংস</h3><p>প্রকাশের তারিখ ও অবস্থা নির্ধারণ করুন</p></div>
+                    <div><h3>তারিখ ও সেটিংস</h3></div>
                 </div>
                 <div class="fs-body">
                     <div class="form-group">
@@ -654,19 +738,21 @@
                         <input asp-for="PublishedAt" type="datetime-local" class="form-control" />
                     </div>
                     <div class="toggle-row">
-                        <label class="toggle-item" id="featuredToggle" for="IsFeatured">
+                        <label class="toggle-item @(Model.IsFeatured ? "checked" : "")" id="featuredToggle" for="IsFeatured">
                             <div class="toggle-sw">
                                 <input asp-for="IsFeatured" type="checkbox" id="IsFeatured"
                                        onchange="syncToggleStyle('featuredToggle','IsFeatured')" />
-                                <div class="ts-track"></div><div class="ts-thumb"></div>
+                                <div class="ts-track"></div>
+                                <div class="ts-thumb" style="@(Model.IsFeatured ? "transform:translateX(18px)" : "")"></div>
                             </div>
                             <div class="ti-info"><strong>⭐ শীর্ষ সংবাদ</strong><span>হোমপেজে বড় করে দেখাবে</span></div>
                         </label>
-                        <label class="toggle-item checked" id="activeToggle" for="IsActive">
+                        <label class="toggle-item @(Model.IsActive ? "checked" : "")" id="activeToggle" for="IsActive">
                             <div class="toggle-sw">
-                                <input asp-for="IsActive" type="checkbox" id="IsActive" checked
+                                <input asp-for="IsActive" type="checkbox" id="IsActive"
                                        onchange="syncToggleStyle('activeToggle','IsActive')" />
-                                <div class="ts-track"></div><div class="ts-thumb" style="transform:translateX(18px)"></div>
+                                <div class="ts-track"></div>
+                                <div class="ts-thumb" style="@(Model.IsActive ? "transform:translateX(18px)" : "")"></div>
                             </div>
                             <div class="ti-info"><strong>✅ সক্রিয়</strong><span>ওয়েবসাইটে প্রকাশিত থাকবে</span></div>
                         </label>
@@ -682,33 +768,51 @@
                 <div class="sc-bd">
                     <div class="news-preview">
                         <div class="np-header" id="prevHeader">
-                            <img id="prevImage" src="" alt="" style="display:none;" />
-                            <span class="np-header-icon" id="prevIcon">📰</span>
-                            <div class="np-cat-badge" id="prevCat">সাধারণ</div>
+                            @if (!string.IsNullOrEmpty(Model.ImagePath))
+                            {
+                                <img id="prevImage" src="@Model.ImagePath" alt="" />
+                            }
+                            else
+                            {
+                                <img id="prevImage" src="" alt="" style="display:none;" />
+                            }
+                            <span class="np-header-icon" id="prevIcon"
+                                  style="@(!string.IsNullOrEmpty(Model.ImagePath) ? "display:none" : "")">
+                                @(Model.Icon ?? "📰")
+                            </span>
+                            <div class="np-cat-badge" id="prevCat">@(Model.Category ?? "সাধারণ")</div>
                         </div>
                         <div class="np-body">
-                            <div class="np-title" id="prevTitle">শিরোনাম এখানে দেখাবে</div>
-                            <div class="np-desc" id="prevDesc">বিবরণ এখানে দেখাবে...</div>
+                            <div class="np-title" id="prevTitle">@(Model.Title ?? "শিরোনাম")</div>
+                            <div class="np-desc" id="prevDesc">
+                                @(Model.Description != null
+                                                                ? (Model.Description.Length > 80 ? Model.Description.Substring(0, 80) + "…" : Model.Description)
+                                                                : "বিবরণ...")
+                            </div>
                         </div>
                     </div>
-                    <div class="field-hint" style="margin-top:0.6rem;">ℹ️ লাইভ প্রিভিউ</div>
                 </div>
             </div>
 
-            <div class="sidebar-card">
-                <div class="sc-hd">💡 নির্দেশিকা</div>
-                <div class="sc-bd" style="display:flex;flex-direction:column;gap:0.65rem;">
-                    <div class="field-hint">⭐ একটি সংবাদকে শীর্ষ করলে হোমপেজে বড় করে দেখাবে</div>
-                    <div class="field-hint">🖼️ ছবি যোগ করলে সংবাদটি আরও আকর্ষণীয় হয়</div>
-                    <div class="field-hint">🏷️ সঠিক বিভাগ দিলে পাঠকরা সহজে খুঁজে পাবেন</div>
-                    <div class="field-hint">📅 ভবিষ্যৎ তারিখ দিলেও সক্রিয় থাকলে দেখাবে</div>
+            <!-- Danger Zone -->
+            <div class="sidebar-card" style="border-color:rgba(231,76,60,0.2);">
+                <div class="sc-hd" style="color:#c0392b;background:#fdf5f5;border-color:rgba(231,76,60,0.15);">⚠️ ডিলিট জোন</div>
+                <div class="sc-bd">
+                    <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.9rem;">এই সংবাদ স্থায়ীভাবে মুছে ফেলতে নিচের বাটনে ক্লিক করুন।</p>
+                    <form method="post" action="/News/NewsDelete/@Model.Id"
+                          onsubmit="return confirm('এই সংবাদ মুছে ফেলবেন?')">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger btn-sm" style="width:100%;justify-content:center;">
+                            🗑️ সংবাদ মুছুন
+                        </button>
+                    </form>
                 </div>
             </div>
 
             <div class="sidebar-card">
                 <div class="form-actions">
-                    <a href="/Admin/NewsList" class="btn btn-outline">বাতিল</a>
-                    <button type="submit" class="btn btn-primary">💾 সংরক্ষণ করুন</button>
+                    <a href="/News/NewsList" class="btn btn-outline">বাতিল</a>
+                    <button type="submit" class="btn btn-primary">💾 আপডেট করুন</button>
                 </div>
             </div>
         </div>
@@ -716,45 +820,35 @@
 </form>
 
 <script>
-    // ── Image upload handlers ──
+    // ── Image upload ──
     function handleFileSelect(input) {
-        if (input.files && input.files[0]) showPreview(input.files[0]);
+        if (input.files && input.files[0]) showNewPreview(input.files[0]);
     }
 
-    function handleDragOver(e) {
-        e.preventDefault();
-        document.getElementById('uploadArea').classList.add('drag-over');
-    }
-
-    function handleDragLeave(e) {
-        document.getElementById('uploadArea').classList.remove('drag-over');
-    }
+    function handleDragOver(e) { e.preventDefault(); document.getElementById('uploadArea').classList.add('drag-over'); }
+    function handleDragLeave(e) { document.getElementById('uploadArea').classList.remove('drag-over'); }
 
     function handleDrop(e) {
         e.preventDefault();
         document.getElementById('uploadArea').classList.remove('drag-over');
         const file = e.dataTransfer.files[0];
         if (file && file.type.startsWith('image/')) {
-            // dataTransfer ফাইল input-এ set করা
             const dt = new DataTransfer();
             dt.items.add(file);
             document.getElementById('imageFileInput').files = dt.files;
-            showPreview(file);
+            showNewPreview(file);
         }
     }
 
-    function showPreview(file) {
-        if (file.size > 5 * 1024 * 1024) {
-            alert('ছবির আকার ৫ MB এর বেশি হতে পারবে না।');
-            return;
-        }
+    function showNewPreview(file) {
+        if (file.size > 5 * 1024 * 1024) { alert('ছবির আকার ৫ MB এর বেশি হতে পারবে না।'); return; }
         const reader = new FileReader();
         reader.onload = e => {
-            document.getElementById('imgPreviewImg').src = e.target.result;
-            document.getElementById('imgPreviewWrap').style.display = 'block';
+            document.getElementById('newImgPreviewImg').src = e.target.result;
+            document.getElementById('newImgPreviewWrap').style.display = 'block';
             document.getElementById('uploadAreaWrap').style.display = 'none';
-            document.getElementById('imgFileName').textContent = '📎 ' + file.name;
-            // sidebar preview তেও দেখাও
+            document.getElementById('newImgFileName').textContent = '📎 ' + file.name;
+            // sidebar preview
             const prevImg = document.getElementById('prevImage');
             prevImg.src = e.target.result;
             prevImg.style.display = 'block';
@@ -763,21 +857,29 @@
         reader.readAsDataURL(file);
     }
 
-    function removeImage() {
+    function removeNewImage() {
         document.getElementById('imageFileInput').value = '';
-        document.getElementById('imgPreviewImg').src = '';
-        document.getElementById('imgPreviewWrap').style.display = 'none';
+        document.getElementById('newImgPreviewWrap').style.display = 'none';
         document.getElementById('uploadAreaWrap').style.display = 'block';
-        document.getElementById('prevImage').style.display = 'none';
-        document.getElementById('prevIcon').style.display = 'block';
+        // sidebar: পুরনো ছবিতে ফিরে যাও
+        const currentSrc = document.getElementById('currentImgEl')?.src;
+        const prevImg = document.getElementById('prevImage');
+        if (currentSrc) {
+            prevImg.src = currentSrc;
+            prevImg.style.display = 'block';
+            document.getElementById('prevIcon').style.display = 'none';
+        } else {
+            prevImg.style.display = 'none';
+            document.getElementById('prevIcon').style.display = 'block';
+        }
     }
 
     // ── Form helpers ──
     function updateTitleCounter() {
-        const v  = document.getElementById('titleInput').value.length;
+        const v = document.getElementById('titleInput').value.length;
         const el = document.getElementById('titleCounter');
         el.textContent = v + '/১০০';
-        el.className   = 'char-counter' + (v > 90 ? ' warn' : '') + (v >= 100 ? ' over' : '');
+        el.className = 'char-counter' + (v > 90 ? ' warn' : '');
     }
 
     function updateDescCounter() {
@@ -786,8 +888,8 @@
     }
 
     function updatePreview() {
-        const title = document.getElementById('titleInput')?.value || 'শিরোনাম এখানে দেখাবে';
-        const desc  = document.getElementById('descInput')?.value  || 'বিবরণ এখানে দেখাবে...';
+        const title = document.getElementById('titleInput')?.value || 'শিরোনাম';
+        const desc  = document.getElementById('descInput')?.value  || 'বিবরণ...';
         const icon  = document.getElementById('iconInput')?.value  || '📰';
         const cat   = document.getElementById('catSelect')?.value  || 'সাধারণ';
         document.getElementById('prevTitle').textContent = title.substring(0, 60);
@@ -803,10 +905,7 @@
         updatePreview();
     }
 
-    function selectCat(cat) {
-        document.getElementById('catSelect').value = cat;
-        syncCatPills(); updatePreview();
-    }
+    function selectCat(cat) { document.getElementById('catSelect').value = cat; syncCatPills(); updatePreview(); }
 
     function syncCatPills() {
         const cat = document.getElementById('catSelect').value;
@@ -822,5 +921,11 @@
     window.addEventListener('DOMContentLoaded', () => {
         syncCatPills(); updatePreview();
         updateTitleCounter(); updateDescCounter();
+        const curIcon = document.getElementById('iconInput')?.value;
+        if (curIcon) {
+            document.querySelectorAll('.icon-option').forEach(el => {
+                if (el.textContent.trim() === curIcon.trim()) el.classList.add('selected');
+            });
+        }
     });
 </script>

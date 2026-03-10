@@ -1,4 +1,4 @@
-@model List<VillageInfoSystem.Models.News>
+﻿@model List<VillageInfoSystem.Models.News>
 @{
     ViewData["Title"] = "সংবাদ ব্যবস্থাপনা";
     Layout = "_AdminLayout";
@@ -457,7 +457,7 @@
         <h2>📰 সংবাদ ব্যবস্থাপনা</h2>
         <p>গ্রামের সকল সংবাদ পরিচালনা করুন</p>
     </div>
-    <a href="/Admin/NewsCreate" class="btn btn-primary">➕ নতুন সংবাদ</a>
+    <a href="/News/NewsCreate" class="btn btn-primary">➕ নতুন সংবাদ</a>
 </div>
 
 <!-- Stats -->
@@ -594,8 +594,8 @@
 
                             <td>
                                 <div class="actions-cell">
-                                    <a href="/Admin/NewsEdit/@n.Id" class="btn btn-edit btn-sm">✏️ সম্পাদনা</a>
-                                    <form method="post" action="/Admin/NewsDelete/@n.Id" style="display:inline"
+                                    <a href="/News/NewsEdit/@n.Id" class="btn btn-edit btn-sm">✏️ সম্পাদনা</a>
+                                    <form method="post" action="/News/NewsDelete/@n.Id" style="display:inline"
                                           onsubmit="return confirm('এই সংবাদ মুছে ফেলবেন?')">
                                         @Html.AntiForgeryToken()
                                         <button type="submit" class="btn btn-danger btn-sm">🗑️</button>
@@ -645,8 +645,8 @@
                                 }
                             </div>
                             <div class="m-actions">
-                                <a href="/Admin/NewsEdit/@n.Id" class="btn btn-edit btn-sm">✏️ সম্পাদনা</a>
-                                <form method="post" action="/Admin/NewsDelete/@n.Id" style="display:inline"
+                                <a href="/News/NewsEdit/@n.Id" class="btn btn-edit btn-sm">✏️ সম্পাদনা</a>
+                                <form method="post" action="/News/NewsDelete/@n.Id" style="display:inline"
                                       onsubmit="return confirm('এই সংবাদ মুছে ফেলবেন?')">
                                     @Html.AntiForgeryToken()
                                     <button type="submit" class="btn btn-danger btn-sm">🗑️</button>

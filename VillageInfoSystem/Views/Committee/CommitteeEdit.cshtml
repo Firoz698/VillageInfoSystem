@@ -440,9 +440,9 @@
 <div class="page-wrapper">
     <!-- Breadcrumb -->
     <div class="breadcrumb">
-        <a href="/Admin/CommitteeList">কমিটি সদস্য</a>
+        <a href="/Committee/CommitteeList">কমিটি সদস্য</a>
         <span>›</span>
-        <a href="/Admin/CommitteeList">তালিকা</a>
+        <a href="/Committee/CommitteeList">তালিকা</a>
         <span>›</span>
         <span>@Model.Name</span>
     </div>
@@ -532,7 +532,7 @@
             </div>
 
             <div class="form-actions">
-                <form method="post" action="/Admin/CommitteeDelete/@Model.Id" style="display:inline" onsubmit="return confirm('এই সদস্যকে স্থায়ীভাবে মুছে ফেলবেন?')">
+                <form method="post" action="/Committee/CommitteeDelete/@Model.Id" style="display:inline" onsubmit="return confirm('এই সদস্যকে স্থায়ীভাবে মুছে ফেলবেন?')">
                     @Html.AntiForgeryToken()
                     <button type="submit" class="btn-danger-link">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" /></svg>
@@ -541,7 +541,7 @@
                 </form>
 
                 <div class="actions-right">
-                    <a href="/Admin/CommitteeList" class="btn-outline">
+                    <a href="/Committee/CommitteeList" class="btn-outline">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
                         বাতিল
                     </a>
