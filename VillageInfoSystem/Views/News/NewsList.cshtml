@@ -8,77 +8,211 @@
 }
 
 <style>
+   @@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Playfair+Display:wght@700;900&display=swap');
+
     :root {
-        --radius: 12px;
-        --shadow-sm: 0 2px 8px rgba(26,58,92,0.07);
-        --shadow-md: 0 6px 24px rgba(26,58,92,0.12);
-        --border: #dde3ec;
-        --surface-alt: #f5f7fa;
+        --forest: #0d5c2e;
+        --emerald: #1a8a4a;
+        --jade: #2ebd6b;
+        --mint: #d4f7e2;
+        --gold: #d4a017;
+        --amber: #f0c040;
+        --sand: #fef3d0;
+        --sky: #1565c0;
+        --azure: #4090e8;
+        --ice: #dbeeff;
+        --violet: #6a1fa2;
+        --lilac: #f0e5ff;
+        --coral: #c0392b;
+        --blush: #ffe0e0;
+        --bg: #f0f4f0;
+        --surface: #ffffff;
+        --border: #e0ebe2;
+        --text: #1a2e1f;
+        --muted: #6b8070;
+        --radius: 16px;
+        --shadow: 0 4px 24px rgba(13,92,46,0.08);
+        --shadow-lg: 0 12px 48px rgba(13,92,46,0.16);
     }
 
-    /* ── Page Header ── */
+    /* ══ PAGE HEADER ══ */
     .page-header {
+        position: relative;
+        border-radius: 24px;
+        padding: 2rem 2.4rem;
+        margin-bottom: 1.6rem;
+        overflow: hidden;
+        background: linear-gradient(135deg, #0d5c2e 0%, #1a8a4a 45%, #2ebd6b 100%);
         display: flex;
-        align-items: flex-start;
+        align-items: center;
         justify-content: space-between;
+        gap: 1.2rem;
         flex-wrap: wrap;
-        gap: 0.75rem;
-        margin-bottom: 1.2rem;
+        box-shadow: 0 14px 44px rgba(13,92,46,0.32);
+        animation: fadeUp 0.45s ease both;
     }
 
-    .ph-left h2 {
-        font-family: 'Playfair Display', serif;
-        font-size: clamp(1.05rem, 3.5vw, 1.4rem);
-        color: var(--green-dark);
-        font-weight: 900;
+        .page-header::before {
+            content: '';
+            position: absolute;
+            width: 360px;
+            height: 360px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 70%);
+            top: -140px;
+            right: -60px;
+            pointer-events: none;
+        }
+
+        .page-header::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 26px 26px;
+            pointer-events: none;
+        }
+
+    .ph-text {
+        position: relative;
+        z-index: 2;
     }
 
-    .ph-left p {
-        font-size: 0.82rem;
-        color: var(--text-muted);
-        margin-top: 2px;
+        .ph-text h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.55rem;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 0.3rem;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.18);
+        }
+
+        .ph-text p {
+            font-size: 0.86rem;
+            color: rgba(255,255,255,0.68);
+        }
+
+    .ph-btn {
+        position: relative;
+        z-index: 2;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.65rem 1.4rem;
+        background: rgba(255,255,255,0.18);
+        border: 1.5px solid rgba(255,255,255,0.35);
+        border-radius: 50px;
+        color: #fff;
+        font-weight: 700;
+        font-size: 0.88rem;
+        text-decoration: none;
+        font-family: 'Hind Siliguri', sans-serif;
+        backdrop-filter: blur(6px);
+        transition: all 0.22s;
+        white-space: nowrap;
     }
 
-    /* ── Stats Pills ── */
+        .ph-btn:hover {
+            background: rgba(255,255,255,0.28);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+            color: #fff;
+            text-decoration: none;
+        }
+
+    /* ══ STAT PILLS ══ */
     .news-stats {
         display: flex;
-        gap: 0.55rem;
-        margin-bottom: 1.1rem;
+        gap: 0.75rem;
+        margin-bottom: 1.4rem;
         flex-wrap: wrap;
+        animation: fadeUp 0.45s 0.08s ease both;
     }
 
     .ns-pill {
         display: flex;
         align-items: center;
-        gap: 0.4rem;
-        padding: 0.42rem 0.85rem;
-        background: white;
-        border: 1px solid var(--border);
+        gap: 0.5rem;
+        padding: 0.55rem 1.1rem;
+        background: var(--surface);
+        border: 1.5px solid var(--border);
         border-radius: 50px;
-        font-size: 0.78rem;
-        color: var(--text-muted);
-        box-shadow: var(--shadow-sm);
+        font-size: 0.8rem;
+        color: var(--muted);
+        box-shadow: var(--shadow);
         white-space: nowrap;
+        font-weight: 500;
+        transition: transform 0.2s;
     }
 
+        .ns-pill:hover {
+            transform: translateY(-2px);
+        }
+
         .ns-pill strong {
-            color: var(--green-dark);
-            font-size: 0.92rem;
+            color: var(--forest);
+            font-size: 0.95rem;
             font-weight: 800;
         }
 
-    /* ── Filter Bar ── */
+        .ns-pill.pill-green {
+            border-color: #c6e8d2;
+            background: #edfaf2;
+        }
+
+        .ns-pill.pill-gold {
+            border-color: #f0dfa0;
+            background: #fffae8;
+        }
+
+        .ns-pill.pill-blue {
+            border-color: #b8d8f8;
+            background: #eaf4ff;
+        }
+
+        .ns-pill.pill-violet {
+            border-color: #dcc8f5;
+            background: #f5eeff;
+        }
+
+        .ns-pill.pill-red {
+            border-color: #f0b8b8;
+            background: #fff5f5;
+        }
+
+        .ns-pill.pill-green strong {
+            color: var(--forest);
+        }
+
+        .ns-pill.pill-gold strong {
+            color: #7a5010;
+        }
+
+        .ns-pill.pill-blue strong {
+            color: var(--sky);
+        }
+
+        .ns-pill.pill-violet strong {
+            color: var(--violet);
+        }
+
+        .ns-pill.pill-red strong {
+            color: var(--coral);
+        }
+
+    /* ══ FILTER BAR ══ */
     .filter-bar {
-        background: white;
-        border-radius: var(--radius);
-        border: 1px solid var(--border);
-        padding: 0.75rem 1rem;
+        background: var(--surface);
+        border-radius: 16px;
+        border: 1.5px solid var(--border);
+        padding: 0.85rem 1.1rem;
         display: flex;
         align-items: center;
-        gap: 0.65rem;
-        margin-bottom: 1.1rem;
+        gap: 0.7rem;
+        margin-bottom: 1.3rem;
         flex-wrap: wrap;
-        box-shadow: var(--shadow-sm);
+        box-shadow: var(--shadow);
+        animation: fadeUp 0.45s 0.14s ease both;
     }
 
     .search-wrap {
@@ -89,25 +223,26 @@
 
         .search-wrap input {
             width: 100%;
-            padding: 0.55rem 0.9rem 0.55rem 2.2rem;
+            padding: 0.58rem 0.9rem 0.58rem 2.3rem;
             border: 1.5px solid var(--border);
-            border-radius: 9px;
+            border-radius: 10px;
             font-family: 'Hind Siliguri', sans-serif;
-            font-size: 0.85rem;
-            transition: all 0.2s;
-            background: white;
+            font-size: 0.86rem;
+            transition: all 0.22s;
+            background: #f8fbf8;
             color: var(--text);
         }
 
             .search-wrap input:focus {
                 outline: none;
-                border-color: var(--green);
-                box-shadow: 0 0 0 3px rgba(26,107,60,0.08);
+                border-color: var(--emerald);
+                background: #fff;
+                box-shadow: 0 0 0 3px rgba(26,138,74,0.1);
             }
 
     .search-icon {
         position: absolute;
-        left: 0.7rem;
+        left: 0.75rem;
         top: 50%;
         transform: translateY(-50%);
         font-size: 0.82rem;
@@ -115,64 +250,107 @@
     }
 
     .filter-select {
-        padding: 0.55rem 0.8rem;
+        padding: 0.58rem 0.9rem;
         border: 1.5px solid var(--border);
-        border-radius: 9px;
+        border-radius: 10px;
         font-family: 'Hind Siliguri', sans-serif;
-        font-size: 0.82rem;
+        font-size: 0.83rem;
         color: var(--text);
         cursor: pointer;
-        transition: all 0.2s;
-        background: white;
+        background: #f8fbf8;
         flex-shrink: 0;
+        transition: all 0.22s;
     }
 
         .filter-select:focus {
             outline: none;
-            border-color: var(--green);
+            border-color: var(--emerald);
+            background: #fff;
         }
 
-    /* ── Table Card ── */
+    /* ══ TABLE CARD ══ */
     .table-card {
-        background: white;
-        border-radius: var(--radius);
-        border: 1px solid var(--border);
-        box-shadow: var(--shadow-sm);
+        background: var(--surface);
+        border-radius: 20px;
+        border: 1.5px solid var(--border);
+        box-shadow: var(--shadow);
         overflow: hidden;
+        animation: fadeUp 0.45s 0.2s ease both;
     }
 
     .tc-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0.9rem 1.2rem;
-        border-bottom: 1px solid var(--border);
+        padding: 1.1rem 1.5rem;
+        border-bottom: 1.5px solid var(--border);
+        background: linear-gradient(90deg, #f5fbf7, #fff);
         flex-wrap: wrap;
-        gap: 0.6rem;
-        background: var(--surface-alt);
+        gap: 0.7rem;
     }
 
     .tc-title {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.6rem;
         font-weight: 700;
-        color: var(--green-dark);
-        font-size: 0.92rem;
+        color: var(--forest);
+        font-size: 0.97rem;
     }
 
     .tc-icon {
-        width: 28px;
-        height: 28px;
-        border-radius: 7px;
-        background: var(--green-muted);
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        background: var(--mint);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.82rem;
+        font-size: 0.95rem;
     }
 
-    /* ── Desktop Table ── */
+    /* ══ BADGES ══ */
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.28rem;
+        padding: 0.28rem 0.72rem;
+        border-radius: 50px;
+        font-size: 0.73rem;
+        font-weight: 700;
+    }
+
+    .badge-green {
+        background: var(--mint);
+        color: var(--forest);
+        border: 1px solid #b0e0c0;
+    }
+
+    .badge-gold {
+        background: var(--sand);
+        color: #7a5010;
+        border: 1px solid #f0dfa0;
+    }
+
+    .badge-blue {
+        background: var(--ice);
+        color: var(--sky);
+        border: 1px solid #b8d8f8;
+    }
+
+    .badge-success {
+        background: #e2f9ec;
+        color: #0d7a3e;
+        border: 1px solid #9ae0b8;
+    }
+
+    .badge-danger {
+        background: var(--blush);
+        color: var(--coral);
+        border: 1px solid #f0b8b8;
+    }
+
+    /* ══ DESKTOP TABLE ══ */
     .table-wrap {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
@@ -181,25 +359,27 @@
     table {
         width: 100%;
         border-collapse: collapse;
-        font-size: 0.855rem;
+        font-size: 0.86rem;
     }
 
     thead th {
-        background: #f5f8f5;
-        color: var(--green-dark);
-        padding: 0.65rem 0.9rem;
+        background: #f5fbf7;
+        color: var(--forest);
+        padding: 0.75rem 1rem;
         text-align: left;
         font-weight: 700;
         font-size: 0.72rem;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
         border-bottom: 2px solid var(--border);
         white-space: nowrap;
     }
 
     tbody td {
-        padding: 0.75rem 0.9rem;
-        border-bottom: 1px solid #f2f6f2;
+        padding: 0.8rem 1rem;
+        border-bottom: 1px solid #f0f6f1;
         vertical-align: middle;
+        color: var(--text);
     }
 
     tbody tr:last-child td {
@@ -207,7 +387,7 @@
     }
 
     tbody tr:hover td {
-        background: #f8fbf8;
+        background: linear-gradient(90deg, #f7fdf9, #fff);
     }
 
     tbody tr.filtered-out {
@@ -215,29 +395,29 @@
     }
 
     .news-thumb {
-        width: 44px;
-        height: 44px;
-        border-radius: 8px;
+        width: 46px;
+        height: 46px;
+        border-radius: 10px;
         object-fit: cover;
         display: block;
-        border: 1px solid #e0ebe0;
+        border: 1.5px solid #d0e8d8;
     }
 
     .news-thumb-placeholder {
-        width: 44px;
-        height: 44px;
-        border-radius: 8px;
-        background: #f0f5f0;
-        border: 1px dashed #c8d8c8;
+        width: 46px;
+        height: 46px;
+        border-radius: 10px;
+        background: #f0f7f2;
+        border: 1.5px dashed #b8d8c0;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.05rem;
-        color: #adc4ad;
+        font-size: 1.1rem;
+        color: #90b898;
     }
 
     .news-icon-cell {
-        font-size: 1.4rem;
+        font-size: 1.45rem;
         line-height: 1;
     }
 
@@ -248,7 +428,7 @@
     .news-title-text {
         font-weight: 600;
         color: var(--text);
-        font-size: 0.85rem;
+        font-size: 0.86rem;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -257,12 +437,12 @@
 
     .news-title-desc {
         font-size: 0.73rem;
-        color: var(--text-muted);
+        color: var(--muted);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         display: block;
-        margin-top: 1px;
+        margin-top: 2px;
     }
 
     .actions-cell {
@@ -272,20 +452,67 @@
         white-space: nowrap;
     }
 
-    .empty-row td {
+    /* ══ BUTTONS ══ */
+    .btn-sm {
+        padding: 0.38rem 0.85rem;
+        border-radius: 50px;
+        font-size: 0.77rem;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.28rem;
+        transition: all 0.2s;
+        font-family: 'Hind Siliguri', sans-serif;
+        border: none;
+        cursor: pointer;
+        line-height: 1.5;
+    }
+
+    .btn-edit {
+        background: var(--ice);
+        color: var(--sky);
+        border: 1.5px solid #b8d8f8;
+    }
+
+        .btn-edit:hover {
+            background: var(--sky);
+            color: #fff;
+            text-decoration: none;
+            border-color: var(--sky);
+        }
+
+    .btn-danger {
+        background: var(--blush);
+        color: var(--coral);
+        border: 1.5px solid #f0b8b8;
+    }
+
+        .btn-danger:hover {
+            background: var(--coral);
+            color: #fff;
+            border-color: var(--coral);
+        }
+
+    /* ══ EMPTY STATE ══ */
+    .empty-state {
         text-align: center;
-        padding: 3.5rem 1rem;
-        color: var(--text-muted);
+        padding: 4rem 1.5rem;
+        color: var(--muted);
     }
 
-    .empty-row .er-icon {
-        font-size: 2.5rem;
-        display: block;
-        margin-bottom: 0.7rem;
-        opacity: 0.4;
-    }
+        .empty-state .es-icon {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 0.8rem;
+            opacity: 0.4;
+        }
 
-    /* ── Desktop visible / Mobile hidden ── */
+        .empty-state p {
+            font-size: 0.9rem;
+        }
+
+    /* ══ MOBILE CARDS ══ */
     .desktop-table {
         display: block;
     }
@@ -294,12 +521,11 @@
         display: none;
     }
 
-    /* ── Mobile News Card ── */
     .m-news-card {
-        padding: 0.9rem 1rem;
+        padding: 1rem 1.1rem;
         border-bottom: 1px solid var(--border);
         display: flex;
-        gap: 0.75rem;
+        gap: 0.8rem;
         align-items: flex-start;
         transition: background 0.15s;
     }
@@ -309,28 +535,28 @@
         }
 
         .m-news-card:hover {
-            background: #f8fbf8;
+            background: #f7fdf9;
         }
 
     .m-thumb {
-        width: 52px;
-        height: 52px;
-        border-radius: 10px;
+        width: 54px;
+        height: 54px;
+        border-radius: 12px;
         object-fit: cover;
         flex-shrink: 0;
-        border: 1px solid #e0ebe0;
+        border: 1.5px solid #d0e8d8;
     }
 
     .m-thumb-placeholder {
-        width: 52px;
-        height: 52px;
-        border-radius: 10px;
-        background: #f0f5f0;
-        border: 1px dashed #c8d8c8;
+        width: 54px;
+        height: 54px;
+        border-radius: 12px;
+        background: #f0f7f2;
+        border: 1.5px dashed #b8d8c0;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.4rem;
+        font-size: 1.5rem;
         flex-shrink: 0;
     }
 
@@ -342,9 +568,9 @@
     .m-title {
         font-weight: 700;
         color: var(--text);
-        font-size: 0.88rem;
+        font-size: 0.9rem;
         line-height: 1.4;
-        margin-bottom: 0.3rem;
+        margin-bottom: 0.35rem;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
@@ -360,8 +586,8 @@
     }
 
     .m-date {
-        font-size: 0.72rem;
-        color: var(--text-muted);
+        font-size: 0.73rem;
+        color: var(--muted);
     }
 
     .m-footer {
@@ -385,7 +611,20 @@
         flex-shrink: 0;
     }
 
-    /* ── Responsive breakpoints ── */
+    /* ══ ANIMATIONS ══ */
+    @@keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(16px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* ══ RESPONSIVE ══ */
     @@media (max-width: 860px) {
         .hide-tablet {
             display: none;
@@ -401,14 +640,9 @@
             display: block !important;
         }
 
-        .page-header {
-            margin-bottom: 0.9rem;
-        }
-
         .filter-bar {
             flex-direction: column;
             gap: 0.5rem;
-            padding: 0.65rem 0.85rem;
         }
 
         .search-wrap {
@@ -419,20 +653,18 @@
             width: 100%;
         }
 
-        .news-stats {
-            gap: 0.4rem;
+        .ph-text h2 {
+            font-size: 1.2rem;
         }
 
-        .ns-pill {
-            font-size: 0.74rem;
-            padding: 0.35rem 0.72rem;
+        .page-header {
+            padding: 1.5rem 1.3rem;
         }
     }
 
     @@media (max-width: 400px) {
         .m-news-card {
-            padding: 0.75rem 0.85rem;
-            gap: 0.6rem;
+            padding: 0.8rem 0.9rem;
         }
 
         .m-thumb, .m-thumb-placeholder {
@@ -440,42 +672,42 @@
             height: 46px;
         }
 
-        .m-title {
-            font-size: 0.84rem;
-        }
-
         .m-footer {
             flex-direction: column;
             align-items: flex-start;
         }
+
+        .news-stats {
+            gap: 0.4rem;
+        }
     }
 </style>
 
-<!-- Header -->
+<!-- ── PAGE HEADER ── -->
 <div class="page-header">
-    <div class="ph-left">
+    <div class="ph-text">
         <h2>📰 সংবাদ ব্যবস্থাপনা</h2>
         <p>গ্রামের সকল সংবাদ পরিচালনা করুন</p>
     </div>
-    <a href="/News/NewsCreate" class="btn btn-primary">➕ নতুন সংবাদ</a>
+    <a href="/News/NewsCreate" class="ph-btn">➕ নতুন সংবাদ</a>
 </div>
 
-<!-- Stats -->
+<!-- ── STAT PILLS ── -->
 @if (Model.Any())
 {
     <div class="news-stats">
-        <div class="ns-pill">📰 মোট: <strong>@Model.Count</strong></div>
-        <div class="ns-pill">✅ সক্রিয়: <strong>@activeCount</strong></div>
-        <div class="ns-pill">⭐ শীর্ষ: <strong>@featuredCount</strong></div>
-        <div class="ns-pill">🖼️ ছবি সহ: <strong>@withImageCount</strong></div>
+        <div class="ns-pill pill-green">📰 মোট <strong>@Model.Count</strong> টি</div>
+        <div class="ns-pill pill-green">✅ সক্রিয় <strong>@activeCount</strong></div>
+        <div class="ns-pill pill-gold">⭐ শীর্ষ <strong>@featuredCount</strong></div>
+        <div class="ns-pill pill-blue">🖼️ ছবি সহ <strong>@withImageCount</strong></div>
         @if (Model.Count - activeCount > 0)
         {
-            <div class="ns-pill">⏸️ নিষ্ক্রিয়: <strong>@(Model.Count - activeCount)</strong></div>
+            <div class="ns-pill pill-red">⏸️ নিষ্ক্রিয় <strong>@(Model.Count - activeCount)</strong></div>
         }
     </div>
 }
 
-<!-- Filter Bar -->
+<!-- ── FILTER BAR ── -->
 <div class="filter-bar">
     <div class="search-wrap">
         <span class="search-icon">🔍</span>
@@ -502,38 +734,38 @@
     </select>
 </div>
 
-<!-- Table Card -->
+<!-- ── TABLE CARD ── -->
 <div class="table-card">
     <div class="tc-header">
         <div class="tc-title">
             <div class="tc-icon">📋</div>
             সকল সংবাদ
-            <span class="badge badge-gold" id="visibleCount">@Model.Count টি</span>
+            <span class="badge badge-green" id="visibleCount">@Model.Count টি</span>
         </div>
     </div>
 
     @if (!Model.Any())
     {
-        <div style="text-align:center;padding:3.5rem 1rem;color:var(--text-muted);">
-            <div style="font-size:2.5rem;margin-bottom:0.7rem;opacity:0.4;">📭</div>
-            এখনো কোনো সংবাদ যোগ করা হয়নি।
+        <div class="empty-state">
+            <span class="es-icon">📭</span>
+            <p>এখনো কোনো সংবাদ যোগ করা হয়নি।</p>
         </div>
     }
     else
     {
-        <!-- ── Desktop Table ── -->
+        <!-- Desktop Table -->
         <div class="table-wrap desktop-table">
             <table id="newsTable">
                 <thead>
                     <tr>
-                        <th style="width:52px">ছবি</th>
-                        <th style="width:42px">আইকন</th>
+                        <th style="width:54px">ছবি</th>
+                        <th style="width:44px">আইকন</th>
                         <th>শিরোনাম</th>
                         <th class="hide-tablet">বিভাগ</th>
                         <th class="hide-tablet">তারিখ</th>
-                        <th style="width:48px">শীর্ষ</th>
+                        <th style="width:52px">শীর্ষ</th>
                         <th>অবস্থা</th>
-                        <th style="width:155px">কার্যক্রম</th>
+                        <th style="width:160px">কার্যক্রম</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -570,7 +802,7 @@
                                 <span class="badge badge-gold">@n.Category</span>
                             </td>
 
-                            <td class="hide-tablet" style="color:var(--text-muted);font-size:0.78rem;white-space:nowrap;">
+                            <td class="hide-tablet" style="color:var(--muted);font-size:0.78rem;white-space:nowrap;">
                                 @n.PublishedAt.ToString("dd MMM yyyy")
                             </td>
 
@@ -594,11 +826,11 @@
 
                             <td>
                                 <div class="actions-cell">
-                                    <a href="/News/NewsEdit/@n.Id" class="btn btn-edit btn-sm">✏️ সম্পাদনা</a>
+                                    <a href="/News/NewsEdit/@n.Id" class="btn-sm btn-edit">✏️ সম্পাদনা</a>
                                     <form method="post" action="/News/NewsDelete/@n.Id" style="display:inline"
                                           onsubmit="return confirm('এই সংবাদ মুছে ফেলবেন?')">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-danger btn-sm">🗑️</button>
+                                        <button type="submit" class="btn-sm btn-danger">🗑️</button>
                                     </form>
                                 </div>
                             </td>
@@ -608,7 +840,7 @@
             </table>
         </div>
 
-        <!-- ── Mobile Cards ── -->
+        <!-- Mobile Cards -->
         <div class="mobile-list" id="mobileList">
             @foreach (var n in Model)
             {
@@ -632,7 +864,7 @@
                         <div class="m-title">@n.Title</div>
                         <div class="m-meta">
                             <span class="badge badge-gold">@n.Category</span>
-                            <span class="m-date">@n.PublishedAt.ToString("dd MMM yyyy")</span>
+                            <span class="m-date">📅 @n.PublishedAt.ToString("dd MMM yyyy")</span>
                         </div>
                         <div class="m-footer">
                             <div class="m-badges">
@@ -645,11 +877,11 @@
                                 }
                             </div>
                             <div class="m-actions">
-                                <a href="/News/NewsEdit/@n.Id" class="btn btn-edit btn-sm">✏️ সম্পাদনা</a>
+                                <a href="/News/NewsEdit/@n.Id" class="btn-sm btn-edit">✏️</a>
                                 <form method="post" action="/News/NewsDelete/@n.Id" style="display:inline"
                                       onsubmit="return confirm('এই সংবাদ মুছে ফেলবেন?')">
                                     @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-danger btn-sm">🗑️</button>
+                                    <button type="submit" class="btn-sm btn-danger">🗑️</button>
                                 </form>
                             </div>
                         </div>
@@ -670,9 +902,7 @@
             document.querySelector('.mobile-list')
         ).display !== 'none';
 
-        // Desktop rows
         const rows  = document.querySelectorAll('#tableBody tr');
-        // Mobile cards
         const cards = document.querySelectorAll('#mobileList .m-news-card');
 
         let visible = 0;
@@ -692,6 +922,7 @@
         rows.forEach(r => {
             const show = matches(r);
             r.classList.toggle('filtered-out', !show);
+            if (show && !isMobile) visible++;
         });
 
         cards.forEach(c => {
@@ -699,10 +930,6 @@
             c.style.display = show ? 'flex' : 'none';
             if (show && isMobile) visible++;
         });
-
-        if (!isMobile) {
-            visible = [...rows].filter(r => !r.classList.contains('filtered-out')).length;
-        }
 
         const vc = document.getElementById('visibleCount');
         if (vc) vc.textContent = visible + ' টি';
