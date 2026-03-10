@@ -12,7 +12,7 @@
 </div>
 
 <div class="card">
-    <form method="post" enctype="multipart/form-data" action="/Admin/DonationEdit/@Model.Id">
+    <form method="post" enctype="multipart/form-data" action="/Donation/DonationEdit/@Model.Id">
         @Html.AntiForgeryToken()
         <input type="hidden" name="Id" value="@Model.Id" />
         <div class="form-group">

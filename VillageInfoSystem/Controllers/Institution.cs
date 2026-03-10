@@ -6,12 +6,12 @@ using VillageInfoSystem.Models;
 
 namespace VillageInfoSystem.Controllers
 {
-    public class InstitutionC : Controller
+    public class InstitutionController : Controller
     {
         private readonly AppDbContext _db;
         private readonly IConfiguration _config;
         private readonly IWebHostEnvironment _env;
-        public InstitutionC(AppDbContext db, IConfiguration config, IWebHostEnvironment env)
+        public InstitutionController(AppDbContext db, IConfiguration config, IWebHostEnvironment env)
         {
             _db = db;
             _config = config;
@@ -112,21 +112,6 @@ namespace VillageInfoSystem.Controllers
             return RedirectToAction("InstitutionList");
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> InstitutionToggleStatus([FromBody] ToggleDtos dto)
-        {
-            var inst = await _db.Institutions.FindAsync(dto.Id);
-            if (inst == null) return NotFound();
-            inst.IsActive = dto.IsActive;
-            await _db.SaveChangesAsync();
-            return Ok();
-        }
 
-        public class ToggleDtos
-        {
-            public int Id { get; set; }
-            public bool IsActive { get; set; }
-        }
     }
 }

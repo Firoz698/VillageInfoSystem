@@ -108,7 +108,7 @@
         <h2>✏️ প্রতিষ্ঠান সম্পাদনা</h2>
         <p>@Model.Name — তথ্য আপডেট করুন</p>
     </div>
-    <a href="/InstitutionC/InstitutionList" class="btn btn-outline">← তালিকায় ফিরুন</a>
+    <a href="/Institution/InstitutionList" class="btn btn-outline">← তালিকায় ফিরুন</a>
 </div>
 
 <div class="adm-form">
@@ -116,7 +116,7 @@
     <!-- Institution Form -->
     <div class="adm-card">
         <div class="adm-card-title">📋 প্রতিষ্ঠানের তথ্য</div>
-        <form method="post" action="/InstitutionC/InstitutionEdit" enctype="multipart/form-data">
+        <form method="post" action="/Institution/InstitutionEdit" enctype="multipart/form-data">
             @Html.AntiForgeryToken()
             <input type="hidden" name="Id" value="@Model.Id" />
 
@@ -175,7 +175,7 @@
 
             <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
                 <button type="submit" class="btn btn-primary btn-lg">💾 আপডেট করুন</button>
-                <a href="/InstitutionC/InstitutionList" class="btn btn-outline btn-lg">বাতিল</a>
+                <a href="/Institution/InstitutionList" class="btn btn-outline btn-lg">বাতিল</a>
             </div>
         </form>
     </div>

@@ -6,12 +6,12 @@ using VillageInfoSystem.Models;
 
 namespace VillageInfoSystem.Controllers
 {
-    public class FacilityC : Controller
+    public class FacilityController : Controller
     {
         private readonly AppDbContext _db;
         private readonly IConfiguration _config;
         private readonly IWebHostEnvironment _env;
-        public FacilityC(AppDbContext db, IConfiguration config, IWebHostEnvironment env)
+        public FacilityController(AppDbContext db, IConfiguration config, IWebHostEnvironment env)
         {
             _db = db;
             _config = config;

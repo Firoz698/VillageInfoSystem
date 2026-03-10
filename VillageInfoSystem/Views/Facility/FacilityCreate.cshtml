@@ -1,11 +1,10 @@
 @model VillageInfoSystem.Models.Facility
 @{
-    ViewData["Title"] = "সুবিধা সম্পাদনা";
+    ViewData["Title"] = "নতুন সুবিধা যোগ";
     Layout = "_AdminLayout";
 }
 
 <style>
-    /* ── REUSE SAME STYLES ── */
     .form-page-header {
         display: flex;
         align-items: center;
@@ -29,19 +28,6 @@
         font-size: 0.84rem;
         color: var(--text-muted);
         margin-top: 2px;
-    }
-
-    .edit-id-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        padding: 0.3rem 0.8rem;
-        background: rgba(26,107,60,0.07);
-        border: 1px solid rgba(26,107,60,0.15);
-        border-radius: 50px;
-        font-size: 0.76rem;
-        color: var(--green-dark);
-        font-weight: 600;
     }
 
     .form-layout {
@@ -174,6 +160,7 @@
         display: block;
     }
 
+    /* Category pills */
     .cat-pills {
         display: flex;
         gap: 0.5rem;
@@ -228,6 +215,7 @@
             border-color: #8840b0;
         }
 
+    /* Icon picker */
     .icon-picker {
         display: flex;
         gap: 0.5rem;
@@ -258,8 +246,10 @@
         .icon-opt.selected {
             border-color: var(--green);
             background: var(--green-muted);
+            box-shadow: 0 0 0 2px rgba(26,107,60,0.15);
         }
 
+    /* Toggle */
     .toggle-item {
         display: flex;
         align-items: center;
@@ -333,6 +323,7 @@
         color: var(--text-muted);
     }
 
+    /* Sidebar */
     .sidebar-card {
         background: white;
         border-radius: var(--radius);
@@ -362,6 +353,7 @@
         padding: 1.1rem 1.2rem;
     }
 
+    /* Facility preview */
     .facility-preview {
         border-radius: 12px;
         overflow: hidden;
@@ -375,6 +367,7 @@
         justify-content: center;
         font-size: 2.5rem;
         transition: background 0.3s;
+        background: linear-gradient(135deg,#1a6b3c,#2d9b5a);
     }
 
     .fp-body {
@@ -432,40 +425,39 @@
     }
 </style>
 
-<!-- Header -->
 <div class="form-page-header">
     <div class="fph-left">
-        <h2>✏️ সুবিধা সম্পাদনা করুন</h2>
-        <p>বিদ্যমান সুবিধার তথ্য আপডেট করুন</p>
+        <h2>🏛️ নতুন সুবিধা যোগ করুন</h2>
+        <p>গ্রামের সুবিধা বিভাগে নতুন প্রতিষ্ঠান বা সেবা যোগ করুন</p>
     </div>
-    <div style="display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;">
-        <div class="edit-id-badge">🆔 সুবিধা #@Model.Id</div>
-        <a href="/FacilityC/FacilityList" class="btn btn-outline btn-sm">← সুবিধা তালিকা</a>
-    </div>
+    <a href="/Facility/FacilityList" class="btn btn-outline btn-sm">← সুবিধা তালিকা</a>
 </div>
 
-<form asp-action="FacilityEdit" method="post" id="facilityForm">
+<form asp-action="FacilityCreate" method="post" id="facilityForm">
     @Html.AntiForgeryToken()
-    <input asp-for="Id" type="hidden" />
-
     <div class="form-layout">
+
         <!-- LEFT -->
         <div>
+            <!-- Name & Icon -->
             <div class="form-section">
                 <div class="fs-header">
                     <div class="fs-icon">🏷️</div>
-                    <div><h3>মূল তথ্য</h3><p>সুবিধার নাম ও আইকন সম্পাদনা করুন</p></div>
+                    <div><h3>মূল তথ্য</h3><p>সুবিধার নাম ও আইকন নির্ধারণ করুন</p></div>
                 </div>
                 <div class="fs-body">
                     <div class="field-grid-2">
                         <div class="form-group">
                             <label class="form-label">নাম <span class="req">*</span></label>
-                            <input asp-for="Name" class="form-control" id="nameInput" oninput="updatePreview()" />
+                            <input asp-for="Name" class="form-control" id="nameInput"
+                                   placeholder="যেমন: আল-আমিন মসজিদ"
+                                   oninput="updatePreview()" />
                             <span asp-validation-for="Name" class="validation-msg"></span>
                         </div>
                         <div class="form-group">
                             <label class="form-label">আইকন ইমোজি</label>
-                            <input asp-for="Icon" class="form-control" id="iconInput" oninput="updatePreview()" maxlength="8" />
+                            <input asp-for="Icon" class="form-control" id="iconInput"
+                                   placeholder="🕌" oninput="updatePreview()" maxlength="8" />
                             <div class="icon-picker">
                                 @foreach (var ic in new[] { "🕌", "🏫", "🏥", "🏪", "⛪", "🌾", "🏛️", "🏗️", "💧", "🌿", "🎓", "🏆" })
                                 {
@@ -476,15 +468,17 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">বিবরণ</label>
-                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                        <textarea asp-for="Description" class="form-control"
+                                  placeholder="সুবিধাটি সম্পর্কে সংক্ষিপ্ত বিবরণ লিখুন..." rows="3"></textarea>
                     </div>
                 </div>
             </div>
 
+            <!-- Category & Count -->
             <div class="form-section">
                 <div class="fs-header">
                     <div class="fs-icon">📊</div>
-                    <div><h3>বিভাগ ও পরিসংখ্যান</h3></div>
+                    <div><h3>বিভাগ ও পরিসংখ্যান</h3><p>বিভাগ ও সংখ্যা নির্ধারণ করুন</p></div>
                 </div>
                 <div class="fs-body">
                     <div class="field-grid-2">
@@ -508,13 +502,16 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">সংখ্যা / পরিমাণ</label>
-                            <input asp-for="Count" class="form-control" id="countInput" oninput="updatePreview()" />
-                            <div class="field-hint">ℹ️ যেমন: ৩টি, ১টি, ৫০+</div>
+                            <input asp-for="Count" class="form-control" id="countInput"
+                                   placeholder="যেমন: ৩টি মসজিদ"
+                                   oninput="updatePreview()" />
+                            <div class="field-hint">ℹ️ যেমন: ৩টি, ১টি, ৫০+ ইত্যাদি</div>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Order & Status -->
             <div class="form-section">
                 <div class="fs-header">
                     <div class="fs-icon">⚙️</div>
@@ -523,14 +520,15 @@
                 <div class="fs-body">
                     <div class="form-group">
                         <label class="form-label">ক্রম নম্বর (SortOrder)</label>
-                        <input asp-for="SortOrder" type="number" class="form-control" min="0" />
+                        <input asp-for="SortOrder" type="number" class="form-control" value="0" min="0" />
                         <div class="field-hint">ℹ️ ছোট সংখ্যা আগে দেখাবে</div>
                     </div>
-                    <label class="toggle-item @(Model.IsActive ? "checked" : "")" id="activeToggle" for="IsActive">
+                    <label class="toggle-item checked" id="activeToggle" for="IsActive">
                         <div class="toggle-sw">
-                            <input asp-for="IsActive" type="checkbox" id="IsActive" onchange="syncToggle()" />
+                            <input asp-for="IsActive" type="checkbox" id="IsActive" checked
+                                   onchange="syncToggle()" />
                             <div class="ts-track"></div>
-                            <div class="ts-thumb" style="@(Model.IsActive ? "transform:translateX(19px)" : "")"></div>
+                            <div class="ts-thumb" style="transform:translateX(19px)"></div>
                         </div>
                         <div class="ti-info">
                             <strong>✅ সক্রিয় রাখুন</strong>
@@ -547,36 +545,31 @@
                 <div class="sc-hd">👁️ প্রিভিউ</div>
                 <div class="sc-bd">
                     <div class="facility-preview">
-                        <div class="fp-header" id="fpHeader"
-                             style="background:@(Model.Category switch { "ধর্মীয়" => "linear-gradient(135deg,#8b5a10,#c8993a)", "শিক্ষা" => "linear-gradient(135deg,#1a4878,#3a8ad4)", "স্বাস্থ্য" => "linear-gradient(135deg,#7a2020,#b84040)", "ব্যবসা" => "linear-gradient(135deg,#5a1a7a,#8840b0)", _ => "linear-gradient(135deg,#1a6b3c,#2d9b5a)" })">
-                            @(Model.Icon ?? "🏛️")
-                        </div>
+                        <div class="fp-header" id="fpHeader">🏛️</div>
                         <div class="fp-body">
-                            <div class="fp-name" id="fpName">@(Model.Name ?? "নাম")</div>
-                            <span class="fp-cat" id="fpCat">@(Model.Category ?? "সাধারণ")</span>
-                            <span class="fp-count" id="fpCount">@(!string.IsNullOrEmpty(Model.Count) ? "· " + Model.Count : "")</span>
+                            <div class="fp-name" id="fpName">নাম এখানে দেখাবে</div>
+                            <span class="fp-cat" id="fpCat">সাধারণ</span>
+                            <span class="fp-count" id="fpCount"></span>
                         </div>
                     </div>
+                    <div class="field-hint" style="margin-top:0.6rem;">ℹ️ লাইভ প্রিভিউ</div>
                 </div>
             </div>
 
-            <!-- Danger Zone -->
-            <div class="sidebar-card" style="border-color:rgba(231,76,60,0.2);">
-                <div class="sc-hd" style="color:#c0392b;background:#fdf5f5;border-color:rgba(231,76,60,0.15);">⚠️ ডিলিট জোন</div>
-                <div class="sc-bd">
-                    <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.9rem;">এই সুবিধা স্থায়ীভাবে মুছে ফেলুন।</p>
-                    <form method="post" action="/FacilityC/FacilityDelete/@Model.Id"
-                          onsubmit="return confirm('এই সুবিধা মুছে ফেলবেন?')">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-danger btn-sm" style="width:100%;justify-content:center;">🗑️ সুবিধা মুছুন</button>
-                    </form>
+            <div class="sidebar-card">
+                <div class="sc-hd">💡 নির্দেশিকা</div>
+                <div class="sc-bd" style="display:flex;flex-direction:column;gap:0.65rem;">
+                    <div class="field-hint">🏷️ সঠিক বিভাগ দিলে ফিল্টারে সহজে খুঁজে পাওয়া যায়</div>
+                    <div class="field-hint">📊 সংখ্যা দিলে দর্শকরা পরিসংখ্যান বুঝতে পারেন</div>
+                    <div class="field-hint">🔢 SortOrder ছোট রাখলে আগে দেখাবে</div>
+                    <div class="field-hint">🎯 প্রতিটি বিভাগের জন্য আলাদা রঙ স্বয়ংক্রিয়ভাবে দেখাবে</div>
                 </div>
             </div>
 
             <div class="sidebar-card">
                 <div class="form-actions">
-                    <a href="/FacilityC/FacilityList" class="btn btn-outline">বাতিল</a>
-                    <button type="submit" class="btn btn-primary">💾 আপডেট করুন</button>
+                    <a href="/Facility/FacilityList" class="btn btn-outline">বাতিল</a>
+                    <button type="submit" class="btn btn-primary">💾 সংরক্ষণ করুন</button>
                 </div>
             </div>
         </div>
@@ -594,10 +587,11 @@
     const CAT_PILL_CLASSES = {
         'সাধারণ':'sel','ধর্মীয়':'sel-religious','শিক্ষা':'sel-education','স্বাস্থ্য':'sel-health','ব্যবসা':'sel-business'
     };
+
     function updatePreview() {
-        const name  = document.getElementById('nameInput')?.value || 'নাম';
-        const icon  = document.getElementById('iconInput')?.value || '🏛️';
-        const cat   = document.getElementById('catSelect')?.value || 'সাধারণ';
+        const name = document.getElementById('nameInput')?.value || 'নাম এখানে দেখাবে';
+        const icon = document.getElementById('iconInput')?.value || '🏛️';
+        const cat  = document.getElementById('catSelect')?.value || 'সাধারণ';
         const count = document.getElementById('countInput')?.value || '';
         document.getElementById('fpHeader').textContent = icon || '🏛️';
         document.getElementById('fpHeader').style.background = CAT_GRADIENTS[cat] || CAT_GRADIENTS['সাধারণ'];
@@ -620,15 +614,14 @@
         const allClasses = Object.values(CAT_PILL_CLASSES);
         document.querySelectorAll('.cat-pill').forEach(el => {
             allClasses.forEach(c => el.classList.remove(c));
-            if (el.textContent === cat) el.classList.add(CAT_PILL_CLASSES[cat] || 'sel');
+            if (el.textContent === cat) {
+                el.classList.add(CAT_PILL_CLASSES[cat] || 'sel');
+            }
         });
     }
     function syncToggle() {
-        document.getElementById('activeToggle').classList.toggle('checked', document.getElementById('IsActive').checked);
+        const checked = document.getElementById('IsActive').checked;
+        document.getElementById('activeToggle').classList.toggle('checked', checked);
     }
-    window.addEventListener('DOMContentLoaded', () => {
-        syncCatPills(); updatePreview();
-        const ci = document.getElementById('iconInput')?.value;
-        if (ci) document.querySelectorAll('.icon-opt').forEach(el => { if (el.textContent.trim() === ci.trim()) el.classList.add('selected'); });
-    });
+    window.addEventListener('DOMContentLoaded', () => { syncCatPills(); updatePreview(); });
 </script>

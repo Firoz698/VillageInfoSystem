@@ -414,7 +414,7 @@
         <h2>🏛️ সুবিধা ব্যবস্থাপনা</h2>
         <p>গ্রামের সকল সুবিধা ও প্রতিষ্ঠান পরিচালনা করুন</p>
     </div>
-    <a href="/FacilityC/FacilityCreate" class="btn btn-primary">➕ নতুন সুবিধা যোগ</a>
+    <a href="/Facility/FacilityCreate" class="btn btn-primary">➕ নতুন সুবিধা যোগ</a>
 </div>
 
 @if (Model.Any())
@@ -498,8 +498,8 @@
                     </div>
                 </div>
                 <div class="fac-actions">
-                    <a href="/FacilityC/FacilityEdit/@f.Id" class="btn btn-edit btn-sm">✏️ সম্পাদনা</a>
-                    <form method="post" action="/FacilityC/FacilityDelete/@f.Id" style="flex:1;display:flex;"
+                    <a href="/Facility/FacilityEdit/@f.Id" class="btn btn-edit btn-sm">✏️ সম্পাদনা</a>
+                    <form method="post" action="/Facility/FacilityDelete/@f.Id" style="flex:1;display:flex;"
                           onsubmit="return confirm('এই সুবিধা মুছে ফেলবেন?')">
                         @Html.AntiForgeryToken()
                         <button type="submit" class="btn btn-danger btn-sm" style="flex:1;justify-content:center;">🗑️ মুছুন</button>
@@ -519,7 +519,7 @@ else
         <span class="ei">🏛️</span>
         <h4>কোনো সুবিধা যোগ করা হয়নি</h4>
         <p>গ্রামের মসজিদ, বিদ্যালয়, বাজার ইত্যাদি সুবিধা যোগ করুন।</p>
-        <a href="/FacilityC/FacilityCreate" class="btn btn-primary">➕ প্রথম সুবিধা যোগ করুন</a>
+        <a href="/Facility/FacilityCreate" class="btn btn-primary">➕ প্রথম সুবিধা যোগ করুন</a>
     </div>
 }
 
