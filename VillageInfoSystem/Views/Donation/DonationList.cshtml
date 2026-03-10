@@ -9,7 +9,7 @@
         <h2>🎁 অনুদান তালিকা</h2>
         <p>সকল অনুদান প্রকল্পের তালিকা</p>
     </div>
-    <a href="/Admin/DonationCreate" class="btn btn-primary">➕ নতুন অনুদান</a>
+    <a href="/Donation/DonationCreate" class="btn btn-primary">➕ নতুন অনুদান</a>
 </div>
 
 <div class="card">
@@ -53,8 +53,8 @@
                             </td>
                             <td>
                                 <div class="actions-wrap">
-                                    <a href="/Admin/DonationEdit/@d.Id" class="btn btn-edit btn-sm">✏️ সম্পাদনা</a>
-                                    <form method="post" action="/Admin/DonationDelete/@d.Id"
+                                    <a href="/Donation/DonationEdit/@d.Id" class="btn btn-edit btn-sm">✏️ সম্পাদনা</a>
+                                    <form method="post" action="/Donation/DonationDelete/@d.Id"
                                           onsubmit="return confirm('মুছে ফেলবেন?')">
                                         @Html.AntiForgeryToken()
                                         <button class="btn btn-danger btn-sm" type="submit">🗑️</button>

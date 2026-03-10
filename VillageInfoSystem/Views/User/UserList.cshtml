@@ -9,7 +9,7 @@
         <h2>👤 সদস্য তালিকা</h2>
         <p>তহবিলে অংশগ্রহণকারী সকল সদস্য</p>
     </div>
-    <a href="/Admin/UserCreate" class="btn btn-primary">➕ নতুন সদস্য</a>
+    <a href="/User/UserCreate" class="btn btn-primary">➕ নতুন সদস্য</a>
 </div>
 
 <div class="card">
@@ -54,8 +54,8 @@
                             <td><span class="badge badge-success">৳ @total.ToString("N0")</span></td>
                             <td>
                                 <div class="actions-wrap">
-                                    <a href="/Admin/UserEdit/@u.Id" class="btn btn-edit btn-sm">✏️ সম্পাদনা</a>
-                                    <form method="post" action="/Admin/UserDelete/@u.Id"
+                                    <a href="/User/UserEdit/@u.Id" class="btn btn-edit btn-sm">✏️ সম্পাদনা</a>
+                                    <form method="post" action="/User/UserDelete/@u.Id"
                                           onsubmit="return confirm('এই সদস্য মুছে ফেলবেন?')">
                                         @Html.AntiForgeryToken()
                                         <button class="btn btn-danger btn-sm" type="submit">🗑️</button>

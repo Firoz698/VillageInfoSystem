@@ -10,7 +10,7 @@
         <h2>💵 ফান্ড এন্ট্রি তালিকা</h2>
         <p>সকল চাঁদার রেকর্ড</p>
     </div>
-    <a href="/Admin/FundCreate" class="btn btn-primary">➕ নতুন এন্ট্রি</a>
+    <a href="/Fund/FundCreate" class="btn btn-primary">➕ নতুন এন্ট্রি</a>
 </div>
 
 @{
@@ -81,8 +81,8 @@
                             </td>
                             <td>
                                 <div class="actions-wrap">
-                                    <a href="/Admin/FundEdit/@f.Id" class="btn btn-edit btn-sm">✏️</a>
-                                    <form method="post" action="/Admin/FundDelete/@f.Id"
+                                    <a href="/Fund/FundEdit/@f.Id" class="btn btn-edit btn-sm">✏️</a>
+                                    <form method="post" action="/Fund/FundDelete/@f.Id"
                                           onsubmit="return confirm('মুছে ফেলবেন?')">
                                         @Html.AntiForgeryToken()
                                         <button class="btn btn-danger btn-sm" type="submit">🗑️</button>

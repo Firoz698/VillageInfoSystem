@@ -1,4 +1,4 @@
-@model List<VillageInfoSystem.Models.GalleryItem>
+﻿@model List<VillageInfoSystem.Models.GalleryItem>
 @{
     ViewData["Title"] = "গ্যালারি ব্যবস্থাপনা";
     Layout = "_AdminLayout";
@@ -272,7 +272,7 @@
         <h2>🖼️ গ্যালারি ব্যবস্থাপনা</h2>
         <p>গ্রামের ফটো গ্যালারি পরিচালনা করুন</p>
     </div>
-    <a href="/Admin/GalleryCreate" class="btn btn-primary">➕ নতুন যোগ</a>
+    <a href="/Gallery/GalleryCreate" class="btn btn-primary">➕ নতুন যোগ</a>
 </div>
 
 <!-- Stats -->
@@ -326,8 +326,8 @@
                     </div>
                 </div>
                 <div class="gac-actions">
-                    <a href="/Admin/GalleryEdit/@g.Id" class="btn btn-edit btn-sm">✏️ সম্পাদনা</a>
-                    <form method="post" action="/Admin/GalleryDelete/@g.Id"
+                    <a href="/Gallery/GalleryEdit/@g.Id" class="btn btn-edit btn-sm">✏️ সম্পাদনা</a>
+                    <form method="post" action="/Gallery/GalleryDelete/@g.Id"
                           style="flex:1;display:flex;"
                           onsubmit="return confirm('এই গ্যালারি আইটেম মুছে ফেলবেন?')">
                         @Html.AntiForgeryToken()
@@ -344,6 +344,6 @@ else
         <span class="eb-icon">🖼️</span>
         <h4>গ্যালারি খালি আছে</h4>
         <p>গ্রামের সুন্দর ছবি যোগ করে গ্যালারি সাজান।</p>
-        <a href="/Admin/GalleryCreate" class="btn btn-primary">➕ প্রথম ছবি যোগ করুন</a>
+        <a href="/Gallery/GalleryCreate" class="btn btn-primary">➕ প্রথম ছবি যোগ করুন</a>
     </div>
 }

@@ -1,51 +1,45 @@
 ﻿@model VillageInfoSystem.Models.Fund.User
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    ViewData["Title"] = "সদস্য সম্পাদনা";
+    ViewData["Title"] = "নতুন সদস্য";
 }
 
 <div class="page-header">
     <div class="page-header-left">
-        <h2>✏️ সদস্য সম্পাদনা</h2>
-        <p>সদস্যের তথ্য আপডেট করুন</p>
+        <h2>👤 নতুন সদস্য যোগ করুন</h2>
+        <p>তহবিলের নতুন সদস্যের তথ্য দিন</p>
     </div>
-    <a href="/Admin/UserList" class="btn btn-outline">← ফিরে যান</a>
+    <a href="/User/UserList" class="btn btn-outline">← ফিরে যান</a>
 </div>
 
 <div class="card">
-    <form method="post" enctype="multipart/form-data" action="/Admin/UserEdit/@Model.Id">
+    <form method="post" enctype="multipart/form-data" action="/User/UserCreate">
         @Html.AntiForgeryToken()
-        <input type="hidden" name="Id" value="@Model.Id" />
         <div class="form-grid">
             <div class="form-group">
                 <label class="form-label">👤 পূর্ণ নাম *</label>
-                <input name="Name" class="form-control" value="@Model.Name" required />
+                <input name="Name" class="form-control" placeholder="সদস্যের নাম" required />
             </div>
             <div class="form-group">
                 <label class="form-label">📞 ফোন নম্বর *</label>
-                <input name="Phone" class="form-control" value="@Model.Phone" required />
+                <input name="Phone" class="form-control" placeholder="01XXXXXXXXX" required />
             </div>
         </div>
         <div class="form-group">
             <label class="form-label">📍 ঠিকানা</label>
-            <input name="Address" class="form-control" value="@Model.Address" />
+            <input name="Address" class="form-control" placeholder="ঠিকানা লিখুন" />
         </div>
         <div class="form-grid">
             <div class="form-group">
                 <label class="form-label">📅 যোগদানের তারিখ</label>
                 <input name="JoinDate" type="date" class="form-control"
-                       value="@Model.JoinDate.ToString("yyyy-MM-dd")" />
+                       value="@DateTime.Today.ToString("yyyy-MM-dd")" />
             </div>
             <div class="form-group">
                 <label class="form-label">🖼️ প্রোফাইল ছবি</label>
-                @if (!string.IsNullOrEmpty(Model.ProfileImage))
-                {
-                    <img src="@Model.ProfileImage" class="img-preview" />
-                }
                 <input name="profileImage" type="file" class="form-control" accept="image/*" />
-                <p class="form-hint">নতুন ছবি না দিলে পুরনোটা থাকবে</p>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary btn-lg">💾 আপডেট করুন</button>
+        <button type="submit" class="btn btn-primary btn-lg">✅ সদস্য যোগ করুন</button>
     </form>
 </div>

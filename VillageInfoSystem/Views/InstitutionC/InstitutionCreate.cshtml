@@ -34,13 +34,13 @@
         <h2>🏛️ নতুন প্রতিষ্ঠান যোগ করুন</h2>
         <p>গ্রামের নতুন প্রতিষ্ঠান বা সংগঠনের তথ্য যোগ করুন</p>
     </div>
-    <a href="/Admin/InstitutionList" class="btn btn-outline">← তালিকায় ফিরুন</a>
+    <a href="/InstitutionC/InstitutionList" class="btn btn-outline">← তালিকায় ফিরুন</a>
 </div>
 
 <div class="adm-form">
     <div class="adm-card">
         <div class="adm-card-title">📋 প্রতিষ্ঠানের তথ্য</div>
-        <form method="post" action="/Admin/InstitutionCreate" enctype="multipart/form-data">
+        <form method="post" action="/InstitutionC/InstitutionCreate" enctype="multipart/form-data">
             @Html.AntiForgeryToken()
 
             <div class="form-grid">
@@ -93,7 +93,7 @@
 
             <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
                 <button type="submit" class="btn btn-primary btn-lg">💾 সংরক্ষণ করুন</button>
-                <a href="/Admin/InstitutionList" class="btn btn-outline btn-lg">বাতিল</a>
+                <a href="/InstitutionC/InstitutionList" class="btn btn-outline btn-lg">বাতিল</a>
             </div>
         </form>
     </div>

@@ -262,7 +262,7 @@
         <h2>🏛️ প্রতিষ্ঠান তালিকা</h2>
         <p>গ্রামের সকল প্রতিষ্ঠান ও সংগঠন পরিচালনা করুন</p>
     </div>
-    <a href="/Admin/InstitutionCreate" class="btn btn-primary">➕ নতুন প্রতিষ্ঠান</a>
+    <a href="/InstitutionC/InstitutionCreate" class="btn btn-primary">➕ নতুন প্রতিষ্ঠান</a>
 </div>
 
 @if (Model.Any())
@@ -329,8 +329,8 @@
                             </td>
                             <td>
                                 <div class="actions-wrap">
-                                    <a href="/Admin/InstitutionEdit/@inst.Id" class="btn btn-edit btn-sm">✏️ সম্পাদনা</a>
-                                    <form method="post" action="/Admin/InstitutionDelete"
+                                    <a href="/InstitutionC/InstitutionEdit/@inst.Id" class="btn btn-edit btn-sm">✏️ সম্পাদনা</a>
+                                    <form method="post" action="/InstitutionC/InstitutionDelete"
                                           style="display:inline;"
                                           onsubmit="return confirm('এই প্রতিষ্ঠান মুছে ফেলবেন?')">
                                         @Html.AntiForgeryToken()
@@ -390,8 +390,8 @@
                         <div class="toggle-spinner" id="spin-m-@inst.Id"></div>
                     </div>
                     <div class="actions-wrap">
-                        <a href="/Admin/InstitutionEdit/@inst.Id" class="btn btn-edit btn-sm">✏️ সম্পাদনা</a>
-                        <form method="post" action="/Admin/InstitutionDelete"
+                        <a href="/InstitutionC/InstitutionEdit/@inst.Id" class="btn btn-edit btn-sm">✏️ সম্পাদনা</a>
+                        <form method="post" action="/InstitutionC/InstitutionDelete"
                               style="display:inline;"
                               onsubmit="return confirm('এই প্রতিষ্ঠান মুছে ফেলবেন?')">
                             @Html.AntiForgeryToken()
@@ -410,7 +410,7 @@ else
         <span class="eb-icon">🏛️</span>
         <h4>কোনো প্রতিষ্ঠান নেই</h4>
         <p>গ্রামের মসজিদ, স্কুল, ক্লাব ও সংগঠনের তথ্য যোগ করুন।</p>
-        <a href="/Admin/InstitutionCreate" class="btn btn-primary">➕ প্রথম প্রতিষ্ঠান যোগ করুন</a>
+        <a href="/InstitutionC/InstitutionCreate" class="btn btn-primary">➕ প্রথম প্রতিষ্ঠান যোগ করুন</a>
     </div>
 }
 
@@ -425,7 +425,7 @@ else
         showSpinner(id, true);
 
         try {
-            const res = await fetch('/Admin/InstitutionToggleStatus', {
+            const res = await fetch('/InstitutionC/InstitutionToggleStatus', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

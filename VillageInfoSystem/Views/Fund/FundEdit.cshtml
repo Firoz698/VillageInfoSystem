@@ -8,11 +8,11 @@
     <div class="page-header-left">
         <h2>✏️ ফান্ড এন্ট্রি সম্পাদনা</h2>
     </div>
-    <a href="/Admin/FundList" class="btn btn-outline">← ফিরে যান</a>
+    <a href="/Fund/FundList" class="btn btn-outline">← ফিরে যান</a>
 </div>
 
 <div class="card">
-    <form method="post" enctype="multipart/form-data" action="/Admin/FundEdit/@Model.Id">
+    <form method="post" enctype="multipart/form-data" action="/Fund/FundEdit/@Model.Id">
         @Html.AntiForgeryToken()
         <input type="hidden" name="Id" value="@Model.Id" />
         <div class="form-grid">
