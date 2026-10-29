@@ -643,12 +643,7 @@
                                 <img src="@Model.ImagePath" alt="বর্তমান ছবি" id="currentImgEl" />
                                 <div class="current-img-actions">
                                     <span class="current-img-label">📌 বর্তমান ছবি</span>
-                                    <form method="post" action="/News/NewsDeleteImage/@Model.Id"
-                                          style="display:inline"
-                                          onsubmit="return confirm('ছবিটি স্থায়ীভাবে মুছে ফেলবেন?')">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn-img-delete">🗑️ ছবি মুছুন</button>
-                                    </form>
+                                    <button type="submit" form="deleteNewsImageForm" class="btn-img-delete">🗑️ ছবি মুছুন</button>
                                 </div>
                             </div>
                             <div class="field-hint">নতুন ছবি আপলোড করলে বর্তমান ছবি স্বয়ংক্রিয়ভাবে replace হবে।</div>
@@ -799,13 +794,9 @@
                 <div class="sc-hd" style="color:#c0392b;background:#fdf5f5;border-color:rgba(231,76,60,0.15);">⚠️ ডিলিট জোন</div>
                 <div class="sc-bd">
                     <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.9rem;">এই সংবাদ স্থায়ীভাবে মুছে ফেলতে নিচের বাটনে ক্লিক করুন।</p>
-                    <form method="post" action="/News/NewsDelete/@Model.Id"
-                          onsubmit="return confirm('এই সংবাদ মুছে ফেলবেন?')">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-danger btn-sm" style="width:100%;justify-content:center;">
+                    <button type="submit" form="deleteNewsForm" class="btn btn-danger btn-sm" style="width:100%;justify-content:center;">
                             🗑️ সংবাদ মুছুন
                         </button>
-                    </form>
                 </div>
             </div>
 
@@ -817,6 +808,20 @@
             </div>
         </div>
     </div>
+</form>
+
+<form id="deleteNewsImageForm" method="post" action="/News/NewsDeleteImage/@Model.Id" onsubmit="return confirm('ছবিটি স্থায়ীভাবে মুছে ফেলবেন?')">
+    @Html.AntiForgeryToken()
+</form>
+<form id="deleteNewsForm" method="post" action="/News/NewsDelete/@Model.Id" onsubmit="return confirm('এই সংবাদ মুছে ফেলবেন?')">
+    @Html.AntiForgeryToken()
+</form>
+
+<form id="deleteNewsImageForm" method="post" action="/News/NewsDeleteImage/@Model.Id" onsubmit="return confirm('ছবিটি স্থায়ীভাবে মুছে ফেলবেন?')">
+    @Html.AntiForgeryToken()
+</form>
+<form id="deleteNewsForm" method="post" action="/News/NewsDelete/@Model.Id" onsubmit="return confirm('এই সংবাদ মুছে ফেলবেন?')">
+    @Html.AntiForgeryToken()
 </form>
 
 <script>

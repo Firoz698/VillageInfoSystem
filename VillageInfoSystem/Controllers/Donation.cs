@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VillageInfoSystem.Data;
 
 namespace VillageInfoSystem.Controllers
 {
+    [Authorize]
     public class Donation : Controller
     {
         private readonly AppDbContext _db;

@@ -6,6 +6,7 @@ using VillageInfoSystem.Models;
 
 namespace VillageInfoSystem.Controllers
 {
+    [Authorize]
     public class TickerController : Controller
     {
         private readonly AppDbContext _db;

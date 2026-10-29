@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VillageInfoSystem.Data;
 using VillageInfoSystem.Models;
 
 namespace VillageInfoSystem.Controllers
 {
+    [Authorize]
     public class NewsController : Controller
     {
 

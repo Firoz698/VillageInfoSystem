@@ -672,13 +672,9 @@
                 <div class="sc-hd" style="color:#c0392b;background:#fdf5f5;border-color:rgba(231,76,60,0.15);">⚠️ ডিলিট জোন</div>
                 <div class="sc-bd">
                     <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.9rem;">এই স্লাইড স্থায়ীভাবে মুছে ফেলতে নিচের বাটনে ক্লিক করুন।</p>
-                    <form method="post" action="/Slider/SliderDelete/@Model.Id"
-                          onsubmit="return confirm('এই স্লাইড মুছে ফেলবেন? এটি পূর্বাবস্থায় ফেরানো যাবে না।')">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-danger btn-sm" style="width:100%;justify-content:center;">
+                    <button type="submit" form="deleteSliderForm" class="btn btn-danger btn-sm" style="width:100%;justify-content:center;">
                             🗑️ স্লাইড মুছুন
                         </button>
-                    </form>
                 </div>
             </div>
 
@@ -691,6 +687,14 @@
             </div>
         </div>
     </div>
+</form>
+
+<form id="deleteSliderForm" method="post" action="/Slider/SliderDelete/@Model.Id" onsubmit="return confirm('এই স্লাইড মুছে ফেলবেন? এটি পূর্বাবস্থায় ফেরানো যাবে না।')">
+    @Html.AntiForgeryToken()
+</form>
+
+<form id="deleteSliderForm" method="post" action="/Slider/SliderDelete/@Model.Id" onsubmit="return confirm('এই স্লাইড মুছে ফেলবেন? এটি পূর্বাবস্থায় ফেরানো যাবে না।')">
+    @Html.AntiForgeryToken()
 </form>
 
 <script>

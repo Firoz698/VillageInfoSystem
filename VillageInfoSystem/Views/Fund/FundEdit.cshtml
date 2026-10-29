@@ -23,9 +23,22 @@
                     {
                         foreach (var u in users)
                         {
-                            <option value="@u.Id" @@(u.Id == Model.UserId ? "selected" : "")>
-                                @u.Name (@u.Phone)
-                            </option>
+                            if (u.Id == Model.UserId)
+
+                            {
+
+                                <option value="@u.Id" selected>@u.Name (@u.Phone)</option>
+
+                            }
+
+                            else
+
+                            {
+
+                                <option value="@u.Id">@u.Name (@u.Phone)</option>
+
+                            }
+
                         }
                     }
                 </select>

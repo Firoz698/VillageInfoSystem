@@ -565,11 +565,7 @@
                 <div class="sc-hd" style="color:#c0392b;background:#fdf5f5;border-color:rgba(231,76,60,0.15);">⚠️ ডিলিট জোন</div>
                 <div class="sc-bd">
                     <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.9rem;">এই সুবিধা স্থায়ীভাবে মুছে ফেলুন।</p>
-                    <form method="post" action="/Facility/FacilityDelete/@Model.Id"
-                          onsubmit="return confirm('এই সুবিধা মুছে ফেলবেন?')">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-danger btn-sm" style="width:100%;justify-content:center;">🗑️ সুবিধা মুছুন</button>
-                    </form>
+                    <button type="submit" form="deleteFacilityForm" class="btn btn-danger btn-sm" style="width:100%;justify-content:center;">🗑️ সুবিধা মুছুন</button>
                 </div>
             </div>
 
@@ -581,6 +577,14 @@
             </div>
         </div>
     </div>
+</form>
+
+<form id="deleteFacilityForm" method="post" action="/Facility/FacilityDelete/@Model.Id" onsubmit="return confirm('এই সুবিধা মুছে ফেলবেন?')">
+    @Html.AntiForgeryToken()
+</form>
+
+<form id="deleteFacilityForm" method="post" action="/Facility/FacilityDelete/@Model.Id" onsubmit="return confirm('এই সুবিধা মুছে ফেলবেন?')">
+    @Html.AntiForgeryToken()
 </form>
 
 <script>

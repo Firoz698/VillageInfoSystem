@@ -1,103 +1,767 @@
-﻿@using VillageInfoSystem.Models.Fund
-@{
-    Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    ViewData["Title"] = "ফান্ড এন্ট্রি";
-    var list = ViewBag.FundList as List<Fund>;
+﻿@{
+    ViewData["Title"] = "ফান্ড ব্যবস্থাপনা";
+    Layout = "_AdminLayout";
+
+    var fundList = ViewBag.FundList as List<VillageInfoSystem.Models.Fund.Fund>;
+    var total = (decimal)(ViewBag.TotalFund ?? 0m);
+
+    // Monthly grouping
+    var monthly = fundList?
+        .GroupBy(f => new { f.Date.Year, f.Date.Month })
+        .OrderByDescending(g => g.Key.Year).ThenByDescending(g => g.Key.Month)
+        .ToList();
+
+    string[] bnMonths = { "", "জানুয়ারি","ফেব্রুয়ারি","মার্চ","এপ্রিল","মে","জুন",
+                          "জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর" };
 }
 
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Playfair+Display:wght@700;900&display=swap');
+
+    :root {
+        --forest: #0d5c2e;
+        --emerald: #1a8a4a;
+        --jade: #2ebd6b;
+        --mint: #d4f7e2;
+        --gold: #d4a017;
+        --amber: #f0c040;
+        --sand: #fef3d0;
+        --sky: #1565c0;
+        --ice: #dbeeff;
+        --violet: #6a1fa2;
+        --lilac: #f0e5ff;
+        --coral: #c0392b;
+        --blush: #ffe0e0;
+        --border: #e0ebe2;
+        --text: #1a2e1f;
+        --muted: #6b8070;
+        --surface: #ffffff;
+        --shadow: 0 4px 24px rgba(13,92,46,0.08);
+        --shadow-lg: 0 12px 48px rgba(13,92,46,0.16);
+    }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+        position: relative;
+        border-radius: 24px;
+        padding: 2rem 2.4rem;
+        margin-bottom: 1.6rem;
+        overflow: hidden;
+        background: linear-gradient(135deg, #0d5c2e 0%, #1a8a4a 45%, #2ebd6b 100%);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.2rem;
+        flex-wrap: wrap;
+        box-shadow: 0 14px 44px rgba(13,92,46,0.32);
+        animation: fadeUp 0.45s ease both;
+    }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            width: 360px;
+            height: 360px;
+            border-radius: 50%;
+            background: radial-gradient(circle,rgba(255,255,255,0.07) 0%,transparent 70%);
+            top: -140px;
+            right: -60px;
+            pointer-events: none;
+        }
+
+        .page-header::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle,rgba(255,255,255,0.1) 1px,transparent 1px);
+            background-size: 26px 26px;
+            pointer-events: none;
+        }
+
+    .ph-text {
+        position: relative;
+        z-index: 2;
+    }
+
+        .ph-text h2 {
+            font-family: 'Playfair Display',serif;
+            font-size: 1.55rem;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: .3rem;
+            text-shadow: 0 2px 8px rgba(0,0,0,.18);
+        }
+
+        .ph-text p {
+            font-size: .86rem;
+            color: rgba(255,255,255,.68);
+        }
+
+    .ph-actions {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        gap: .6rem;
+        flex-wrap: wrap;
+    }
+
+    .ph-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        padding: .62rem 1.3rem;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: .86rem;
+        text-decoration: none;
+        font-family: 'Hind Siliguri',sans-serif;
+        transition: all .22s;
+        white-space: nowrap;
+        border: none;
+        cursor: pointer;
+    }
+
+    .ph-btn-white {
+        background: rgba(255,255,255,.18);
+        border: 1.5px solid rgba(255,255,255,.35);
+        color: #fff;
+        backdrop-filter: blur(6px);
+    }
+
+        .ph-btn-white:hover {
+            background: rgba(255,255,255,.28);
+            transform: translateY(-2px);
+            color: #fff;
+            text-decoration: none;
+        }
+
+    .ph-btn-gold {
+        background: linear-gradient(135deg,#c8993a,#f0c040);
+        color: #082818;
+        box-shadow: 0 4px 14px rgba(200,153,58,.35);
+    }
+
+        .ph-btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(200,153,58,.5);
+            color: #082818;
+            text-decoration: none;
+        }
+
+    /* ── STAT PILLS ── */
+    .fund-stats-row {
+        display: flex;
+        gap: .85rem;
+        margin-bottom: 1.4rem;
+        flex-wrap: wrap;
+        animation: fadeUp .45s .08s ease both;
+    }
+
+    .fs-pill {
+        display: flex;
+        align-items: center;
+        gap: .55rem;
+        padding: .6rem 1.2rem;
+        background: var(--surface);
+        border: 1.5px solid var(--border);
+        border-radius: 50px;
+        font-size: .82rem;
+        color: var(--muted);
+        box-shadow: var(--shadow);
+        white-space: nowrap;
+        font-weight: 500;
+        transition: transform .2s;
+    }
+
+        .fs-pill:hover {
+            transform: translateY(-2px);
+        }
+
+        .fs-pill strong {
+            font-size: 1rem;
+            font-weight: 800;
+        }
+
+        .fs-pill.p-green {
+            border-color: #c6e8d2;
+            background: #edfaf2;
+        }
+
+        .fs-pill.p-gold {
+            border-color: #f0dfa0;
+            background: #fffae8;
+        }
+
+        .fs-pill.p-green strong {
+            color: var(--forest);
+        }
+
+        .fs-pill.p-gold strong {
+            color: #7a5010;
+        }
+
+    /* ── MONTHLY REPORT ── */
+    .monthly-section {
+        margin-bottom: 1.6rem;
+        animation: fadeUp .45s .14s ease both;
+    }
+
+    .monthly-toggle {
+        width: 100%;
+        background: var(--surface);
+        border: 1.5px solid var(--border);
+        border-radius: 16px;
+        padding: 1rem 1.4rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        transition: all .22s;
+        box-shadow: var(--shadow);
+        font-family: 'Hind Siliguri',sans-serif;
+    }
+
+        .monthly-toggle:hover {
+            border-color: var(--emerald);
+            background: #f7fdf9;
+        }
+
+    .monthly-toggle-title {
+        display: flex;
+        align-items: center;
+        gap: .6rem;
+        font-weight: 700;
+        color: var(--forest);
+        font-size: .97rem;
+    }
+
+    .monthly-toggle-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        background: var(--mint);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .95rem;
+    }
+
+    .monthly-toggle-arrow {
+        color: var(--muted);
+        font-size: .9rem;
+        transition: transform .25s;
+    }
+
+    .monthly-toggle.open .monthly-toggle-arrow {
+        transform: rotate(180deg);
+    }
+
+    .monthly-content {
+        display: none;
+        padding-top: .7rem;
+    }
+
+        .monthly-content.open {
+            display: block;
+        }
+
+    .month-block {
+        background: var(--surface);
+        border-radius: 16px;
+        border: 1.5px solid var(--border);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        margin-bottom: 1rem;
+    }
+
+    .month-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: .9rem 1.3rem;
+        background: linear-gradient(90deg,#f5fbf7,#fff);
+        border-bottom: 1.5px solid var(--border);
+        flex-wrap: wrap;
+        gap: .5rem;
+        cursor: pointer;
+        transition: background .2s;
+    }
+
+        .month-header:hover {
+            background: linear-gradient(90deg,#edfaf2,#f8fdf9);
+        }
+
+    .month-name {
+        font-weight: 800;
+        color: var(--forest);
+        font-size: .95rem;
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+    }
+
+    .month-summary {
+        display: flex;
+        gap: .7rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .month-total {
+        font-family: 'Playfair Display',serif;
+        font-size: 1.05rem;
+        font-weight: 900;
+        color: var(--forest);
+    }
+
+    .month-count {
+        font-size: .76rem;
+        color: var(--muted);
+        background: #f0f5f1;
+        padding: .22rem .7rem;
+        border-radius: 50px;
+        font-weight: 600;
+    }
+
+    .month-arrow {
+        color: var(--muted);
+        font-size: .8rem;
+        transition: transform .25s;
+    }
+
+    .month-header.open .month-arrow {
+        transform: rotate(180deg);
+    }
+
+    .month-table-wrap {
+        display: none;
+    }
+
+        .month-table-wrap.open {
+            display: block;
+        }
+
+    /* Table */
+    table.fund-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: .86rem;
+    }
+
+        table.fund-table thead th {
+            background: #f5fbf7;
+            color: var(--forest);
+            padding: .7rem 1rem;
+            text-align: left;
+            font-weight: 700;
+            font-size: .72rem;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--border);
+            white-space: nowrap;
+        }
+
+        table.fund-table tbody td {
+            padding: .78rem 1rem;
+            border-bottom: 1px solid #f0f6f1;
+            vertical-align: middle;
+            color: var(--text);
+        }
+
+        table.fund-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        table.fund-table tbody tr:hover td {
+            background: linear-gradient(90deg,#f7fdf9,#fff);
+        }
+
+    .pay-thumb {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        object-fit: cover;
+        border: 1.5px solid #d0e8d8;
+        display: block;
+    }
+
+    .pay-placeholder {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background: #f0f7f2;
+        border: 1.5px dashed #b8d8c0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .9rem;
+    }
+
+    /* Badges */
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .28rem;
+        padding: .28rem .72rem;
+        border-radius: 50px;
+        font-size: .73rem;
+        font-weight: 700;
+    }
+
+    .badge-green {
+        background: var(--mint);
+        color: var(--forest);
+        border: 1px solid #b0e0c0;
+    }
+
+    .badge-gold {
+        background: var(--sand);
+        color: #7a5010;
+        border: 1px solid #f0dfa0;
+    }
+
+    /* Buttons */
+    .btn-sm {
+        padding: .38rem .85rem;
+        border-radius: 50px;
+        font-size: .77rem;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: .28rem;
+        transition: all .2s;
+        font-family: 'Hind Siliguri',sans-serif;
+        border: none;
+        cursor: pointer;
+        line-height: 1.5;
+    }
+
+    .btn-edit {
+        background: var(--ice);
+        color: var(--sky);
+        border: 1.5px solid #b8d8f8;
+    }
+
+        .btn-edit:hover {
+            background: var(--sky);
+            color: #fff;
+            text-decoration: none;
+            border-color: var(--sky);
+        }
+
+    .btn-danger {
+        background: var(--blush);
+        color: var(--coral);
+        border: 1.5px solid #f0b8b8;
+    }
+
+        .btn-danger:hover {
+            background: var(--coral);
+            color: #fff;
+            border-color: var(--coral);
+        }
+
+    /* All funds table card */
+    .table-card {
+        background: var(--surface);
+        border-radius: 20px;
+        border: 1.5px solid var(--border);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        animation: fadeUp .45s .2s ease both;
+    }
+
+    .tc-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.1rem 1.5rem;
+        border-bottom: 1.5px solid var(--border);
+        background: linear-gradient(90deg,#f5fbf7,#fff);
+        flex-wrap: wrap;
+        gap: .7rem;
+    }
+
+    .tc-title {
+        display: flex;
+        align-items: center;
+        gap: .6rem;
+        font-weight: 700;
+        color: var(--forest);
+        font-size: .97rem;
+    }
+
+    .tc-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        background: var(--mint);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .95rem;
+    }
+
+    /* Empty */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 1.5rem;
+        color: var(--muted);
+    }
+
+        .empty-state .es-icon {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: .8rem;
+            opacity: .4;
+        }
+
+    /* Animations */
+    @@keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(16px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive */
+    @@media (max-width:640px) {
+        .page-header {
+            padding: 1.5rem 1.3rem;
+        }
+
+        .ph-text h2 {
+            font-size: 1.2rem;
+        }
+
+        .hide-mob {
+            display: none;
+        }
+    }
+</style>
+
+<!-- ── PAGE HEADER ── -->
 <div class="page-header">
-    <div class="page-header-left">
-        <h2>💵 ফান্ড এন্ট্রি তালিকা</h2>
-        <p>সকল চাঁদার রেকর্ড</p>
+    <div class="ph-text">
+        <h2>💰 ফান্ড ব্যবস্থাপনা</h2>
+        <p>গ্রামের তহবিল এন্ট্রি ও মাসিক রিপোর্ট</p>
     </div>
-    <a href="/Fund/FundCreate" class="btn btn-primary">➕ নতুন এন্ট্রি</a>
+    <div class="ph-actions">
+        <a href="/Fund/FundCreate" class="ph-btn ph-btn-gold">➕ নতুন এন্ট্রি</a>
+        <!-- এই লাইনটি যোগ করুন -->
+        <!-- /Fund/FundReport — এখন সঠিক controller -->
+        <a href="/Fund/FundReport" class="ph-btn ph-btn-white">📄 PDF রিপোর্ট</a>
+        <a href="/User/UserList" class="ph-btn ph-btn-white">👥 সদস্য তালিকা</a>
+    </div>
 </div>
 
-@{
-    var totalFund = ViewBag.TotalFund as decimal? ?? 0m;
+<!-- ── STAT PILLS ── -->
+<div class="fund-stats-row">
+    <div class="fs-pill p-green">💵 মোট তহবিল <strong>৳ @total.ToString("N0")</strong></div>
+    <div class="fs-pill p-green">📋 মোট এন্ট্রি <strong>@(fundList?.Count ?? 0) টি</strong></div>
+    <div class="fs-pill p-gold">
+        📅 এই মাসে
+        <strong>
+            ৳ @(fundList?
+                        .Where(f => f.Date.Month == DateTime.Now.Month && f.Date.Year == DateTime.Now.Year)
+                        .Sum(f => f.Amount)
+                        .ToString("N0") ?? "0")
+        </strong>
+    </div>
+    <div class="fs-pill p-gold">
+        👥 সক্রিয় মাস
+        <strong>@(monthly?.Count ?? 0) টি</strong>
+    </div>
+</div>
+
+<!-- ── MONTHLY REPORT ── -->
+@if (monthly != null && monthly.Any())
+{
+    <div class="monthly-section">
+        <button class="monthly-toggle" id="monthlyToggleBtn" onclick="toggleMonthly()">
+            <div class="monthly-toggle-title">
+                <div class="monthly-toggle-icon">📊</div>
+                মাসিক রিপোর্ট
+                <span class="badge badge-gold">@monthly.Count টি মাস</span>
+            </div>
+            <span class="monthly-toggle-arrow" id="monthlyArrow">▼</span>
+        </button>
+        <div class="monthly-content" id="monthlyContent">
+            @foreach (var mg in monthly)
+            {
+                string mKey = $"m{mg.Key.Year}{mg.Key.Month}";
+                decimal mTotal = mg.Sum(f => f.Amount);
+                string mName = $"{bnMonths[mg.Key.Month]} {mg.Key.Year}";
+                <div class="month-block">
+                    <div class="month-header" id="hdr-@mKey" onclick="toggleMonth('@mKey')">
+                        <div class="month-name">📅 @mName</div>
+                        <div class="month-summary">
+                            <span class="month-total">৳ @mTotal.ToString("N0")</span>
+                            <span class="month-count">@mg.Count() টি এন্ট্রি</span>
+                            <span class="month-arrow">▼</span>
+                        </div>
+                    </div>
+                    <div class="month-table-wrap" id="tbl-@mKey">
+                        <table class="fund-table">
+                            <thead>
+                                <tr>
+                                    <th>পেমেন্ট</th>
+                                    <th>সদস্য</th>
+                                    <th>পরিমাণ</th>
+                                    <th class="hide-mob">তারিখ</th>
+                                    <th class="hide-mob">নোট</th>
+                                    <th>কার্যক্রম</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var f in mg.OrderByDescending(x => x.Date))
+                                {
+                                    <tr>
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(f.PaymentImage))
+                                            {
+                                                <a href="@f.PaymentImage" target="_blank">
+                                                    <img src="@f.PaymentImage" class="pay-thumb" alt="পেমেন্ট" />
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <div class="pay-placeholder">💵</div>
+                                            }
+                                        </td>
+                                        <td style="font-weight:600;color:var(--forest);">@f.User?.Name</td>
+                                        <td>
+                                            <span class="badge badge-green" style="font-size:.82rem;">৳ @f.Amount.ToString("N0")</span>
+                                        </td>
+                                        <td class="hide-mob" style="color:var(--muted);font-size:.8rem;">@f.Date.ToString("dd MMM yyyy")</td>
+                                        <td class="hide-mob" style="color:var(--muted);font-size:.8rem;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                            @(string.IsNullOrEmpty(f.PaymentNote) ? "—" : f.PaymentNote)
+                                        </td>
+                                        <td>
+                                            <div style="display:flex;gap:.4rem;">
+                                                <a href="/Fund/FundEdit/@f.Id" class="btn-sm btn-edit">✏️</a>
+                                                <form method="post" action="/Fund/FundDelete/@f.Id" style="display:inline"
+                                                      onsubmit="return confirm('এই এন্ট্রি মুছে ফেলবেন?')">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn-sm btn-danger">🗑️</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr style="background:#f5fbf7;">
+                                    <td colspan="2" style="font-weight:700;color:var(--forest);padding:.8rem 1rem;">@mName — মোট</td>
+                                    <td colspan="4" style="font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:900;color:var(--forest);padding:.8rem 1rem;">৳ @mTotal.ToString("N0")</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
 }
-<div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:1.4rem;">
-    <div class="stat-card">
-        <div class="stat-icon-wrap green">💵</div>
-        <div>
-            <div class="stat-num">৳ @totalFund.ToString("N0")</div>
-            <div class="stat-label">মোট সংগৃহীত</div>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-icon-wrap gold">📋</div>
-        <div>
-            <div class="stat-num">@(list?.Count ?? 0)</div>
-            <div class="stat-label">মোট এন্ট্রি</div>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-icon-wrap blue">👥</div>
-        <div>
-            <div class="stat-num">@(list?.Select(f => f.UserId).Distinct().Count() ?? 0)</div>
-            <div class="stat-label">সক্রিয় সদস্য</div>
-        </div>
-    </div>
-</div>
 
-<div class="card">
-    <div class="table-wrap">
-        <table>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>সদস্য</th>
-                    <th>পরিমাণ</th>
-                    <th>তারিখ</th>
-                    <th>নোট</th>
-                    <th>রসিদ</th>
-                    <th>অ্যাকশন</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (list != null && list.Any())
-                {
-                    int i = 1;
-                    foreach (var f in list)
+<!-- ── ALL FUND ENTRIES TABLE ── -->
+<div class="table-card">
+    <div class="tc-header">
+        <div class="tc-title">
+            <div class="tc-icon">📋</div>
+            সকল এন্ট্রি (সর্বশেষ থেকে)
+            <span class="badge badge-green">@(fundList?.Count ?? 0) টি</span>
+        </div>
+    </div>
+
+    @if (fundList == null || !fundList.Any())
+    {
+        <div class="empty-state">
+            <span class="es-icon">📭</span>
+            <p>এখনো কোনো ফান্ড এন্ট্রি নেই।</p>
+        </div>
+    }
+    else
+    {
+        <div style="overflow-x:auto;">
+            <table class="fund-table">
+                <thead>
+                    <tr>
+                        <th>পেমেন্ট</th>
+                        <th>সদস্য</th>
+                        <th>পরিমাণ</th>
+                        <th class="hide-mob">তারিখ</th>
+                        <th class="hide-mob">নোট</th>
+                        <th>কার্যক্রম</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var f in fundList)
                     {
                         <tr>
-                            <td class="text-muted">@i</td>
-                            <td><strong>@(f.User?.Name ?? "—")</strong></td>
-                            <td><span class="badge badge-success">৳ @f.Amount.ToString("N0")</span></td>
-                            <td class="text-muted">@f.Date.ToString("dd MMM, yyyy")</td>
-                            <td class="text-muted">@(f.PaymentNote ?? "—")</td>
                             <td>
                                 @if (!string.IsNullOrEmpty(f.PaymentImage))
                                 {
                                     <a href="@f.PaymentImage" target="_blank">
-                                        <img src="@f.PaymentImage" style="width:40px;height:40px;object-fit:cover;border-radius:6px;border:1px solid var(--border);" />
+                                        <img src="@f.PaymentImage" class="pay-thumb" alt="পেমেন্ট" />
                                     </a>
                                 }
                                 else
                                 {
-
-                                    <span class="text-muted">—</span>
+                                    <div class="pay-placeholder">💵</div>
                                 }
                             </td>
+                            <td style="font-weight:600;color:var(--forest);">@f.User?.Name</td>
+                            <td><span class="badge badge-green" style="font-size:.82rem;">৳ @f.Amount.ToString("N0")</span></td>
+                            <td class="hide-mob" style="color:var(--muted);font-size:.8rem;">@f.Date.ToString("dd MMM yyyy")</td>
+                            <td class="hide-mob" style="color:var(--muted);font-size:.8rem;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                @(string.IsNullOrEmpty(f.PaymentNote) ? "—" : f.PaymentNote)
+                            </td>
                             <td>
-                                <div class="actions-wrap">
-                                    <a href="/Fund/FundEdit/@f.Id" class="btn btn-edit btn-sm">✏️</a>
-                                    <form method="post" action="/Fund/FundDelete/@f.Id"
-                                          onsubmit="return confirm('মুছে ফেলবেন?')">
+                                <div style="display:flex;gap:.4rem;">
+                                    <a href="/Fund/FundEdit/@f.Id" class="btn-sm btn-edit">✏️ সম্পাদনা</a>
+                                    <form method="post" action="/Fund/FundDelete/@f.Id" style="display:inline"
+                                          onsubmit="return confirm('এই এন্ট্রি মুছে ফেলবেন?')">
                                         @Html.AntiForgeryToken()
-                                        <button class="btn btn-danger btn-sm" type="submit">🗑️</button>
+                                        <button type="submit" class="btn-sm btn-danger">🗑️</button>
                                     </form>
                                 </div>
                             </td>
                         </tr>
-                        i++;
                     }
-                }
-                else
-                {
-                    <tr><td colspan="7" class="text-center text-muted" style="padding:2.5rem;">কোনো এন্ট্রি নেই</td></tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                </tbody>
+                <tfoot>
+                    <tr style="background:#f5fbf7;">
+                        <td colspan="2" style="font-weight:700;color:var(--forest);padding:.9rem 1rem;font-size:.9rem;">সর্বমোট</td>
+                        <td colspan="4" style="font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:900;color:var(--forest);padding:.9rem 1rem;">৳ @total.ToString("N0")</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    }
 </div>
+
+<script>
+    // Monthly report toggle
+    function toggleMonthly() {
+        const content = document.getElementById('monthlyContent');
+        const btn     = document.getElementById('monthlyToggleBtn');
+        const arrow   = document.getElementById('monthlyArrow');
+        const open    = content.classList.toggle('open');
+        btn.classList.toggle('open', open);
+    }
+
+    // Individual month toggle
+    function toggleMonth(key) {
+        const hdr = document.getElementById('hdr-' + key);
+        const tbl = document.getElementById('tbl-' + key);
+        hdr.classList.toggle('open');
+        tbl.classList.toggle('open');
+    }
+</script>

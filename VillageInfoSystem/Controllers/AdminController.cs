@@ -155,7 +155,7 @@ namespace VillageInfoSystem.Controllers
             _db.InstitutionMembers.Add(member);
             await _db.SaveChangesAsync();
             TempData["Success"] = "সদস্য যোগ করা হয়েছে!";
-            return RedirectToAction("InstitutionEdit", new { id = member.InstitutionId });
+            return RedirectToAction("InstitutionEdit", "Institution", new { id = member.InstitutionId });
         }
 
         [Authorize, HttpGet]
@@ -191,7 +191,7 @@ namespace VillageInfoSystem.Controllers
             _db.InstitutionMembers.Update(member);
             await _db.SaveChangesAsync();
             TempData["Success"] = "সদস্য আপডেট হয়েছে!";
-            return RedirectToAction("InstitutionEdit", new { id = member.InstitutionId });
+            return RedirectToAction("InstitutionEdit", "Institution", new { id = member.InstitutionId });
         }
 
         [Authorize, HttpPost]
@@ -211,7 +211,7 @@ namespace VillageInfoSystem.Controllers
                 await _db.SaveChangesAsync();
             }
             TempData["Success"] = "সদস্য মুছে ফেলা হয়েছে!";
-            return RedirectToAction("InstitutionEdit", new { id = instId });
+            return RedirectToAction("InstitutionEdit", "Institution", new { id = instId });
         }
 
 

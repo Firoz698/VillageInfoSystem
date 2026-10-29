@@ -1352,363 +1352,1049 @@
     <a href="#news" class="scroll-arrow" aria-label="নিচে স্ক্রোল করুন">⬇</a>
 </div>
 
+
+
+
+
+<!-- ═══════════════════════════════════════════════════
+     FUND SECTION — Index.cshtml এ replace করুন
+     পুরনো #fund section টি সরিয়ে এটি বসান
+════════════════════════════════════════════════════ -->
 <!-- ═══ FUND SECTION ═══ -->
-<section id="fund" style="background: linear-gradient(160deg, #f5f9f6 0%, #eef5f0 100%); padding: 80px 0; position: relative;">
+<section id="fund" style="background: linear-gradient(160deg,#081f12 0%,#0d3520 55%,#0f4228 100%); padding: 90px 0; position: relative; overflow: hidden;">
+
     <style>
-        .fund-total-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
+        #fund::before {
+            content: '';
+            position: absolute;
+            width: 700px;
+            height: 700px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(45,155,90,0.09) 0%, transparent 65%);
+            top: -200px;
+            right: -150px;
+            pointer-events: none;
+        }
+
+        #fund::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(200,153,58,0.07) 0%, transparent 65%);
+            bottom: -100px;
+            left: -80px;
+            pointer-events: none;
+        }
+
+        #fund .fund-dots {
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+            background-size: 32px 32px;
+            pointer-events: none;
+        }
+
+        /* ── Balance Hero ── */
+        .fund-balance-wrap {
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+            gap: 0;
             margin-bottom: 3rem;
+            position: relative;
+            z-index: 2;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.09);
+            border-radius: 28px;
+            overflow: hidden;
+            backdrop-filter: blur(8px);
         }
 
-        .fund-stat-card {
-            background: white;
-            border-radius: 20px;
-            padding: 2rem 1.5rem;
+        .fund-bal-item {
+            flex: 1;
             text-align: center;
-            border: 1px solid rgba(26,107,60,0.09);
-            box-shadow: 0 4px 20px rgba(26,107,60,0.07);
-            transition: all 0.3s;
+            padding: 2rem 1.5rem;
+            position: relative;
+            transition: background 0.3s;
         }
 
-            .fund-stat-card:hover {
-                transform: translateY(-6px);
-                box-shadow: 0 16px 48px rgba(26,107,60,0.13);
+            .fund-bal-item:hover {
+                background: rgba(255,255,255,0.04);
             }
 
-        .fund-stat-icon {
-            font-size: 2.4rem;
-            margin-bottom: 0.8rem;
+            .fund-bal-item + .fund-bal-item::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 20%;
+                bottom: 20%;
+                width: 1px;
+                background: rgba(255,255,255,0.1);
+            }
+
+        .fund-bal-icon {
+            font-size: 1.8rem;
             display: block;
+            margin-bottom: 0.5rem;
         }
 
-        .fund-stat-num {
+        .fund-bal-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.45);
+            display: block;
+            margin-bottom: 0.4rem;
+        }
+
+        .fund-bal-amount {
             font-family: 'Playfair Display', serif;
-            font-size: 2rem;
             font-weight: 900;
-            color: var(--green-dark);
+            display: block;
+            line-height: 1;
+        }
+
+        /* collected = gold */
+        .fund-bal-item.collected .fund-bal-amount {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            background: linear-gradient(135deg, #f0c040, #e8a820, #f5d060);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 2px 12px rgba(200,153,58,0.4));
+        }
+
+        /* spent = red-ish */
+        .fund-bal-item.spent .fund-bal-amount {
+            font-size: clamp(1.4rem, 3vw, 2.1rem);
+            color: #ff8a80;
+            text-shadow: 0 2px 12px rgba(255,100,80,0.3);
+        }
+
+        /* balance = bright green */
+        .fund-bal-item.balance {
+            background: rgba(46,189,107,0.08);
+        }
+
+            .fund-bal-item.balance .fund-bal-amount {
+                font-size: clamp(1.8rem, 4vw, 2.8rem);
+                background: linear-gradient(135deg, #2ebd6b, #54e890);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                filter: drop-shadow(0 2px 14px rgba(46,189,107,0.45));
+            }
+
+            .fund-bal-item.balance .fund-bal-label {
+                color: rgba(46,189,107,0.7);
+            }
+
+        .fund-bal-operator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 0.3rem;
+            font-size: 1.5rem;
+            color: rgba(255,255,255,0.2);
+            flex-shrink: 0;
+            align-self: center;
+        }
+
+        /* ── Mini stats row ── */
+        .fund-stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3.5rem;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 2;
+        }
+
+        .fund-mini-stat {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            padding: 0.9rem 1.4rem;
+            text-align: center;
+            min-width: 120px;
+            transition: all 0.3s;
+            backdrop-filter: blur(6px);
+        }
+
+            .fund-mini-stat:hover {
+                background: rgba(255,255,255,0.1);
+                border-color: rgba(200,153,58,0.3);
+                transform: translateY(-4px);
+            }
+
+        .fund-mini-icon {
+            font-size: 1.3rem;
             display: block;
             margin-bottom: 0.3rem;
         }
 
-        .fund-stat-label {
-            color: var(--text-light);
-            font-size: 0.87rem;
+        .fund-mini-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: #f0c040;
+            display: block;
+            line-height: 1;
+            margin-bottom: 0.2rem;
         }
 
-        /* Member List */
-        .fund-member-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
+        .fund-mini-lbl {
+            color: rgba(255,255,255,0.45);
+            font-size: 0.75rem;
+        }
+
+        /* ── Sub header ── */
+        .fund-sub-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.4rem;
+            position: relative;
+            z-index: 2;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .fund-sub-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+            .fund-sub-title span {
+                color: rgba(255,255,255,0.4);
+                font-size: 0.86rem;
+                font-family: 'Hind Siliguri', sans-serif;
+                font-weight: 400;
+            }
+
+        .fund-view-all-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.52rem 1.15rem;
+            background: rgba(200,153,58,0.18);
+            border: 1.5px solid rgba(200,153,58,0.35);
+            border-radius: 50px;
+            color: #f0c040;
+            font-size: 0.81rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: 'Hind Siliguri', sans-serif;
+        }
+
+            .fund-view-all-btn:hover {
+                background: rgba(200,153,58,0.3);
+                border-color: rgba(200,153,58,0.6);
+                transform: translateY(-2px);
+            }
+
+        /* ── Top 4 Contributors ── */
+        .contributors-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.2rem;
+            margin-bottom: 3.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .contributor-card {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: 20px;
+            padding: 1.6rem 1.2rem;
+            text-align: center;
+            transition: all 0.32s;
+            position: relative;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(26,107,60,0.07);
-            margin-bottom: 3rem;
+            backdrop-filter: blur(6px);
         }
 
-            .fund-member-table thead tr {
-                background: linear-gradient(135deg, var(--green-dark), var(--green-light));
-                color: white;
+            .contributor-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background: linear-gradient(90deg, #c8993a, #f0c040, #c8993a);
+                transform: scaleX(0);
+                transition: transform 0.3s;
             }
 
-            .fund-member-table th, .fund-member-table td {
-                padding: 0.9rem 1.2rem;
-                text-align: left;
-                font-size: 0.9rem;
-                border-bottom: 1px solid rgba(26,107,60,0.07);
+            .contributor-card:hover {
+                background: rgba(255,255,255,0.1);
+                border-color: rgba(200,153,58,0.3);
+                transform: translateY(-8px);
+                box-shadow: 0 20px 50px rgba(0,0,0,0.35);
             }
 
-            .fund-member-table th {
-                font-weight: 700;
-                font-size: 0.85rem;
-                letter-spacing: 0.03em;
+                .contributor-card:hover::before {
+                    transform: scaleX(1);
+                }
+
+        .contributor-rank {
+            position: absolute;
+            top: 12px;
+            right: 14px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: rgba(255,255,255,0.28);
+            letter-spacing: 0.06em;
+        }
+
+        .contributor-card:nth-child(1) .contributor-rank {
+            color: #f0c040;
+        }
+
+        .contributor-card:nth-child(2) .contributor-rank {
+            color: #c0c0c0;
+        }
+
+        .contributor-card:nth-child(3) .contributor-rank {
+            color: #cd7f32;
+        }
+
+        .contributor-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            margin: 0 auto 0.85rem;
+            object-fit: cover;
+            border: 3px solid rgba(200,153,58,0.4);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            display: block;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .contributor-card:hover .contributor-avatar {
+            transform: scale(1.08);
+            border-color: #f0c040;
+        }
+
+        .contributor-avatar-placeholder {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            margin: 0 auto 0.85rem;
+            background: linear-gradient(135deg, #1a6b3c, #2ebd6b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.7rem;
+            border: 3px solid rgba(200,153,58,0.4);
+            transition: transform 0.3s;
+        }
+
+        .contributor-card:hover .contributor-avatar-placeholder {
+            transform: scale(1.08);
+        }
+
+        .contributor-name {
+            font-weight: 700;
+            color: white;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+            line-height: 1.3;
+        }
+
+        .contributor-amount {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: #f0c040;
+            display: block;
+            margin-bottom: 0.22rem;
+        }
+
+        .contributor-joined {
+            font-size: 0.71rem;
+            color: rgba(255,255,255,0.38);
+        }
+
+        /* ── All Contributors Modal ── */
+        .all-contrib-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+            .all-contrib-modal.open {
+                visibility: visible;
+                opacity: 1;
             }
 
-            .fund-member-table tbody tr:hover {
-                background: rgba(26,107,60,0.03);
+        .modal-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(5,20,12,0.88);
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-box {
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(160deg, #0d3520, #0f4228);
+            border: 1px solid rgba(200,153,58,0.25);
+            border-radius: 28px;
+            width: 100%;
+            max-width: 760px;
+            max-height: 85vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+            transform: translateY(30px) scale(0.97);
+            transition: transform 0.35s ease;
+        }
+
+        .all-contrib-modal.open .modal-box {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-header {
+            padding: 1.5rem 1.8rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255,255,255,0.03);
+            flex-shrink: 0;
+        }
+
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.7);
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+            .modal-close:hover {
+                background: rgba(255,60,60,0.2);
+                color: #ff6b6b;
             }
 
-            .fund-member-table tbody tr:last-child td {
-                border-bottom: none;
+        .modal-body {
+            overflow-y: auto;
+            padding: 1.4rem 1.8rem;
+        }
+
+        .modal-total-bar {
+            background: rgba(200,153,58,0.1);
+            border: 1px solid rgba(200,153,58,0.22);
+            border-radius: 12px;
+            padding: 0.9rem 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.2rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .modal-total-label {
+            color: rgba(255,255,255,0.55);
+            font-size: 0.83rem;
+        }
+
+        .modal-total-amount {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: #f0c040;
+        }
+
+        .contrib-list-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.85rem 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.06);
+            margin-bottom: 0.6rem;
+            transition: all 0.22s;
+            background: rgba(255,255,255,0.03);
+        }
+
+            .contrib-list-item:hover {
+                background: rgba(255,255,255,0.07);
+                border-color: rgba(200,153,58,0.2);
+                transform: translateX(4px);
             }
 
-        .fund-member-avatar {
-            width: 40px;
-            height: 40px;
+        .contrib-list-num {
+            font-size: 0.76rem;
+            color: rgba(255,255,255,0.28);
+            font-weight: 700;
+            min-width: 22px;
+            text-align: center;
+        }
+
+        .contrib-list-img {
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid rgba(26,107,60,0.2);
+            border: 2px solid rgba(200,153,58,0.3);
+            flex-shrink: 0;
         }
 
-        .fund-member-avatar-placeholder {
-            width: 40px;
-            height: 40px;
+        .contrib-list-placeholder {
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--green), var(--green-light));
-            display: inline-flex;
+            background: linear-gradient(135deg,#1a6b3c,#2ebd6b);
+            display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.1rem;
+            flex-shrink: 0;
+            border: 2px solid rgba(200,153,58,0.3);
+        }
+
+        .contrib-list-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .contrib-list-name {
+            font-weight: 700;
             color: white;
+            font-size: 0.88rem;
         }
 
-        .fund-member-total {
-            font-weight: 700;
-            color: var(--green-dark);
+        .contrib-list-meta {
+            font-size: 0.73rem;
+            color: rgba(255,255,255,0.38);
+            margin-top: 2px;
         }
 
-        .fund-member-badge {
-            background: rgba(26,107,60,0.09);
-            color: var(--green);
-            padding: 0.18rem 0.65rem;
-            border-radius: 50px;
-            font-size: 0.78rem;
-            font-weight: 700;
+        .contrib-list-amount {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.05rem;
+            font-weight: 900;
+            color: #f0c040;
+            white-space: nowrap;
         }
 
-        /* Donation Cards */
-        .donation-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.4rem;
+        /* ── Donation spent cards ── */
+        .donation-divider {
+            position: relative;
+            z-index: 2;
+            margin-bottom: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
 
-        .donation-card {
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid rgba(26,107,60,0.09);
-            box-shadow: 0 4px 20px rgba(26,107,60,0.06);
-            transition: all 0.3s;
-        }
-
-            .donation-card:hover {
-                transform: translateY(-7px);
-                box-shadow: 0 18px 48px rgba(26,107,60,0.14);
+            .donation-divider::before,
+            .donation-divider::after {
+                content: '';
+                flex: 1;
+                height: 1px;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
             }
 
-        .donation-card-img {
+        .donation-divider-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,100,80,0.12);
+            border: 1px solid rgba(255,100,80,0.22);
+            border-radius: 50px;
+            padding: 0.4rem 1rem;
+            color: #ff8a80;
+            font-size: 0.78rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .donation-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .donation-use-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,100,80,0.15);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.32s;
+            backdrop-filter: blur(6px);
+            position: relative;
+        }
+
+            .donation-use-card::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background: linear-gradient(90deg, #c0392b, #ff6b6b);
+                transform: scaleX(0);
+                transition: transform 0.3s;
+                transform-origin: left;
+            }
+
+            .donation-use-card:hover {
+                background: rgba(255,255,255,0.07);
+                border-color: rgba(255,100,80,0.3);
+                transform: translateY(-7px);
+                box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+            }
+
+                .donation-use-card:hover::after {
+                    transform: scaleX(1);
+                }
+
+        .duc-img {
             width: 100%;
-            height: 180px;
+            height: 165px;
             object-fit: cover;
             display: block;
         }
 
-        .donation-card-img-placeholder {
+        .duc-img-placeholder {
             width: 100%;
-            height: 180px;
-            background: linear-gradient(135deg, var(--green-dark), var(--green-light));
+            height: 165px;
+            background: linear-gradient(135deg, rgba(192,57,43,0.35), rgba(255,107,107,0.25));
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 3rem;
         }
 
-        .donation-card-body {
-            padding: 1.2rem 1.3rem 1.4rem;
+        .duc-body {
+            padding: 1.1rem 1.2rem 1.3rem;
         }
 
-        .donation-card-title {
+        .duc-title {
             font-weight: 800;
-            color: var(--green-dark);
-            font-size: 0.98rem;
-            margin-bottom: 0.4rem;
+            color: white;
+            font-size: 0.93rem;
+            margin-bottom: 0.35rem;
             line-height: 1.35;
         }
 
-        .donation-card-desc {
-            color: var(--text-light);
-            font-size: 0.84rem;
+        .duc-desc {
+            color: rgba(255,255,255,0.45);
+            font-size: 0.81rem;
             line-height: 1.6;
-            margin-bottom: 0.8rem;
+            margin-bottom: 0.85rem;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
 
-        .donation-card-footer {
+        .duc-footer {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding-top: 0.75rem;
-            border-top: 1px solid rgba(26,107,60,0.07);
+            padding-top: 0.7rem;
+            border-top: 1px solid rgba(255,255,255,0.07);
         }
 
-        .donation-amount {
+        .duc-amount {
             font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 900;
-            color: var(--green);
+            color: #ff8a80;
         }
 
-        .donation-date {
-            font-size: 0.78rem;
-            color: var(--text-light);
+            .duc-amount::before {
+                content: '− ';
+                font-size: 0.85rem;
+                opacity: 0.7;
+            }
+
+        .duc-date {
+            font-size: 0.74rem;
+            color: rgba(255,255,255,0.32);
         }
 
+        /* ── Net balance footer bar ── */
+        .fund-net-bar {
+            position: relative;
+            z-index: 2;
+            margin-top: 2.5rem;
+            background: rgba(46,189,107,0.1);
+            border: 1.5px solid rgba(46,189,107,0.25);
+            border-radius: 18px;
+            padding: 1.2rem 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            backdrop-filter: blur(6px);
+        }
+
+        .fund-net-left {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+        }
+
+        .fund-net-badge {
+            background: rgba(46,189,107,0.18);
+            border: 1px solid rgba(46,189,107,0.3);
+            border-radius: 50px;
+            padding: 0.25rem 0.8rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #2ebd6b;
+        }
+
+        .fund-net-amount {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.7rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #2ebd6b, #54e890);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 2px 10px rgba(46,189,107,0.4));
+        }
+
+        /* ── Responsive ── */
         @@media (max-width: 960px) {
-            .fund-total-grid {
-                grid-template-columns: 1fr 1fr;
+            .contributors-grid {
+                grid-template-columns: repeat(2,1fr);
             }
 
-            .donation-grid {
-                grid-template-columns: 1fr 1fr;
+            .donation-cards-grid {
+                grid-template-columns: repeat(2,1fr);
             }
         }
 
-        @@media (max-width: 580px) {
-            .fund-total-grid {
-                grid-template-columns: 1fr;
+        @@media (max-width: 640px) {
+            .fund-balance-wrap {
+                flex-direction: column;
             }
 
-            .donation-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .fund-member-table th:nth-child(4),
-            .fund-member-table td:nth-child(4) {
+            .fund-bal-item + .fund-bal-item::before {
                 display: none;
+            }
+
+            .fund-bal-operator {
+                padding: 0;
+                font-size: 1.2rem;
+            }
+
+            .contributors-grid {
+                grid-template-columns: repeat(2,1fr);
+                gap: 0.8rem;
+            }
+
+            .donation-cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .fund-stats-row {
+                gap: 0.65rem;
+            }
+
+            .fund-mini-stat {
+                min-width: 100px;
+                padding: 0.8rem 0.9rem;
+            }
+
+            .modal-body {
+                padding: 1rem 1.1rem;
+            }
+
+            .modal-header {
+                padding: 1.1rem 1.2rem;
+            }
+
+            .fund-net-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+
+        @@media (max-width: 400px) {
+            .contributors-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.6rem;
+            }
+
+            .contributor-card {
+                padding: 1.1rem 0.7rem;
             }
         }
     </style>
 
-    <div class="container">
+    <div class="fund-dots"></div>
+    <div class="container" style="position:relative;z-index:2;">
+
         <!-- Section Header -->
-        <div class="section-header reveal">
-            <div class="section-tag">💰 তহবিল</div>
-            <h2 class="section-title">গ্রামের তহবিল ও অনুদান</h2>
-            <p class="section-desc">আমাদের গ্রামের উন্নয়নে সংগৃহীত তহবিল এবং মহৎ দাতাদের তালিকা</p>
+        <div class="section-header reveal" style="margin-bottom:2rem;">
+            <div class="section-tag" style="background:rgba(200,153,58,0.15);color:#f0c040;border:1px solid rgba(200,153,58,0.3);">💰 তহবিল</div>
+            <h2 class="section-title" style="color:white;">গ্রামের তহবিল ও হিসাব</h2>
+            <p class="section-desc" style="color:rgba(255,255,255,0.5);">সংগৃহীত তহবিল, অবদানকারী সদস্য এবং কোথায় কত খরচ হয়েছে তার সম্পূর্ণ হিসাব</p>
             <div class="divider"></div>
         </div>
 
-        <!-- ── Stat Cards ── -->
         @{
             var totalFund = (decimal)(ViewBag.TotalFund ?? 0m);
             var totalDonation = (decimal)(ViewBag.TotalDonation ?? 0m);
             var fundUsers = ViewBag.FundUsers as List<VillageInfoSystem.Models.Fund.User>;
             var donations = ViewBag.Donations as List<VillageInfoSystem.Models.Fund.Donation>;
-            var grandTotal = totalFund + totalDonation;
+            var netBalance = totalFund - totalDonation;   // ← donations = খরচ, বাদ যাবে
+            var top4 = fundUsers?
+            .OrderByDescending(u => u.Funds?.Sum(f => f.Amount) ?? 0)
+            .Take(4).ToList();
         }
-        <div class="fund-total-grid reveal">
-            <div class="fund-stat-card">
-                <span class="fund-stat-icon">💵</span>
-                <span class="fund-stat-num">৳ @grandTotal.ToString("N0")</span>
-                <span class="fund-stat-label">মোট তহবিল</span>
+
+        <!-- ── BALANCE BREAKDOWN ROW ── -->
+        <div class="fund-balance-wrap reveal">
+            <div class="fund-bal-item collected">
+                <span class="fund-bal-icon">💵</span>
+                <span class="fund-bal-label">মোট সংগৃহীত</span>
+                <span class="fund-bal-amount">৳ @totalFund.ToString("N0")</span>
             </div>
-            <div class="fund-stat-card">
-                <span class="fund-stat-icon">👥</span>
-                <span class="fund-stat-num">@(fundUsers?.Count ?? 0)</span>
-                <span class="fund-stat-label">মোট সদস্য</span>
+            <div class="fund-bal-operator">−</div>
+            <div class="fund-bal-item spent">
+                <span class="fund-bal-icon">🏗️</span>
+                <span class="fund-bal-label">মোট খরচ (অনুদান)</span>
+                <span class="fund-bal-amount">৳ @totalDonation.ToString("N0")</span>
             </div>
-            <div class="fund-stat-card">
-                <span class="fund-stat-icon">🎁</span>
-                <span class="fund-stat-num">@(donations?.Count ?? 0)</span>
-                <span class="fund-stat-label">মোট অনুদান প্রকল্প</span>
+            <div class="fund-bal-operator">=</div>
+            <div class="fund-bal-item balance">
+                <span class="fund-bal-icon">✅</span>
+                <span class="fund-bal-label">বর্তমান ব্যালেন্স</span>
+                <span class="fund-bal-amount">৳ @netBalance.ToString("N0")</span>
             </div>
         </div>
 
-        <!-- ── Member Table ── -->
-        @if (fundUsers != null && fundUsers.Any())
-        {
-            <div class="section-header reveal" style="margin-bottom:1.5rem;">
-                <div class="section-tag">👤 সদস্য তালিকা</div>
-                <h3 class="section-title" style="font-size:1.5rem;">যারা ফান্ডে অবদান রেখেছেন</h3>
+        <!-- ── MINI STATS ── -->
+        <div class="fund-stats-row reveal">
+            <div class="fund-mini-stat">
+                <span class="fund-mini-icon">👥</span>
+                <span class="fund-mini-num">@(fundUsers?.Count ?? 0)</span>
+                <div class="fund-mini-lbl">মোট সদস্য</div>
             </div>
-            <div class="reveal" style="overflow-x:auto;margin-bottom:3rem;">
-                <table class="fund-member-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>সদস্য</th>
-                            <th>ফোন</th>
-                            <th>যোগদান</th>
-                            <th>মোট চাঁদা</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @{
-                            int si = 1;
-                        }
-                        @foreach (var u in fundUsers)
-                        {
-                            var userTotal = u.Funds?.Sum(f => f.Amount) ?? 0;
-                            <tr>
-                                <td style="color:var(--text-light);font-size:0.82rem;">@si</td>
-                                <td>
-                                    <div style="display:flex;align-items:center;gap:0.7rem;">
-                                        @if (!string.IsNullOrEmpty(u.ProfileImage))
-                                        {
-                                            <img src="@u.ProfileImage" class="fund-member-avatar" alt="@u.Name" />
-                                        }
-                                        else
-                                        {
-                                            <div class="fund-member-avatar-placeholder">👤</div>
-                                        }
-                                        <div>
-                                            <div style="font-weight:700;color:var(--green-dark);font-size:0.9rem;">@u.Name</div>
-                                            @if (!string.IsNullOrEmpty(u.Address))
-                                            {
-                                                <div style="font-size:0.76rem;color:var(--text-light);">@u.Address</div>
-                                            }
-                                        </div>
-                                    </div>
-                                </td>
-                                <td><span class="fund-member-badge">📞 @u.Phone</span></td>
-                                <td style="font-size:0.82rem;color:var(--text-light);">@u.JoinDate.ToString("dd MMM, yyyy")</td>
-                                <td><span class="fund-member-total">৳ @userTotal.ToString("N0")</span></td>
-                            </tr>
-                            si++;
-                        }
-                    </tbody>
-                    <tfoot>
-                        <tr style="background:rgba(26,107,60,0.04);">
-                            <td colspan="4" style="font-weight:700;color:var(--green-dark);padding:0.9rem 1.2rem;">মোট সংগৃহীত (চাঁদা)</td>
-                            <td style="font-weight:900;color:var(--green);font-size:1rem;padding:0.9rem 1.2rem;">৳ @totalFund.ToString("N0")</td>
-                        </tr>
-                    </tfoot>
-                </table>
+            <div class="fund-mini-stat">
+                <span class="fund-mini-icon">🏗️</span>
+                <span class="fund-mini-num">@(donations?.Count ?? 0)</span>
+                <div class="fund-mini-lbl">প্রকল্প সম্পন্ন</div>
             </div>
-        }
+            <div class="fund-mini-stat">
+                <span class="fund-mini-icon">📊</span>
+                <span class="fund-mini-num">
+                    @(totalFund > 0 ? ((int)((netBalance / totalFund) * 100)) + "%" : "০%")
+                </span>
+                <div class="fund-mini-lbl">অবশিষ্ট %</div>
+            </div>
+        </div>
 
-        <!-- ── Donation Cards ── -->
-        @if (donations != null && donations.Any())
+        <!-- ── TOP 4 CONTRIBUTORS ── -->
+        @if (top4 != null && top4.Any())
         {
-            <div class="section-header reveal" style="margin-bottom:1.5rem;">
-                <div class="section-tag">🎁 অনুদান</div>
-                <h3 class="section-title" style="font-size:1.5rem;">অনুদানের তালিকা</h3>
-            </div>
-            <div class="donation-grid reveal">
-                @foreach (var d in donations)
+            <div class="fund-sub-header reveal">
+                <div class="fund-sub-title">
+                    🏅 শীর্ষ অবদানকারী
+                    <span>(সর্বশেষ @top4.Count জন)</span>
+                </div>
+                @if (fundUsers != null && fundUsers.Count > 4)
                 {
-                    <div class="donation-card">
-                        @if (!string.IsNullOrEmpty(d.Image))
+                    <button class="fund-view-all-btn" onclick="openContribModal()">
+                        👥 সকলকে দেখুন (@fundUsers.Count জন) →
+                    </button>
+                }
+            </div>
+            <div class="contributors-grid reveal">
+                @{
+                    int rank = 1;
+                }
+                @foreach (var u in top4)
+                {
+                    var uTotal = u.Funds?.Sum(f => f.Amount) ?? 0;
+                    var rankLabel = rank == 1 ? "🥇 #১" : rank == 2 ? "🥈 #২" : rank == 3 ? "🥉 #৩" : "#" + rank;
+                    <div class="contributor-card">
+                        <div class="contributor-rank">@rankLabel</div>
+                        @if (!string.IsNullOrEmpty(u.ProfileImage))
                         {
-                            <img src="@d.Image" alt="@d.Title" class="donation-card-img" loading="lazy" />
+                            <img src="@u.ProfileImage" alt="@u.Name" class="contributor-avatar" loading="lazy" />
                         }
                         else
                         {
-                            <div class="donation-card-img-placeholder">🎁</div>
+                            <div class="contributor-avatar-placeholder">👤</div>
                         }
-                        <div class="donation-card-body">
-                            <div class="donation-card-title">@d.Title</div>
+                        <div class="contributor-name">@u.Name</div>
+                        <span class="contributor-amount">৳ @uTotal.ToString("N0")</span>
+                        <div class="contributor-joined">📅 @u.JoinDate.ToString("MMM yyyy") থেকে</div>
+                    </div>
+                    rank++;
+                }
+            </div>
+        }
+
+        <!-- ── DONATIONS (SPENT) ── -->
+        @if (donations != null && donations.Any())
+        {
+            <div class="donation-divider reveal">
+                <div class="donation-divider-label">
+                    🔻 মূল তহবিল থেকে যা দান / খরচ করা হয়েছে
+                </div>
+            </div>
+
+            <div class="fund-sub-header reveal">
+                <div class="fund-sub-title">
+                    🏗️ তহবিল থেকে অনুদান
+                    <span>(মোট − ৳ @totalDonation.ToString("N0") খরচ)</span>
+                </div>
+            </div>
+
+            <div class="donation-cards-grid reveal">
+                @foreach (var d in donations)
+                {
+                    <div class="donation-use-card">
+                        @if (!string.IsNullOrEmpty(d.Image))
+                        {
+                            <img src="@d.Image" alt="@d.Title" class="duc-img" loading="lazy" />
+                        }
+                        else
+                        {
+                            <div class="duc-img-placeholder">🏗️</div>
+                        }
+                        <div class="duc-body">
+                            <div class="duc-title">@d.Title</div>
                             @if (!string.IsNullOrEmpty(d.Description))
                             {
-                                <div class="donation-card-desc">@d.Description</div>
+                                <div class="duc-desc">@d.Description</div>
                             }
-                            <div class="donation-card-footer">
-                                <span class="donation-amount">৳ @d.Amount.ToString("N0")</span>
-                                <span class="donation-date">📅 @d.Date.ToString("dd MMM, yyyy")</span>
+                            <div class="duc-footer">
+                                <span class="duc-amount">৳ @d.Amount.ToString("N0")</span>
+                                <span class="duc-date">📅 @d.Date.ToString("dd MMM, yyyy")</span>
                             </div>
                         </div>
                     </div>
                 }
             </div>
+
+            <!-- Net Balance Footer Bar -->
+            <div class="fund-net-bar reveal">
+                <div class="fund-net-left">
+                    <span>💰 মোট সংগৃহীত</span>
+                    <span style="color:rgba(255,255,255,0.35);">৳ @totalFund.ToString("N0")</span>
+                    <span style="color:rgba(255,80,80,0.7);">− @totalDonation.ToString("N0")</span>
+                    <span class="fund-net-badge">বর্তমান ব্যালেন্স</span>
+                </div>
+                <div class="fund-net-amount">৳ @netBalance.ToString("N0")</div>
+            </div>
         }
+
+    </div><!-- /container -->
+    <!-- ── ALL CONTRIBUTORS MODAL ── -->
+    <div class="all-contrib-modal" id="contribModal">
+        <div class="modal-backdrop" onclick="closeContribModal()"></div>
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title">👥 সকল অবদানকারী</div>
+                <button class="modal-close" onclick="closeContribModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-total-bar">
+                    <span class="modal-total-label">💵 মোট সংগৃহীত চাঁদা</span>
+                    <span class="modal-total-amount">৳ @totalFund.ToString("N0")</span>
+                </div>
+                @if (fundUsers != null && fundUsers.Any())
+                {
+                    int li = 1;
+                    foreach (var u in fundUsers.OrderByDescending(u => u.Funds?.Sum(f => f.Amount) ?? 0))
+                    {
+                        var uTotal = u.Funds?.Sum(f => f.Amount) ?? 0;
+                        <div class="contrib-list-item">
+                            <div class="contrib-list-num">@li</div>
+                            @if (!string.IsNullOrEmpty(u.ProfileImage))
+                            {
+                                <img src="@u.ProfileImage" alt="@u.Name" class="contrib-list-img" loading="lazy" />
+                            }
+                            else
+                            {
+                                <div class="contrib-list-placeholder">👤</div>
+                            }
+                            <div class="contrib-list-info">
+                                <div class="contrib-list-name">@u.Name</div>
+                                <div class="contrib-list-meta">📞 @u.Phone &nbsp;|&nbsp; 📅 @u.JoinDate.ToString("dd MMM, yyyy") থেকে</div>
+                            </div>
+                            <div class="contrib-list-amount">৳ @uTotal.ToString("N0")</div>
+                        </div>
+                        li++;
+                    }
+                }
+            </div>
+        </div>
     </div>
+
+    <script>
+        function openContribModal() {
+            document.getElementById('contribModal').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeContribModal() {
+            document.getElementById('contribModal').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeContribModal(); });
+    </script>
+
 </section>
+
+
+
+
 
 
 <!-- ═══ NEWS SECTION ═══ -->

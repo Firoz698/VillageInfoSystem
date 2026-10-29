@@ -699,11 +699,7 @@
                 <div class="sc-hd" style="color:#c0392b;background:#fdf5f5;border-color:rgba(231,76,60,0.15);">⚠️ ডিলিট জোন</div>
                 <div class="sc-bd">
                     <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.9rem;">এই গ্যালারি আইটেম স্থায়ীভাবে মুছে ফেলুন।</p>
-                    <form method="post" action="/Gallery/GalleryDelete/@Model.Id"
-                          onsubmit="return confirm('এই আইটেম মুছে ফেলবেন?')">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-danger btn-sm" style="width:100%;justify-content:center;">🗑️ আইটেম মুছুন</button>
-                    </form>
+                    <button type="submit" form="deleteGalleryForm" class="btn btn-danger btn-sm" style="width:100%;justify-content:center;">🗑️ আইটেম মুছুন</button>
                 </div>
             </div>
 
@@ -715,6 +711,14 @@
             </div>
         </div>
     </div>
+</form>
+
+<form id="deleteGalleryForm" method="post" action="/Gallery/GalleryDelete/@Model.Id" onsubmit="return confirm('এই আইটেম মুছে ফেলবেন?')">
+    @Html.AntiForgeryToken()
+</form>
+
+<form id="deleteGalleryForm" method="post" action="/Gallery/GalleryDelete/@Model.Id" onsubmit="return confirm('এই আইটেম মুছে ফেলবেন?')">
+    @Html.AntiForgeryToken()
 </form>
 
 <script>
