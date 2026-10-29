@@ -2,256 +2,252 @@
     ViewData["Title"] = "ড্যাশবোর্ড";
     Layout = "_AdminLayout";
     var recentNews = ViewBag.RecentNews as List<VillageInfoSystem.Models.News>;
+    var recentFunds = ViewBag.RecentFunds as List<VillageInfoSystem.Models.Fund.Fund>;
+    decimal totalFund = (decimal)(ViewBag.TotalFund ?? 0m);
+    decimal totalDonation = (decimal)(ViewBag.TotalDonation ?? 0m);
+    decimal netBalance = (decimal)(ViewBag.NetBalance ?? 0m);
 }
 
 <style>
-    @@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Playfair+Display:wght@700;900&display=swap');
-    /* ══════════════════════════════════════
-           DESIGN TOKENS
-        ══════════════════════════════════════ */
-    :root {
-        --forest: #0d5c2e;
-        --emerald: #1a8a4a;
-        --jade: #2ebd6b;
-        --mint: #d4f7e2;
-        --gold: #d4a017;
-        --amber: #f0c040;
-        --sand: #fef3d0;
-        --sky: #1565c0;
-        --azure: #4090e8;
-        --ice: #dbeeff;
-        --violet: #6a1fa2;
-        --lavender: #c490f8;
-        --lilac: #f0e5ff;
-        --coral: #c0392b;
-        --rose: #ff6b6b;
-        --blush: #ffe0e0;
-        --bg: #f0f4f0;
-        --surface: #ffffff;
-        --border: #e0ebe2;
-        --text: #1a2e1f;
-        --muted: #6b8070;
-        --radius: 16px;
-        --shadow: 0 4px 24px rgba(13,92,46,0.08);
-        --shadow-lg: 0 12px 48px rgba(13,92,46,0.16);
-    }
-
-    /* ══════════════════════════════════════
-           WELCOME BANNER
-        ══════════════════════════════════════ */
-    .welcome-banner {
+    /* ═══════════════════════════════════════════════════════════
+       DASHBOARD STYLES & ANIMATIONS
+    ═══════════════════════════════════════════════════════════ */
+    .dash-hero {
         position: relative;
-        border-radius: 24px;
-        padding: 2.2rem 2.5rem;
-        margin-bottom: 1.8rem;
+        border-radius: var(--radius-xl);
+        padding: 2.2rem 2.6rem;
+        margin-bottom: 2rem;
         overflow: hidden;
-        background: linear-gradient(135deg, #0d5c2e 0%, #1a8a4a 45%, #2ebd6b 100%);
+        background: linear-gradient(135deg, #052012 0%, #0d5c2e 45%, #10b981 100%);
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 1.5rem;
         flex-wrap: wrap;
-        box-shadow: 0 16px 48px rgba(13,92,46,0.35);
+        box-shadow: 0 16px 45px rgba(13, 92, 46, 0.28);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        animation: fadeUp 0.45s ease both;
     }
 
-        /* Decorative blobs */
-        .welcome-banner::before,
-        .welcome-banner::after {
-            content: '';
-            position: absolute;
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
-        .welcome-banner::before {
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
-            top: -150px;
-            right: -80px;
-        }
-
-        .welcome-banner::after {
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle, rgba(212,160,23,0.18) 0%, transparent 70%);
-            bottom: -80px;
-            left: 35%;
-        }
-
-    .wb-deco-dots {
+    .dash-hero::before {
+        content: '';
         position: absolute;
-        inset: 0;
-        background-image: radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px);
-        background-size: 28px 28px;
+        width: 420px;
+        height: 420px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, transparent 68%);
+        top: -160px;
+        right: -80px;
         pointer-events: none;
     }
 
-    .wb-text {
+    .dash-hero::after {
+        content: '';
+        position: absolute;
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(245, 158, 11, 0.22) 0%, transparent 70%);
+        bottom: -100px;
+        left: 25%;
+        pointer-events: none;
+    }
+
+    .dh-dots {
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(circle, rgba(255, 255, 255, 0.14) 1px, transparent 1px);
+        background-size: 24px 24px;
+        pointer-events: none;
+    }
+
+    .dh-text {
         position: relative;
         z-index: 2;
     }
 
-        .wb-text h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.65rem;
-            font-weight: 900;
-            color: #fff;
-            margin-bottom: 0.35rem;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
+    .dh-greeting {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.85rem;
+        font-weight: 900;
+        color: #ffffff;
+        margin-bottom: 0.35rem;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+    }
 
-        .wb-text p {
-            font-size: 0.88rem;
-            color: rgba(255,255,255,0.7);
-        }
+    .dh-desc {
+        font-size: 0.95rem;
+        color: rgba(255, 255, 255, 0.85);
+        max-width: 580px;
+        line-height: 1.5;
+    }
 
-    .wb-right {
+    .dh-badges {
         position: relative;
         z-index: 2;
         display: flex;
-        align-items: center;
         gap: 0.65rem;
         flex-wrap: wrap;
     }
 
-    .wb-pill {
+    .dh-pill {
         display: inline-flex;
         align-items: center;
-        gap: 0.4rem;
-        padding: 0.5rem 1.1rem;
-        border-radius: 50px;
-        font-size: 0.81rem;
-        font-weight: 600;
-        backdrop-filter: blur(8px);
+        gap: 0.45rem;
+        padding: 0.55rem 1.15rem;
+        border-radius: var(--radius-full);
+        font-size: 0.82rem;
+        font-weight: 700;
+        backdrop-filter: blur(10px);
         white-space: nowrap;
     }
 
-    .wb-pill-green {
-        background: rgba(255,255,255,0.15);
-        border: 1px solid rgba(255,255,255,0.25);
-        color: #fff;
+    .dh-pill-gold {
+        background: rgba(245, 158, 11, 0.25);
+        border: 1px solid rgba(245, 158, 11, 0.5);
+        color: #fef08a;
     }
 
-    .wb-pill-gold {
-        background: rgba(212,160,23,0.25);
-        border: 1px solid rgba(212,160,23,0.45);
-        color: #ffe08a;
+    .dh-pill-white {
+        background: rgba(255, 255, 255, 0.16);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: #ffffff;
     }
 
-    /* ══════════════════════════════════════
-           STAT CARDS
-        ══════════════════════════════════════ */
-    .stats-grid {
+    /* ═══════════════════════════════════════════════════════════
+       FINANCIAL STATS HERO (3 CARDS)
+    ═══════════════════════════════════════════════════════════ */
+    .fin-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1.2rem;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.4rem;
         margin-bottom: 1.8rem;
     }
 
-    .stat-card {
-        background: var(--surface);
-        border-radius: 20px;
-        padding: 1.5rem 1.4rem;
-        border: 1.5px solid transparent;
-        box-shadow: var(--shadow);
-        display: flex;
-        align-items: flex-start;
-        gap: 1rem;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    .fin-card {
+        border-radius: var(--radius-lg);
+        padding: 1.6rem 1.8rem;
         position: relative;
         overflow: hidden;
-        cursor: default;
+        border: 1px solid transparent;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        animation: fadeUp 0.45s 0.08s ease both;
     }
 
-        .stat-card:hover {
-            transform: translateY(-6px) scale(1.01);
-            box-shadow: var(--shadow-lg);
-        }
-
-        /* Colored top stripe */
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            border-radius: 20px 20px 0 0;
-        }
-
-    /* Card themes */
-    .sc-green {
-        border-color: #c6e8d2;
-        background: linear-gradient(160deg, #fff 60%, #edfaf2);
+    .fin-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
     }
 
-        .sc-green::before {
-            background: linear-gradient(90deg, var(--forest), var(--jade));
-        }
-
-        .sc-green .stat-icon-wrap {
-            background: var(--mint);
-        }
-
-        .sc-green .stat-num {
-            color: var(--forest);
-        }
-
-    .sc-gold {
-        border-color: #f0dfa0;
-        background: linear-gradient(160deg, #fff 60%, #fffae8);
+    .fc-collected {
+        background: linear-gradient(135deg, #092c19 0%, #0d5c2e 60%, #15803d 100%);
+        color: #ffffff;
+        border-color: rgba(0, 220, 130, 0.3);
     }
 
-        .sc-gold::before {
-            background: linear-gradient(90deg, #a07010, var(--amber));
-        }
-
-        .sc-gold .stat-icon-wrap {
-            background: var(--sand);
-        }
-
-        .sc-gold .stat-num {
-            color: #7a5010;
-        }
-
-    .sc-blue {
-        border-color: #b8d8f8;
-        background: linear-gradient(160deg, #fff 60%, #eaf4ff);
+    .fc-balance {
+        background: linear-gradient(135deg, #064e3b 0%, #047857 60%, #10b981 100%);
+        color: #ffffff;
+        border-color: rgba(52, 211, 153, 0.35);
     }
 
-        .sc-blue::before {
-            background: linear-gradient(90deg, var(--sky), var(--azure));
-        }
-
-        .sc-blue .stat-icon-wrap {
-            background: var(--ice);
-        }
-
-        .sc-blue .stat-num {
-            color: var(--sky);
-        }
-
-    .sc-violet {
-        border-color: #dcc8f5;
-        background: linear-gradient(160deg, #fff 60%, #f5eeff);
+    .fc-spent {
+        background: linear-gradient(135deg, #4c0519 0%, #881337 60%, #be123c 100%);
+        color: #ffffff;
+        border-color: rgba(244, 63, 94, 0.35);
     }
 
-        .sc-violet::before {
-            background: linear-gradient(90deg, var(--violet), var(--lavender));
-        }
+    .fin-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.8rem;
+    }
 
-        .sc-violet .stat-icon-wrap {
-            background: var(--lilac);
-        }
+    .fin-icon-wrap {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        backdrop-filter: blur(8px);
+    }
 
-        .sc-violet .stat-num {
-            color: var(--violet);
-        }
+    .fin-badge {
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 0.25rem 0.7rem;
+        border-radius: var(--radius-full);
+        background: rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+    }
 
-    .stat-icon-wrap {
-        width: 54px;
-        height: 54px;
+    .fin-amount {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.1rem;
+        font-weight: 900;
+        line-height: 1;
+        margin-bottom: 0.35rem;
+        letter-spacing: -0.01em;
+    }
+
+    .fin-label {
+        font-size: 0.88rem;
+        color: rgba(255, 255, 255, 0.85);
+        font-weight: 600;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       SECONDARY METRIC CARDS (4-GRID)
+    ═══════════════════════════════════════════════════════════ */
+    .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.25rem;
+        margin-bottom: 2rem;
+    }
+
+    .metric-card {
+        background: #ffffff;
+        border-radius: var(--radius-md);
+        padding: 1.3rem 1.4rem;
+        border: 1.5px solid var(--border-color);
+        box-shadow: var(--shadow-card);
+        display: flex;
+        align-items: center;
+        gap: 1.1rem;
+        transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .metric-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-hover);
+        border-color: rgba(13, 92, 46, 0.25);
+    }
+
+    .metric-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3.5px;
+    }
+
+    .mc-users::before { background: linear-gradient(90deg, #0284c7, #38bdf8); }
+    .mc-news::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+    .mc-inst::before { background: linear-gradient(90deg, #8b5cf6, #c084fc); }
+    .mc-facility::before { background: linear-gradient(90deg, #10b981, #34d399); }
+
+    .mc-icon-wrap {
+        width: 50px;
+        height: 50px;
         border-radius: 14px;
         display: flex;
         align-items: center;
@@ -261,680 +257,543 @@
         transition: transform 0.3s;
     }
 
-    .stat-card:hover .stat-icon-wrap {
-        transform: rotate(-6deg) scale(1.12);
+    .metric-card:hover .mc-icon-wrap {
+        transform: scale(1.15) rotate(-5deg);
     }
 
-    .stat-content {
+    .mc-users .mc-icon-wrap { background: #e0f2fe; color: #0284c7; }
+    .mc-news .mc-icon-wrap { background: #fef3c7; color: #d97706; }
+    .mc-inst .mc-icon-wrap { background: #ede9fe; color: #7c3aed; }
+    .mc-facility .mc-icon-wrap { background: #d1fae5; color: #059669; }
+
+    .mc-content {
         min-width: 0;
     }
 
-    .stat-num {
+    .mc-num {
         font-family: 'Playfair Display', serif;
-        font-size: 2.1rem;
+        font-size: 1.85rem;
         font-weight: 900;
         line-height: 1;
-        display: block;
+        color: var(--text-main);
     }
 
-    .stat-label {
-        font-size: 0.78rem;
-        color: var(--muted);
-        margin-top: 5px;
-        font-weight: 500;
+    .mc-label {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-top: 4px;
+        font-weight: 600;
     }
 
-    /* ══════════════════════════════════════
-           MAIN GRID
-        ══════════════════════════════════════ */
-    .dash-grid {
+    /* ═══════════════════════════════════════════════════════════
+       MAIN 2-COLUMN LAYOUT
+    ═══════════════════════════════════════════════════════════ */
+    .dash-columns {
         display: grid;
-        grid-template-columns: 1fr 330px;
-        gap: 1.4rem;
+        grid-template-columns: 1fr 340px;
+        gap: 1.6rem;
         align-items: start;
     }
 
-    /* ══════════════════════════════════════
-           NEWS TABLE CARD
-        ══════════════════════════════════════ */
-    .news-table-card {
-        background: var(--surface);
-        border-radius: 20px;
-        border: 1.5px solid var(--border);
-        box-shadow: var(--shadow);
+    /* Recent Table Cards */
+    .dash-table-card {
+        background: #ffffff;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-card);
+        border: 1px solid var(--border-color);
         overflow: hidden;
+        margin-bottom: 1.6rem;
+        transition: box-shadow 0.25s;
     }
 
-    .ntc-header {
+    .dash-table-card:hover {
+        box-shadow: var(--shadow-hover);
+    }
+
+    .dtc-header {
+        padding: 1.2rem 1.6rem;
+        border-bottom: 1px solid var(--border-color);
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 1.25rem 1.6rem;
-        border-bottom: 1.5px solid var(--border);
-        background: linear-gradient(90deg, #f5fbf7, #fff);
+        background: #fafcfa;
         flex-wrap: wrap;
         gap: 0.8rem;
     }
 
-    .ntc-title {
+    .dtc-title {
         display: flex;
         align-items: center;
-        gap: 0.7rem;
-        font-weight: 700;
-        color: var(--forest);
-        font-size: 1rem;
+        gap: 0.65rem;
+        font-family: 'Playfair Display', serif;
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: var(--brand-green-dark);
     }
 
-    .ntc-icon {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
-        background: var(--mint);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1rem;
-    }
-
-    /* Table */
-    .ntc-body {
-        overflow-x: auto;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 0.87rem;
-        white-space: nowrap;
-    }
-
-    thead th {
-        background: #f5fbf7;
-        color: var(--forest);
-        padding: 0.8rem 1.3rem;
-        text-align: left;
-        font-weight: 700;
-        font-size: 0.75rem;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        border-bottom: 2px solid var(--border);
-    }
-
-    tbody td {
-        padding: 0.85rem 1.3rem;
-        border-bottom: 1px solid #f0f5f1;
-        color: var(--text);
-        vertical-align: middle;
-    }
-
-    tbody tr:last-child td {
-        border-bottom: none;
-    }
-
-    tbody tr:hover td {
-        background: linear-gradient(90deg, #f7fdf9, #fff);
-    }
-
-    .news-title-cell {
-        max-width: 240px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        font-weight: 600;
-    }
-
-    /* Badges */
-    .badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.3rem;
-        padding: 0.3rem 0.75rem;
-        border-radius: 50px;
-        font-size: 0.74rem;
-        font-weight: 700;
-    }
-
-    .badge-green {
-        background: var(--mint);
-        color: var(--forest);
-        border: 1px solid #b0e0c0;
-    }
-
-    .badge-gold {
-        background: var(--sand);
-        color: #7a5010;
-        border: 1px solid #f0dfa0;
-    }
-
-    .badge-blue {
-        background: var(--ice);
-        color: var(--sky);
-        border: 1px solid #b8d8f8;
-    }
-
-    .badge-violet {
-        background: var(--lilac);
-        color: var(--violet);
-        border: 1px solid #dcc8f5;
-    }
-
-    .badge-success {
-        background: #e2f9ec;
-        color: #0d7a3e;
-        border: 1px solid #9ae0b8;
-    }
-
-    .badge-danger {
-        background: var(--blush);
-        color: var(--coral);
-        border: 1px solid #f0b8b8;
-    }
-
-    /* Buttons */
-    .btn-sm {
-        padding: 0.42rem 1rem;
-        border-radius: 50px;
-        font-size: 0.78rem;
-        font-weight: 700;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.3rem;
-        transition: all 0.22s;
-        font-family: 'Hind Siliguri', sans-serif;
-        border: none;
-        cursor: pointer;
-    }
-
-    .btn-primary {
-        background: linear-gradient(135deg, var(--forest), var(--emerald));
-        color: #fff;
-        box-shadow: 0 4px 14px rgba(13,92,46,0.3);
-    }
-
-        .btn-primary:hover {
-            box-shadow: 0 7px 22px rgba(13,92,46,0.42);
-            transform: translateY(-1px);
-            color: #fff;
-            text-decoration: none;
-        }
-
-    .btn-edit {
-        background: var(--ice);
-        color: var(--sky);
-        border: 1px solid #b8d8f8;
-    }
-
-        .btn-edit:hover {
-            background: var(--sky);
-            color: #fff;
-            text-decoration: none;
-        }
-
-    /* Empty state */
-    .empty-state {
-        text-align: center;
-        padding: 3.5rem 1.5rem;
-        color: var(--muted);
-    }
-
-        .empty-state .es-icon {
-            font-size: 2.8rem;
-            display: block;
-            margin-bottom: 0.7rem;
-            opacity: 0.45;
-        }
-
-        .empty-state p {
-            font-size: 0.88rem;
-        }
-
-    /* ══════════════════════════════════════
-           QUICK ACTIONS CARD
-        ══════════════════════════════════════ */
-    .quick-card {
-        background: var(--surface);
-        border-radius: 20px;
-        border: 1.5px solid var(--border);
-        box-shadow: var(--shadow);
-        overflow: hidden;
-    }
-
-    .qc-header {
-        padding: 1.25rem 1.6rem;
-        border-bottom: 1.5px solid var(--border);
-        background: linear-gradient(90deg, #fffae8, #fff);
-        display: flex;
-        align-items: center;
-        gap: 0.7rem;
-        font-weight: 700;
-        color: var(--forest);
-        font-size: 1rem;
-    }
-
-    .qc-icon {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
-        background: var(--sand);
+    .dtc-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+        background: rgba(13, 92, 46, 0.08);
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 1rem;
     }
 
-    .qc-body {
-        padding: 1.1rem;
-        display: flex;
-        flex-direction: column;
-        gap: 0.55rem;
+    /* ═══════════════════════════════════════════════════════════
+       QUICK ACTION LAUNCHPAD
+    ═══════════════════════════════════════════════════════════ */
+    .launchpad-card {
+        background: #ffffff;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-card);
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+        position: sticky;
+        top: 90px;
     }
 
-    /* Quick action section label */
-    .qa-section-label {
-        font-size: 0.7rem;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--muted);
-        padding: 0.3rem 0.3rem 0;
-        margin-top: 0.2rem;
-    }
-
-    .qa-btn {
+    .lp-header {
+        padding: 1.2rem 1.5rem;
+        background: linear-gradient(135deg, #0d5c2e 0%, #16a34a 100%);
+        color: #ffffff;
         display: flex;
         align-items: center;
-        gap: 0.7rem;
+        gap: 0.6rem;
+        font-family: 'Playfair Display', serif;
+        font-size: 1.15rem;
+        font-weight: 800;
+    }
+
+    .lp-body {
+        padding: 1.3rem;
+    }
+
+    .lp-section-title {
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--text-muted);
+        margin: 1.1rem 0 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .lp-section-title:first-child {
+        margin-top: 0;
+    }
+
+    .lp-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
         padding: 0.75rem 1rem;
-        border-radius: 12px;
+        border-radius: var(--radius-sm);
         text-decoration: none;
-        font-size: 0.855rem;
-        font-weight: 600;
-        transition: all 0.22s;
-        font-family: 'Hind Siliguri', sans-serif;
-        border: 1.5px solid transparent;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
+        font-size: 0.88rem;
+        font-weight: 700;
+        margin-bottom: 0.45rem;
+        transition: all 0.22s ease;
+        border: 1px solid transparent;
     }
 
-        .qa-btn::after {
-            content: '→';
-            position: absolute;
-            right: 1rem;
-            opacity: 0;
-            transform: translateX(-6px);
-            transition: all 0.22s;
-            font-size: 0.85rem;
-        }
-
-        .qa-btn:hover::after {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .qa-btn:hover {
-            transform: translateX(3px);
-            text-decoration: none;
-        }
-
-    .qa-btn-icon {
+    .lp-btn-icon {
         width: 32px;
         height: 32px;
         border-radius: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.95rem;
+        font-size: 1.05rem;
         flex-shrink: 0;
+        transition: transform 0.2s;
     }
 
-    /* Themes */
-    .qa-primary {
-        background: linear-gradient(135deg, var(--forest) 0%, var(--emerald) 100%);
-        color: #fff;
-        border-color: transparent;
-        box-shadow: 0 5px 18px rgba(13,92,46,0.3);
+    .lp-btn:hover {
+        transform: translateX(4px);
     }
 
-        .qa-primary:hover {
-            box-shadow: 0 8px 28px rgba(13,92,46,0.42);
-            transform: translateX(0) translateY(-2px);
-            color: #fff;
-        }
-
-        .qa-primary .qa-btn-icon {
-            background: rgba(255,255,255,0.18);
-        }
-
-    .qa-green {
-        background: #edfaf2;
-        color: var(--forest);
-        border-color: #c6e8d2;
+    .lp-btn:hover .lp-btn-icon {
+        transform: scale(1.15);
     }
 
-        .qa-green:hover {
-            background: var(--mint);
-            border-color: #9ed8b2;
-            color: var(--forest);
-        }
-
-        .qa-green .qa-btn-icon {
-            background: var(--mint);
-        }
-
-    .qa-gold {
-        background: #fffae8;
-        color: #7a5010;
-        border-color: #f0dfa0;
+    .lp-green {
+        background: #f0fdf4;
+        color: #166534;
+        border-color: #bbf7d0;
     }
+    .lp-green .lp-btn-icon { background: #dcfce7; }
+    .lp-green:hover { background: #dcfce7; }
 
-        .qa-gold:hover {
-            background: var(--sand);
-            border-color: #e0c870;
-            color: #7a5010;
-        }
-
-        .qa-gold .qa-btn-icon {
-            background: var(--sand);
-        }
-
-    .qa-blue {
-        background: #eaf4ff;
-        color: var(--sky);
-        border-color: #b8d8f8;
+    .lp-gold {
+        background: #fefce8;
+        color: #854d0e;
+        border-color: #fef08a;
     }
+    .lp-gold .lp-btn-icon { background: #fef9c3; }
+    .lp-gold:hover { background: #fef9c3; }
 
-        .qa-blue:hover {
-            background: var(--ice);
-            border-color: #88c0f0;
-            color: var(--sky);
-        }
-
-        .qa-blue .qa-btn-icon {
-            background: var(--ice);
-        }
-
-    .qa-violet {
-        background: #f5eeff;
-        color: var(--violet);
-        border-color: #dcc8f5;
+    .lp-blue {
+        background: #f0f9ff;
+        color: #075985;
+        border-color: #bae6fd;
     }
+    .lp-blue .lp-btn-icon { background: #e0f2fe; }
+    .lp-blue:hover { background: #e0f2fe; }
 
-        .qa-violet:hover {
-            background: var(--lilac);
-            border-color: #c0a0e8;
-            color: var(--violet);
-        }
-
-        .qa-violet .qa-btn-icon {
-            background: var(--lilac);
-        }
-
-    .qa-outline {
-        background: #fff;
-        color: var(--forest);
-        border-color: var(--border);
+    .lp-purple {
+        background: #faf5ff;
+        color: #6b21a8;
+        border-color: #e9d5ff;
     }
+    .lp-purple .lp-btn-icon { background: #f3e8ff; }
+    .lp-purple:hover { background: #f3e8ff; }
 
-        .qa-outline:hover {
-            background: #f5fbf7;
-            border-color: var(--jade);
-            color: var(--forest);
-        }
-
-        .qa-outline .qa-btn-icon {
-            background: var(--mint);
-        }
-
-    /* ══════════════════════════════════════
-           DIVIDER
-        ══════════════════════════════════════ */
-    .qa-divider {
-        height: 1px;
-        background: linear-gradient(90deg, transparent, var(--border), transparent);
-        margin: 0.2rem 0;
+    .lp-rose {
+        background: #fff1f2;
+        color: #9f1239;
+        border-color: #fecdd3;
     }
+    .lp-rose .lp-btn-icon { background: #ffe4e6; }
+    .lp-rose:hover { background: #ffe4e6; }
 
-    /* ══════════════════════════════════════
-           ANIMATIONS
-        ══════════════════════════════════════ */
+    /* ═══════════════════════════════════════════════════════════
+       ANIMATIONS
+    ═══════════════════════════════════════════════════════════ */
     @@keyframes fadeUp {
         from {
             opacity: 0;
-            transform: translateY(18px);
+            transform: translateY(16px);
         }
-
         to {
             opacity: 1;
             transform: translateY(0);
         }
     }
 
-    .welcome-banner {
-        animation: fadeUp 0.5s ease both;
-    }
-
-    .stat-card:nth-child(1) {
-        animation: fadeUp 0.5s 0.08s ease both;
-    }
-
-    .stat-card:nth-child(2) {
-        animation: fadeUp 0.5s 0.14s ease both;
-    }
-
-    .stat-card:nth-child(3) {
-        animation: fadeUp 0.5s 0.20s ease both;
-    }
-
-    .stat-card:nth-child(4) {
-        animation: fadeUp 0.5s 0.26s ease both;
-    }
-
-    .news-table-card {
-        animation: fadeUp 0.5s 0.32s ease both;
-    }
-
-    .quick-card {
-        animation: fadeUp 0.5s 0.38s ease both;
-    }
-
-    /* ══════════════════════════════════════
-           RESPONSIVE
-        ══════════════════════════════════════ */
-    @@media (max-width: 1100px) {
-        .stats-grid {
+    /* ═══════════════════════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════════════════════ */
+    @@media (max-width: 1180px) {
+        .metric-grid {
             grid-template-columns: repeat(2, 1fr);
         }
-
-        .dash-grid {
+        .dash-columns {
             grid-template-columns: 1fr;
+        }
+        .launchpad-card {
+            position: static;
         }
     }
 
-    @@media (max-width: 640px) {
-        .stats-grid {
+    @@media (max-width: 860px) {
+        .fin-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+    }
+
+    @@media (max-width: 600px) {
+        .dash-hero {
+            padding: 1.6rem 1.4rem;
+        }
+        .dh-greeting {
+            font-size: 1.4rem;
+        }
+        .metric-grid {
             grid-template-columns: 1fr 1fr;
             gap: 0.85rem;
         }
-
-        .welcome-banner {
-            padding: 1.4rem 1.3rem;
+        .mc-num {
+            font-size: 1.5rem;
         }
-
-        .wb-text h2 {
-            font-size: 1.2rem;
-        }
-
-        .wb-right {
-            display: none;
-        }
-
-        .stat-num {
+        .fin-amount {
             font-size: 1.7rem;
-        }
-    }
-
-    @@media (max-width: 380px) {
-        .stats-grid {
-            grid-template-columns: 1fr;
         }
     }
 </style>
 
-<!-- ── WELCOME BANNER ── -->
-<div class="welcome-banner">
-    <div class="wb-deco-dots"></div>
-    <div class="wb-text">
-        <h2>আস-সালামু আলাইকুম, @User.Identity?.Name! 👋</h2>
-        <p>খোকসা মল্লিক পাড়া গ্রামের অ্যাডমিন প্যানেলে আপনাকে স্বাগতম।</p>
+<!-- ── WELCOME HERO BANNER ── -->
+<div class="dash-hero">
+    <div class="dh-dots"></div>
+    <div class="dh-text">
+        <h1 class="dh-greeting">আস-সালামু আলাইকুম, @(User.Identity?.Name ?? "অ্যাডমিন")! 👋</h1>
+        <p class="dh-desc">খোকসা মল্লিক পাড়া গ্রাম তথ্য, নাগরিক সেবা ও তহবিল ব্যবস্থাপনা কন্ট্রোল সেন্টারে আপনাকে স্বাগতম।</p>
     </div>
-    <div class="wb-right">
-        <div class="wb-pill wb-pill-gold">🌿 খোকসা মল্লিক পাড়া</div>
-        <div class="wb-pill wb-pill-green">📅 @DateTime.Now.ToString("dd MMMM, yyyy")</div>
-    </div>
-</div>
-
-<!-- ── STAT CARDS ── -->
-<div class="stats-grid">
-    <div class="stat-card sc-green">
-        <div class="stat-icon-wrap">📰</div>
-        <div class="stat-content">
-            <span class="stat-num">@ViewBag.NewsCount</span>
-            <div class="stat-label">মোট সংবাদ</div>
-        </div>
-    </div>
-    <div class="stat-card sc-gold">
-        <div class="stat-icon-wrap">🏛️</div>
-        <div class="stat-content">
-            <span class="stat-num">@ViewBag.FacilityCount</span>
-            <div class="stat-label">সুবিধাসমূহ</div>
-        </div>
-    </div>
-    <div class="stat-card sc-blue">
-        <div class="stat-icon-wrap">👥</div>
-        <div class="stat-content">
-            <span class="stat-num">@ViewBag.CommitteeCount</span>
-            <div class="stat-label">কমিটি সদস্য</div>
-        </div>
-    </div>
-    <div class="stat-card sc-violet">
-        <div class="stat-icon-wrap">🖼️</div>
-        <div class="stat-content">
-            <span class="stat-num">@ViewBag.GalleryCount</span>
-            <div class="stat-label">গ্যালারি আইটেম</div>
-        </div>
+    <div class="dh-badges">
+        <div class="dh-pill dh-pill-gold">🌿 খোকসা মল্লিক পাড়া</div>
+        <div class="dh-pill dh-pill-white">📅 @DateTime.Now.ToString("dd MMMM, yyyy")</div>
     </div>
 </div>
 
-<!-- ── MAIN GRID ── -->
-<div class="dash-grid">
-
-    <!-- Recent News Table -->
-    <div class="news-table-card">
-        <div class="ntc-header">
-            <div class="ntc-title">
-                <div class="ntc-icon">📰</div>
-                সাম্প্রতিক সংবাদ
-            </div>
-            <a href="/News/NewsList" class="btn-sm btn-primary">সব দেখুন →</a>
+<!-- ── 3 FINANCIAL HERO CARDS ── -->
+<div class="fin-grid">
+    <!-- Collected -->
+    <div class="fin-card fc-collected">
+        <div class="fin-top">
+            <div class="fin-icon-wrap">💰</div>
+            <span class="fin-badge">সর্বমোট সংগৃহীত</span>
         </div>
-        <div class="ntc-body">
-            @if (recentNews != null && recentNews.Any())
-            {
-                <table>
-                    <thead>
-                        <tr>
-                            <th>শিরোনাম</th>
-                            <th>বিভাগ</th>
-                            <th>তারিখ</th>
-                            <th>অবস্থা</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var n in recentNews)
-                        {
-                            <tr>
-                                <td>
-                                    <div class="news-title-cell" title="@n.Title">
-                                        @n.Icon @n.Title
-                                    </div>
-                                </td>
-                                <td><span class="badge badge-gold">@n.Category</span></td>
-                                <td style="color:var(--muted);font-size:0.8rem;">@n.PublishedAt.ToString("dd/MM/yyyy")</td>
-                                <td>
-                                    <span class="badge @(n.IsActive ? "badge-success" : "badge-danger")">
-                                        @(n.IsActive ? "✓ সক্রিয়" : "✗ নিষ্ক্রিয়")
-                                    </span>
-                                </td>
-                                <td>
-                                    <a href="/News/NewsEdit/@n.Id" class="btn-sm btn-edit">✏️ সম্পাদনা</a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-            else
-            {
-                <div class="empty-state">
-                    <span class="es-icon">📭</span>
-                    <p>এখনো কোনো সংবাদ যোগ করা হয়নি।</p>
+        <div class="fin-amount">৳ @totalFund.ToString("N0")</div>
+        <div class="fin-label">গ্রামের উন্নয়ন তহবিলের মোট সংগ্রহ</div>
+    </div>
+
+    <!-- Balance -->
+    <div class="fin-card fc-balance">
+        <div class="fin-top">
+            <div class="fin-icon-wrap">⚖️</div>
+            <span class="fin-badge">বর্তমান ব্যালেন্স</span>
+        </div>
+        <div class="fin-amount">৳ @netBalance.ToString("N0")</div>
+        <div class="fin-label">খরচ বাদে অবশিষ্ট নিট ব্যালেন্স</div>
+    </div>
+
+    <!-- Spent -->
+    <div class="fin-card fc-spent">
+        <div class="fin-top">
+            <div class="fin-icon-wrap">🏗️</div>
+            <span class="fin-badge">মোট খরচ / অনুদান</span>
+        </div>
+        <div class="fin-amount">৳ @totalDonation.ToString("N0")</div>
+        <div class="fin-label">গ্রামের বিভিন্ন প্রকল্পে মোট ব্যয়</div>
+    </div>
+</div>
+
+<!-- ── 4 SECONDARY METRIC CARDS ── -->
+<div class="metric-grid">
+    <div class="metric-card mc-users">
+        <div class="mc-icon-wrap">👥</div>
+        <div class="mc-content">
+            <div class="mc-num">@(ViewBag.UserCount ?? 0)</div>
+            <div class="mc-label">নিবন্ধিত সদস্য</div>
+        </div>
+    </div>
+    <div class="metric-card mc-news">
+        <div class="mc-icon-wrap">📰</div>
+        <div class="mc-content">
+            <div class="mc-num">@(ViewBag.NewsCount ?? 0)</div>
+            <div class="mc-label">প্রকাশিত সংবাদ</div>
+        </div>
+    </div>
+    <div class="metric-card mc-inst">
+        <div class="mc-icon-wrap">🏢</div>
+        <div class="mc-content">
+            <div class="mc-num">@(ViewBag.InstitutionCount ?? 0)</div>
+            <div class="mc-label">গ্রামের প্রতিষ্ঠান</div>
+        </div>
+    </div>
+    <div class="metric-card mc-facility">
+        <div class="mc-icon-wrap">🏛️</div>
+        <div class="mc-content">
+            <div class="mc-num">@(ViewBag.FacilityCount ?? 0)</div>
+            <div class="mc-label">নাগরিক সুবিধাসমূহ</div>
+        </div>
+    </div>
+</div>
+
+<!-- ── 2-COLUMN MAIN DASHBOARD CONTENT ── -->
+<div class="dash-columns">
+
+    <!-- LEFT COLUMN: RECENT TABLES -->
+    <div>
+        <!-- Recent News Table -->
+        <div class="dash-table-card">
+            <div class="dtc-header">
+                <div class="dtc-title">
+                    <div class="dtc-icon">📰</div>
+                    সাম্প্রতিক সংবাদ ও নোটিশ
                 </div>
-            }
+                <a href="/News/NewsList" class="btn btn-sm btn-outline">সব সংবাদ দেখুন →</a>
+            </div>
+            <div class="table-wrap">
+                @if (recentNews != null && recentNews.Any())
+                {
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>সংবাদের শিরোনাম</th>
+                                <th>বিভাগ</th>
+                                <th>তারিখ</th>
+                                <th>অবস্থা</th>
+                                <th style="text-align:right;">অ্যাকশন</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var n in recentNews)
+                            {
+                                <tr>
+                                    <td>
+                                        <div style="font-weight:700;color:var(--brand-green-dark);display:flex;align-items:center;gap:0.45rem;">
+                                            <span>@n.Icon</span>
+                                            <span>@n.Title</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge badge-gold">@n.Category</span></td>
+                                    <td class="text-muted" style="font-size:0.8rem;">@n.PublishedAt.ToString("dd MMM yyyy")</td>
+                                    <td>
+                                        <span class="badge @(n.IsActive ? "badge-success" : "badge-danger")">
+                                            @(n.IsActive ? "✓ সক্রিয়" : "✗ নিষ্ক্রিয়")
+                                        </span>
+                                    </td>
+                                    <td style="text-align:right;">
+                                        <a href="/News/NewsEdit/@n.Id" class="btn btn-sm btn-edit">✏️ সম্পাদনা</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div style="text-align:center;padding:2.5rem;color:var(--text-muted);">
+                        <div style="font-size:2rem;margin-bottom:0.5rem;">📭</div>
+                        <p>এখনো কোনো সংবাদ এন্ট্রি নেই।</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Recent Fund Collections -->
+        <div class="dash-table-card">
+            <div class="dtc-header">
+                <div class="dtc-title">
+                    <div class="dtc-icon">💵</div>
+                    সাম্প্রতিক চাঁদা এন্ট্রি
+                </div>
+                <div class="d-flex gap-1">
+                    <a href="/Fund/FundReport" class="btn btn-sm btn-outline">📄 PDF রিপোর্ট</a>
+                    <a href="/Fund/FundList" class="btn btn-sm btn-primary">সকল ফান্ড →</a>
+                </div>
+            </div>
+            <div class="table-wrap">
+                @if (recentFunds != null && recentFunds.Any())
+                {
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>সদস্যের নাম</th>
+                                <th>পরিমাণ</th>
+                                <th>তারিখ</th>
+                                <th>রসিদ</th>
+                                <th style="text-align:right;">অ্যাকশন</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var f in recentFunds)
+                            {
+                                <tr>
+                                    <td style="font-weight:700;color:var(--brand-green-dark);">
+                                        @(f.User?.Name ?? "—")
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-success" style="font-size:0.84rem;">
+                                            ৳ @f.Amount.ToString("N0")
+                                        </span>
+                                    </td>
+                                    <td class="text-muted" style="font-size:0.8rem;">
+                                        @f.Date.ToString("dd MMM yyyy")
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(f.PaymentImage))
+                                        {
+                                            <a href="@f.PaymentImage" target="_blank" style="text-decoration:none;">
+                                                <span class="badge badge-blue">🖼️ রসিদ</span>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted" style="font-size:0.75rem;">—</span>
+                                        }
+                                    </td>
+                                    <td style="text-align:right;">
+                                        <a href="/Fund/FundEdit/@f.Id" class="btn btn-sm btn-edit">✏️</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div style="text-align:center;padding:2.5rem;color:var(--text-muted);">
+                        <div style="font-size:2rem;margin-bottom:0.5rem;">💸</div>
+                        <p>এখনো কোনো ফান্ড কালেকশন এন্ট্রি নেই।</p>
+                    </div>
+                }
+            </div>
         </div>
     </div>
 
-    <!-- Quick Actions -->
-    <div class="quick-card">
-        <div class="qc-header">
-            <div class="qc-icon">⚡</div>
-            দ্রুত অ্যাকশন
-        </div>
-        <div class="qc-body">
+    <!-- RIGHT COLUMN: QUICK ACTION LAUNCHPAD -->
+    <div>
+        <div class="launchpad-card">
+            <div class="lp-header">
+                <span>⚡</span>
+                <span>দ্রুত অ্যাকশন প্যানেল</span>
+            </div>
+            <div class="lp-body">
 
-            <div class="qa-section-label">📰 সংবাদ</div>
-            <a href="/News/NewsCreate" class="qa-btn qa-primary">
-                <span class="qa-btn-icon">📰</span>
-                নতুন সংবাদ যোগ করুন
-            </a>
-            <a href="/Ticker/TickerCreate" class="qa-btn qa-green">
-                <span class="qa-btn-icon">📺</span>
-                ব্রেকিং নিউজ যোগ করুন
-            </a>
+                <!-- Fund Actions -->
+                <div class="lp-section-title">💰 তহবিল ও আর্থিক কার্যক্রম</div>
+                <a href="/Fund/FundCreate" class="lp-btn lp-green">
+                    <span class="lp-btn-icon">💵</span>
+                    <span>নতুন ফান্ড এন্ট্রি</span>
+                </a>
+                <a href="/Donation/DonationCreate" class="lp-btn lp-rose">
+                    <span class="lp-btn-icon">🎁</span>
+                    <span>নতুন অনুদান (খরচ)</span>
+                </a>
+                <a href="/User/UserCreate" class="lp-btn lp-blue">
+                    <span class="lp-btn-icon">👤</span>
+                    <span>নতুন সদস্য নিবন্ধন</span>
+                </a>
+                <a href="/Fund/FundReport" class="lp-btn lp-gold">
+                    <span class="lp-btn-icon">📄</span>
+                    <span>মাসিক PDF রিপোর্ট</span>
+                </a>
 
-            <div class="qa-divider"></div>
-            <div class="qa-section-label">🏘️ গ্রাম তথ্য</div>
-            <a href="/Facility/FacilityCreate" class="qa-btn qa-green">
-                <span class="qa-btn-icon">🏛️</span>
-                নতুন সুবিধা যোগ করুন
-            </a>
-            <a href="/Committee/CommitteeCreate" class="qa-btn qa-green">
-                <span class="qa-btn-icon">👥</span>
-                নতুন কমিটি সদস্য
-            </a>
+                <!-- Media Actions -->
+                <div class="lp-section-title">📰 প্রকাশনা ও সংবাদ</div>
+                <a href="/News/NewsCreate" class="lp-btn lp-gold">
+                    <span class="lp-btn-icon">📰</span>
+                    <span>নতুন সংবাদ প্রকাশ</span>
+                </a>
+                <a href="/Ticker/TickerCreate" class="lp-btn lp-rose">
+                    <span class="lp-btn-icon">📺</span>
+                    <span>ব্রেকিং নিউজ টিকার</span>
+                </a>
+                <a href="/Slider/SliderCreate" class="lp-btn lp-purple">
+                    <span class="lp-btn-icon">🎞️</span>
+                    <span>নতুন স্লাইডার ব্যানার</span>
+                </a>
+                <a href="/Gallery/GalleryCreate" class="lp-btn lp-blue">
+                    <span class="lp-btn-icon">🖼️</span>
+                    <span>গ্যালারিতে ছবি যোগ</span>
+                </a>
 
-            <div class="qa-divider"></div>
-            <div class="qa-section-label">🎨 মিডিয়া</div>
-            <a href="/Gallery/GalleryCreate" class="qa-btn qa-blue">
-                <span class="qa-btn-icon">🖼️</span>
-                গ্যালারি আইটেম যোগ
-            </a>
-            <a href="/Slider/SliderCreate" class="qa-btn qa-violet">
-                <span class="qa-btn-icon">🎞️</span>
-                স্লাইডার যোগ করুন
-            </a>
-
-            <div class="qa-divider"></div>
-            <a href="/Admin/VillageInfoEdit" class="qa-btn qa-gold">
-                <span class="qa-btn-icon">⚙️</span>
-                গ্রামের তথ্য সম্পাদনা
-            </a>
-            <a href="/" target="_blank" class="qa-btn qa-outline">
-                <span class="qa-btn-icon">🌐</span>
-                ওয়েবসাইট দেখুন
-            </a>
+                <!-- Village Info Actions -->
+                <div class="lp-section-title">🏢 গ্রাম ও সংগঠন</div>
+                <a href="/Institution/InstitutionCreate" class="lp-btn lp-green">
+                    <span class="lp-btn-icon">🏢</span>
+                    <span>নতুন প্রতিষ্ঠান যোগ</span>
+                </a>
+                <a href="/Facility/FacilityCreate" class="lp-btn lp-blue">
+                    <span class="lp-btn-icon">🏛️</span>
+                    <span>নতুন সুবিধা যোগ</span>
+                </a>
+                <a href="/Committee/CommitteeCreate" class="lp-btn lp-purple">
+                    <span class="lp-btn-icon">👥</span>
+                    <span>নতুন কমিটি সদস্য</span>
+                </a>
+                <a href="/Admin/VillageInfoEdit" class="lp-btn lp-gold">
+                    <span class="lp-btn-icon">⚙️</span>
+                    <span>গ্রামের সার্বিক তথ্য</span>
+                </a>
+            </div>
         </div>
     </div>
 

@@ -88,7 +88,20 @@ namespace VillageInfoSystem.Controllers
             ViewBag.FacilityCount = await _db.Facilities.CountAsync();
             ViewBag.CommitteeCount = await _db.CommitteeMembers.CountAsync();
             ViewBag.GalleryCount = await _db.GalleryItems.CountAsync();
+            ViewBag.InstitutionCount = await _db.Institutions.CountAsync();
+            ViewBag.UserCount = await _db.Users.CountAsync();
+            ViewBag.SliderCount = await _db.SliderItems.CountAsync();
+            ViewBag.TickerCount = await _db.TickerNews.CountAsync();
+
+            var totalFund = await _db.Funds.SumAsync(f => (decimal?)f.Amount) ?? 0m;
+            var totalDonation = await _db.Donations.SumAsync(d => (decimal?)d.Amount) ?? 0m;
+            ViewBag.TotalFund = totalFund;
+            ViewBag.TotalDonation = totalDonation;
+            ViewBag.NetBalance = totalFund - totalDonation;
+
             ViewBag.RecentNews = await _db.News.OrderByDescending(n => n.PublishedAt).Take(5).ToListAsync();
+            ViewBag.RecentFunds = await _db.Funds.Include(f => f.User).OrderByDescending(f => f.Date).Take(5).ToListAsync();
+
             return View();
         }
 
